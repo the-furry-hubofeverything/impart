@@ -16,12 +16,7 @@ export function Artistry({}: ArtistryProps) {
     <div>
       <div>Hello World!</div>
       <div>Check out this cool image</div>
-      {imageData && (
-        <img
-          src={`data:image/png;base64,${imageData}`}
-          style={{ width: 400 }}
-        />
-      )}
+      {imageData && <img src={`data:image/png;base64,${imageData}`} />}
     </div>
   );
 }

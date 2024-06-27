@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import { readdirSync, readFileSync } from "fs";
 import path from "path";
+import sharp from "sharp";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -38,10 +39,12 @@ app.on("ready", () => {
     return readdirSync("../ArtistryTestFolder");
   });
 
-  ipcMain.handle("getImage", (e) => {
-    return readFileSync(`../ArtistryTestFolder/WereguarRef1.png`).toString(
-      "base64"
-    );
+  ipcMain.handle("getImage", async (e) => {
+    const buffer = await sharp(`../ArtistryTestFolder/WereguarRef1.png`)
+      .resize(400)
+      .toBuffer();
+
+    return buffer.toString("base64");
   });
   createWindow();
 });
