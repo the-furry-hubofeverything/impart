@@ -1,5 +1,5 @@
-import { app, BrowserWindow, ipcMain } from "electron";
-import { readdirSync } from "fs";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
+import { readdirSync, readFileSync } from "fs";
 import path from "path";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -36,6 +36,12 @@ const createWindow = () => {
 app.on("ready", () => {
   ipcMain.handle("getFiles", () => {
     return readdirSync("../ArtistryTestFolder");
+  });
+
+  ipcMain.handle("getImage", (e) => {
+    return readFileSync(`../ArtistryTestFolder/WereguarRef1.png`).toString(
+      "base64"
+    );
   });
   createWindow();
 });
