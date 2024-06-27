@@ -45,7 +45,7 @@ app.on("ready", () => {
     }
 
     const buffer = await sharp(`../ArtistryTestFolder/${fileName}`)
-      .resize(400)
+      .resize({ height: 300 })
       .toBuffer();
 
     return buffer.toString("base64");
