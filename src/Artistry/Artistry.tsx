@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from "react";
+import { ImageDisplay } from "./ImageDisplay";
 
 export interface ArtistryProps {}
 
 export function Artistry({}: ArtistryProps) {
-  const [imageData, setImageData] = useState<string>();
+  const [files, setFiles] = useState<string[]>();
 
   useEffect(() => {
     (async () => {
-      const f = await window.fileApi.getImage();
-      setImageData(f);
+      const f = await window.fileApi.getFiles();
+      setFiles(f);
     })();
   }, []);
 
   return (
     <div>
       <div>Hello World!</div>
-      <div>Check out this cool image</div>
-      {imageData && <img src={`data:image/png;base64,${imageData}`} />}
+      <div>Check out these cool images</div>
+      {files?.map((f) => (
+        <ImageDisplay key={f} fileName={f} />
+      ))}
     </div>
   );
 }

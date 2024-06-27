@@ -4,12 +4,12 @@ declare global {
   interface Window {
     fileApi: {
       getFiles: () => Promise<string[]>;
-      getImage: () => Promise<string>;
+      getImage: (fileName: string) => Promise<string>;
     };
   }
 }
 
 contextBridge.exposeInMainWorld("fileApi", {
   getFiles: () => ipcRenderer.invoke("getFiles"),
-  getImage: () => ipcRenderer.invoke("getImage"),
+  getImage: (fileName: string) => ipcRenderer.invoke("getImage", fileName),
 });

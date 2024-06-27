@@ -39,8 +39,12 @@ app.on("ready", () => {
     return readdirSync("../ArtistryTestFolder");
   });
 
-  ipcMain.handle("getImage", async (e) => {
-    const buffer = await sharp(`../ArtistryTestFolder/WereguarRef1.png`)
+  ipcMain.handle("getImage", async (e, fileName?: string) => {
+    if (!fileName?.endsWith("png")) {
+      return "";
+    }
+
+    const buffer = await sharp(`../ArtistryTestFolder/${fileName}`)
       .resize(400)
       .toBuffer();
 
