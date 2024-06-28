@@ -18,6 +18,8 @@ const createWindow = () => {
     },
   });
 
+  mainWindow.setMenu(null);
+
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
@@ -44,12 +46,20 @@ app.on("ready", () => {
       return "";
     }
 
-    const buffer = await sharp(`../ArtistryTestFolder/${fileName}`)
-      .resize({ height: 300 })
-      .toBuffer();
+    const image = await sharp(`../ArtistryTestFolder/${fileName}`)
+      .resize({
+        height: 200,
+      })
+      .png()
+      .toBuffer({ resolveWithObject: true });
 
-    return buffer.toString("base64");
+    return {
+      data: image.data.toString("base64"),
+      width: image.info.width,
+      height: image.info.height,
+    };
   });
+
   createWindow();
 });
 

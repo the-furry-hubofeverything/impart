@@ -17,11 +17,7 @@ export function Artistry({}: ArtistryProps) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box>Hello World!</Box>
-      <Box>Check out these cool images</Box>
-      <Box>Check out this MUI Button</Box>
-      <Button variant="contained">Wow</Button>
-      <Grid container spacing={1}>
+      <Grid container spacing={1} p={2}>
         {files?.map((f) => (
           <Grid item key={f}>
             <ImageDisplay fileName={f} />

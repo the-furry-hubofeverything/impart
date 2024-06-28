@@ -6,25 +6,36 @@ export interface ImageDisplayProps {
 }
 
 export function ImageDisplay({ fileName }: ImageDisplayProps) {
-  const [imageData, setImageData] = useState<string>();
+  const [image, setImage] = useState<ImageResult>();
 
   useEffect(() => {
     (async () => {
-      const f = await window.fileApi.getImage(fileName);
-      setImageData(f);
+      const d = await window.fileApi.getImage(fileName);
+      setImage(d);
     })();
   }, [fileName]);
 
-  if (!imageData || !fileName.endsWith("png")) {
+  if (!image || !fileName.endsWith("png")) {
     return null;
   }
 
   return (
     <Stack alignItems="center">
-      <Typography textAlign="center" variant="caption">
-        {fileName}
-      </Typography>
-      <img src={`data:image/png;base64,${imageData}`} />
+      <Box
+        component="img"
+        src={`data:image/png;base64,${image.data}`}
+        borderRadius={2}
+        mb={0.5}
+      />
+      <Box maxWidth={image.width}>
+        <Typography
+          textAlign="center"
+          variant="caption"
+          sx={{ wordBreak: "break-all" }}
+        >
+          {fileName}
+        </Typography>
+      </Box>
     </Stack>
   );
 }
