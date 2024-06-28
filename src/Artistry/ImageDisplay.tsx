@@ -1,3 +1,4 @@
+import { Box, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 export interface ImageDisplayProps {
@@ -18,5 +19,12 @@ export function ImageDisplay({ fileName }: ImageDisplayProps) {
     return null;
   }
 
-  return <img src={`data:image/png;base64,${imageData}`} />;
+  return (
+    <Stack alignItems="center">
+      <Typography textAlign="center" variant="caption">
+        {fileName}
+      </Typography>
+      <img src={`data:image/png;base64,${imageData}`} />
+    </Stack>
+  );
 }
