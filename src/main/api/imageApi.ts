@@ -24,16 +24,16 @@ export function setupImageApi() {
       mkdirSync(path);
     }
 
-    const target = `${path}/${fileName}`;
-    console.log("Attempting to save to ", target);
+    // const target = `${path}/${fileName}`;
+    // console.log("Attempting to save to ", target);
 
-    image.toFile(target, (error, info) => {
-      if (error) {
-        console.error("It didn't work:", error);
-      } else {
-        console.log("Saved file to ", target);
-      }
-    });
+    // image.toFile(target, (error, info) => {
+    //   if (error) {
+    //     console.error("It didn't work:", error);
+    //   } else {
+    //     console.log("Saved file to ", target);
+    //   }
+    // });
 
     const buffer = await image.toBuffer({ resolveWithObject: true });
 

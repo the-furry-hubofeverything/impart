@@ -20,7 +20,12 @@ export function ImageDisplay({ fileName }: ImageDisplayProps) {
   }
 
   return (
-    <Stack alignItems="center" justifyContent="center" height="100%">
+    <Stack
+      alignItems="center"
+      justifyContent="center"
+      height="100%"
+      width={250}
+    >
       <Box
         component="img"
         src={`data:image/png;base64,${image.data}`}

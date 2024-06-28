@@ -1,8 +1,7 @@
-import { app, BrowserWindow, ipcMain, dialog } from "electron";
-import { readdirSync, readFileSync } from "fs";
+import { app, BrowserWindow } from "electron";
 import path from "path";
-import sharp from "sharp";
-import { setupImageApi } from "./main/imageApi";
+import { setupImageApi } from "./main/api/imageApi";
+import { database } from "./main/database";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -38,6 +37,7 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
+  database.sync();
   setupImageApi();
   createWindow();
 });
