@@ -1,12 +1,17 @@
 import { ipcMain, app } from "electron";
 import { readdirSync, existsSync, mkdirSync } from "fs";
 import sharp from "sharp";
-import { TaggableImage } from "./database";
+import { TaggableImage } from "./database/entities/TaggableImage";
 
 class ImageManager {
   public async getImage(fileName: string) {
     const path = `../ArtistryTestFolder/${fileName}`;
-    const target = await TaggableImage.findOne({ where: { path } });
+
+    const result = await TaggableImage.findOneBy({ path });
+
+    if (!result) {
+      this.buildEntity(path);
+    }
 
     const image = sharp(path)
       .resize({
@@ -38,6 +43,18 @@ class ImageManager {
       width: buffer.info.width,
       height: buffer.info.height,
     };
+  }
+
+  private async buildEntity(path: string) {
+    const image = await sharp(path).metadata();
+
+    const taggableImage = TaggableImage.create({
+      path,
+      width: image.width,
+      height: image.height,
+    });
+
+    taggableImage.save();
   }
 }
 

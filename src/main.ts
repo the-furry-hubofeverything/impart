@@ -1,7 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import path from "path";
 import { setupImageApi } from "./main/api/imageApi";
-import { database } from "./main/database";
+import { AppDataSource } from "./main/database/database";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -37,7 +37,7 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
-  //await database.sync({ force: true });
+  await AppDataSource.initialize();
   setupImageApi();
   createWindow();
 });
