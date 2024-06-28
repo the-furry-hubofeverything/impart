@@ -1,0 +1,52 @@
+import React, { useEffect, useState } from "react";
+import { ImageDisplay } from "./ImageDisplay";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  Stack,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
+import { theme } from "./theme";
+
+export interface ArtistryProps {}
+
+export function Artistry({}: ArtistryProps) {
+  const [files, setFiles] = useState<string[]>();
+
+  useEffect(() => {
+    (async () => {
+      const f = await window.fileApi.getFiles();
+      setFiles(f);
+    })();
+  }, []);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Stack direction="row" p={2} gap={2} height="calc(100vh - 40px)">
+        <Box flex={1}>
+          <Grid container spacing={1}>
+            {files
+              ?.filter((f) => f.endsWith("png"))
+              .map((f) => (
+                <Grid item key={f} xs={2}>
+                  <ImageDisplay fileName={f} />
+                </Grid>
+              ))}
+          </Grid>
+        </Box>
+
+        <Card>
+          <CardContent>
+            <Box width={300}>
+              <Typography>Content goes here</Typography>
+            </Box>
+          </CardContent>
+        </Card>
+      </Stack>
+    </ThemeProvider>
+  );
+}

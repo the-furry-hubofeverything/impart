@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import { readdirSync, readFileSync } from "fs";
 import path from "path";
 import sharp from "sharp";
+import { setupImageApi } from "./main/imageApi";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -37,29 +38,7 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
-  ipcMain.handle("getFiles", () => {
-    return readdirSync("../ArtistryTestFolder");
-  });
-
-  ipcMain.handle("getImage", async (e, fileName?: string) => {
-    if (!fileName?.endsWith("png")) {
-      return "";
-    }
-
-    const image = await sharp(`../ArtistryTestFolder/${fileName}`)
-      .resize({
-        height: 200,
-      })
-      .png()
-      .toBuffer({ resolveWithObject: true });
-
-    return {
-      data: image.data.toString("base64"),
-      width: image.info.width,
-      height: image.info.height,
-    };
-  });
-
+  setupImageApi();
   createWindow();
 });
 

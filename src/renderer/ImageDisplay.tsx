@@ -20,12 +20,14 @@ export function ImageDisplay({ fileName }: ImageDisplayProps) {
   }
 
   return (
-    <Stack alignItems="center">
+    <Stack alignItems="center" justifyContent="center" height="100%">
       <Box
         component="img"
         src={`data:image/png;base64,${image.data}`}
         borderRadius={2}
         mb={0.5}
+        maxWidth={240}
+        maxHeight={200}
       />
       <Box maxWidth={image.width}>
         <Typography
