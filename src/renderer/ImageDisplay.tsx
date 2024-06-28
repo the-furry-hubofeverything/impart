@@ -15,10 +15,6 @@ export function ImageDisplay({ fileName }: ImageDisplayProps) {
     })();
   }, [fileName]);
 
-  if (!image || !fileName.endsWith("png")) {
-    return null;
-  }
-
   return (
     <Stack
       alignItems="center"
@@ -28,13 +24,13 @@ export function ImageDisplay({ fileName }: ImageDisplayProps) {
     >
       <Box
         component="img"
-        src={`data:image/png;base64,${image.data}`}
+        src={`data:image/png;base64,${image?.data}`}
         borderRadius={2}
         mb={0.5}
         maxWidth={240}
         maxHeight={200}
       />
-      <Box maxWidth={image.width}>
+      <Box maxWidth={image?.width}>
         <Typography
           textAlign="center"
           variant="caption"

@@ -29,16 +29,13 @@ export function Artistry({}: ArtistryProps) {
       <Stack direction="row" p={2} gap={2} height="calc(100vh - 40px)">
         <Box flex={1} overflow="auto">
           <Grid container spacing={1}>
-            {files
-              ?.filter((f) => f.endsWith("png"))
-              .map((f) => (
-                <Grid item key={f} xs={true}>
-                  <ImageDisplay fileName={f} />
-                </Grid>
-              ))}
+            {files?.map((f) => (
+              <Grid item key={f} xs={true}>
+                <ImageDisplay fileName={f} />
+              </Grid>
+            ))}
           </Grid>
         </Box>
-
         <Card>
           <CardContent>
             <Box width={300}>
