@@ -26,8 +26,6 @@ export function FileIndexStatusProvider({
       setIndexing(true);
       setFilesIndexed(e.amountIndexed);
       setTotal(e.total);
-
-      console.log("Event!", e);
     });
   }, []);
 

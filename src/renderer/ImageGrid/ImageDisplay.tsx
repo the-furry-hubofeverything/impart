@@ -1,6 +1,7 @@
 import { Box, Skeleton, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useAsyncData } from "../common/useAsyncData";
+import { useFileIndexStatus } from "../FileIndexStatusProvider";
 
 export interface ImageDisplayProps {
   fileName: string;

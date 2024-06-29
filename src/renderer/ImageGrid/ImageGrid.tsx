@@ -1,18 +1,30 @@
 import { Stack, Typography, Button, Grid } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { ImageDisplay } from "./ImageDisplay";
 import { useAsyncData } from "../common/useAsyncData";
 import CreateNewFolderIcon from "@mui/icons-material/Person";
+import { useFileIndexStatus } from "../FileIndexStatusProvider";
 
 export interface ImageGridProps {}
 
 export function ImageGrid({}: ImageGridProps) {
-  const { data: files, isLoading } = useAsyncData(
-    () => window.fileApi.getFiles(),
-    []
-  );
+  const {
+    data: files,
+    isLoading,
+    executeRequest: reloadFiles,
+  } = useAsyncData(() => window.fileApi.getFiles(), []);
 
-  if (files === undefined || isLoading) {
+  const { isIndexing } = useFileIndexStatus();
+
+  useEffect(() => {
+    if (isIndexing) {
+      const interval = setInterval(reloadFiles, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isIndexing]);
+
+  if (!files) {
     return null;
   }
 
