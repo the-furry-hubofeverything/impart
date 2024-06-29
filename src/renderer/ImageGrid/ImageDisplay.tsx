@@ -1,6 +1,6 @@
 import { Box, Skeleton, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useAsyncData } from "./common/useAsyncData";
+import { useAsyncData } from "../common/useAsyncData";
 
 export interface ImageDisplayProps {
   fileName: string;

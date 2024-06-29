@@ -5,7 +5,7 @@ class FileMessenger {
     impartApp.mainWindow?.webContents.send("file/fileIndexed", {
       amountIndexed,
       total,
-    });
+    } satisfies FileIndexedEvent);
   }
 }
 

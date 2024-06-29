@@ -1,0 +1,1 @@
+export { TaggingPanel } from "./TaggingPanel";

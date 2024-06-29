@@ -24,7 +24,7 @@ export function FileIndexStatusProvider({
   useEffect(() => {
     return window.fileApi.onFileIndexed((e) => {
       setIndexing(true);
-      setFilesIndexed(e.filesIndexed);
+      setFilesIndexed(e.amountIndexed);
       setTotal(e.total);
 
       console.log("Event!", e);

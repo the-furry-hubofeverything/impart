@@ -12,7 +12,7 @@ declare global {
   }
 
   interface FileIndexedEvent {
-    filesIndexed: number;
+    amountIndexed: number;
     total: number;
   }
 
