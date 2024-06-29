@@ -24,13 +24,16 @@ class ImageManager {
     });
 
     if (!taggableImage) {
-      taggableImage = await this.buildEntity(filePath);
+      taggableImage = await this.buildImage(filePath);
     }
 
     let thumbnail = taggableImage.thumbnail;
 
     if (!thumbnail) {
-      thumbnail = await this.buildThumbnail(taggableImage);
+      thumbnail = await this.buildThumbnail(filePath);
+
+      taggableImage.thumbnail = thumbnail;
+      taggableImage.save();
     }
 
     return {
@@ -40,13 +43,23 @@ class ImageManager {
     };
   }
 
-  private async buildEntity(filePath: string) {
+  public async indexImage(filePath: string) {
+    console.log("Indexing Image: ", filePath);
+    let taggableImage = await TaggableImage.findOneBy({ path: filePath });
+
+    if (!taggableImage) {
+      taggableImage = await this.buildImage(filePath);
+    }
+  }
+
+  private async buildImage(filePath: string) {
     const image = await sharp(filePath).metadata();
 
     const taggableImage = TaggableImage.create({
       path: filePath,
       width: image.width,
       height: image.height,
+      thumbnail: await this.buildThumbnail(filePath),
     });
 
     await taggableImage.save();
@@ -54,7 +67,7 @@ class ImageManager {
     return taggableImage;
   }
 
-  private async buildThumbnail(taggableImage: TaggableImage) {
+  private async buildThumbnail(filePath: string) {
     const thumbnailPath = app.isPackaged
       ? `${app.getPath("appData")}/impart/app/thumbnails`
       : `${app.getPath("appData")}/impart/dev/thumbnails`;
@@ -63,13 +76,13 @@ class ImageManager {
       mkdirSync(thumbnailPath);
     }
 
-    const image = sharp(taggableImage.path)
+    const image = sharp(filePath)
       .resize({
         height: 400,
       })
       .png();
 
-    const target = `${thumbnailPath}/${path.basename(taggableImage.path)}`;
+    const target = `${thumbnailPath}/${path.basename(filePath)}`;
     image.toFile(target);
 
     const buffer = await image.toBuffer({ resolveWithObject: true });
@@ -81,10 +94,6 @@ class ImageManager {
     });
 
     await thumbnail.save();
-
-    taggableImage.thumbnail = thumbnail;
-    await taggableImage.save();
-
     return thumbnail;
   }
 

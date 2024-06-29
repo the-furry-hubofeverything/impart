@@ -1,7 +1,10 @@
 import { ipcMain } from "electron";
-import { fileManager } from "../fileManager";
+import { fileManager } from "../file/fileManager";
 
 export function setupFileApi() {
   ipcMain.handle("file/getFiles", () => fileManager.getFiles());
-  ipcMain.handle("file/indexDirectory", () => fileManager.indexDirectory());
+
+  ipcMain.handle("file/selectAndIndexDirectory", () =>
+    fileManager.selectAndIndexDirectory()
+  );
 }

@@ -7,7 +7,7 @@ export class TaggableImage extends Image {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Thumbnail, { nullable: true, eager: true })
+  @OneToOne(() => Thumbnail, { nullable: true, eager: true, cascade: true })
   @JoinColumn()
   thumbnail?: Thumbnail;
 }

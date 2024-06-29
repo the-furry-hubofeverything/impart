@@ -8,7 +8,7 @@ export interface ImageDisplayProps {
 
 export function ImageDisplay({ fileName }: ImageDisplayProps) {
   const { data: image, isLoading } = useAsyncData(
-    () => window.iamgeApi.getImage(fileName),
+    () => window.imageApi.getImage(fileName),
     []
   );
 

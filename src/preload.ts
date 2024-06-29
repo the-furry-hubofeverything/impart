@@ -1,5 +1,9 @@
 import { contextBridge, ipcRenderer } from "electron";
 
+type CallbackFunc<Payload> = (
+  callback: (values: FileIndexedEvent) => void
+) => () => void;
+
 declare global {
   interface ImageResult {
     data: string;
@@ -7,13 +11,19 @@ declare global {
     height: number;
   }
 
+  interface FileIndexedEvent {
+    filesIndexed: number;
+    total: number;
+  }
+
   interface Window {
-    iamgeApi: {
+    imageApi: {
       getImage: (fileName: string) => Promise<ImageResult>;
     };
     fileApi: {
       getFiles: () => Promise<string[]>;
-      indexDirectory: () => Promise<void>;
+      selectAndIndexDirectory: () => Promise<void>;
+      onFileIndexed: CallbackFunc<FileIndexedEvent>;
     };
   }
 }
@@ -26,5 +36,9 @@ contextBridge.exposeInMainWorld("imageApi", {
 
 contextBridge.exposeInMainWorld("fileApi", {
   getFiles: () => ipcRenderer.invoke("file/getFiles"),
-  indexDirectory: () => ipcRenderer.invoke("file/indexDirectory"),
+  selectAndIndexDirectory: () =>
+    ipcRenderer.invoke("file/selectAndIndexDirectory"),
+
+  onFileIndexed: (callback: (values: any) => void) =>
+    ipcRenderer.on("file/fileIndexed", (event, values) => callback(values)),
 });
