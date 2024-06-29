@@ -1,12 +1,12 @@
-import { impartApp } from "../../main";
+import { impartApp } from '..'
 
 class FileMessenger {
   public fileIndexed(amountIndexed: number, total: number) {
-    impartApp.mainWindow?.webContents.send("file/fileIndexed", {
+    impartApp.mainWindow?.webContents.send('file/fileIndexed', {
       amountIndexed,
-      total,
-    } satisfies FileIndexedEvent);
+      total
+    })
   }
 }
 
-export const fileMessenger = new FileMessenger();
+export const fileMessenger = new FileMessenger()

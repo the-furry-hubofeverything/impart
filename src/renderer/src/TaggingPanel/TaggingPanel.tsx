@@ -1,19 +1,11 @@
-import {
-  Stack,
-  Card,
-  CardContent,
-  Typography,
-  Collapse,
-  Box,
-} from "@mui/material";
-import React from "react";
-import { useFileIndexStatus } from "../FileIndexStatusProvider";
-import { IndexingPanel } from "./IndexingPanel";
+import { Stack, Card, CardContent, Typography, Collapse, Box } from '@mui/material'
+import { useFileIndexStatus } from '../FileIndexStatusProvider'
+import { IndexingPanel } from './IndexingPanel'
 
 export interface TaggingPanelProps {}
 
 export function TaggingPanel({}: TaggingPanelProps) {
-  const { isIndexing } = useFileIndexStatus();
+  const { isIndexing } = useFileIndexStatus()
 
   return (
     <Stack width="100%" height="100%">
@@ -28,5 +20,5 @@ export function TaggingPanel({}: TaggingPanelProps) {
         </Box>
       </Collapse>
     </Stack>
-  );
+  )
 }

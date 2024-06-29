@@ -1,39 +1,37 @@
-import { Stack, Typography, Button, Grid } from "@mui/material";
-import React, { useEffect } from "react";
-import { ImageDisplay } from "./ImageDisplay";
-import { useAsyncData } from "../common/useAsyncData";
-import CreateNewFolderIcon from "@mui/icons-material/Person";
-import { useFileIndexStatus } from "../FileIndexStatusProvider";
+import { Stack, Typography, Button, Grid } from '@mui/material'
+import { useEffect } from 'react'
+import { ImageDisplay } from './ImageDisplay'
+import { useAsyncData } from '../common/useAsyncData'
+import CreateNewFolderIcon from '@mui/icons-material/Person'
+import { useFileIndexStatus } from '../FileIndexStatusProvider'
 
 export interface ImageGridProps {}
 
 export function ImageGrid({}: ImageGridProps) {
-  const {
-    data: files,
-    isLoading,
-    executeRequest: reloadFiles,
-  } = useAsyncData(() => window.fileApi.getFiles(), []);
+  const { data: files, executeRequest: reloadFiles } = useAsyncData(
+    () => window.fileApi.getFiles(),
+    []
+  )
 
-  const { isIndexing } = useFileIndexStatus();
+  const { isIndexing } = useFileIndexStatus()
 
   useEffect(() => {
     if (isIndexing) {
-      const interval = setInterval(reloadFiles, 1000);
+      const interval = setInterval(reloadFiles, 1000)
 
-      return () => clearInterval(interval);
+      return () => clearInterval(interval)
     }
-  }, [isIndexing]);
+  }, [isIndexing])
 
   if (!files) {
-    return null;
+    return null
   }
 
   if (files.length === 0) {
     return (
       <Stack justifyContent="center" alignItems="center" gap={2} height="100%">
         <Typography textAlign="center" sx={{ opacity: 0.6 }}>
-          Impart hasn't found any files yet! Add a folder to start organizing
-          your gallery
+          Impart hasn't found any files yet! Add a folder to start organizing your gallery
         </Typography>
         <Button
           startIcon={<CreateNewFolderIcon />}
@@ -43,7 +41,7 @@ export function ImageGrid({}: ImageGridProps) {
           Add Folder
         </Button>
       </Stack>
-    );
+    )
   }
 
   return (
@@ -54,5 +52,5 @@ export function ImageGrid({}: ImageGridProps) {
         </Grid>
       ))}
     </Grid>
-  );
+  )
 }
