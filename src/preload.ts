@@ -8,14 +8,23 @@ declare global {
   }
 
   interface Window {
+    iamgeApi: {
+      getImage: (fileName: string) => Promise<ImageResult>;
+    };
     fileApi: {
       getFiles: () => Promise<string[]>;
-      getImage: (fileName: string) => Promise<ImageResult>;
+      indexDirectory: () => Promise<void>;
     };
   }
 }
 
-contextBridge.exposeInMainWorld("fileApi", {
+contextBridge.exposeInMainWorld("imageApi", {
   getFiles: () => ipcRenderer.invoke("getFiles"),
-  getImage: (fileName: string) => ipcRenderer.invoke("getImage", fileName),
+  getImage: (fileName: string) =>
+    ipcRenderer.invoke("image/getImage", fileName),
+});
+
+contextBridge.exposeInMainWorld("fileApi", {
+  getFiles: () => ipcRenderer.invoke("file/getFiles"),
+  indexDirectory: () => ipcRenderer.invoke("file/indexDirectory"),
 });

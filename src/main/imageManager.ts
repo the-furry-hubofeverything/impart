@@ -7,10 +7,21 @@ import path from "path";
 import { Image } from "./database/entities/Image";
 
 class ImageManager {
-  public async getImage(fileName: string) {
-    const filePath = `../ArtistryTestFolder/${fileName}`;
+  private targetPath: string | undefined;
 
-    let taggableImage = await TaggableImage.findOneBy({ path: filePath });
+  public setPath(path: string) {
+    this.targetPath = path;
+  }
+
+  public getPath() {
+    return this.targetPath;
+  }
+
+  public async getImage(filePath: string) {
+    let taggableImage = await TaggableImage.findOne({
+      where: { path: filePath },
+      relations: { thumbnail: true },
+    });
 
     if (!taggableImage) {
       taggableImage = await this.buildEntity(filePath);
@@ -44,7 +55,9 @@ class ImageManager {
   }
 
   private async buildThumbnail(taggableImage: TaggableImage) {
-    const thumbnailPath = `${app.getPath("appData")}/impart/thumbnails`;
+    const thumbnailPath = app.isPackaged
+      ? `${app.getPath("appData")}/impart/app/thumbnails`
+      : `${app.getPath("appData")}/impart/dev/thumbnails`;
 
     if (!existsSync(thumbnailPath)) {
       mkdirSync(thumbnailPath);

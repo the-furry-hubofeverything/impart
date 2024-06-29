@@ -2,6 +2,8 @@ import { app, BrowserWindow } from "electron";
 import path from "path";
 import { setupImageApi } from "./main/api/imageApi";
 import { AppDataSource } from "./main/database/database";
+import { setupFileApi } from "./main/api/fileApi";
+import { fileManager } from "./main/fileManager";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -31,6 +33,8 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+
+  return mainWindow;
 };
 
 // This method will be called when Electron has finished
@@ -39,7 +43,11 @@ const createWindow = () => {
 app.on("ready", async () => {
   await AppDataSource.initialize();
   setupImageApi();
-  createWindow();
+  setupFileApi();
+
+  const mainWindow = createWindow();
+
+  fileManager.setBrowserWindow(mainWindow);
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
