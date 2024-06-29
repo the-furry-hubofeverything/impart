@@ -12,9 +12,9 @@ import {
 } from "@mui/material";
 import { theme } from "./theme";
 
-export interface ArtistryProps {}
+export interface ImpartProps {}
 
-export function Artistry({}: ArtistryProps) {
+export function Impart({}: ImpartProps) {
   const [files, setFiles] = useState<string[]>();
 
   useEffect(() => {

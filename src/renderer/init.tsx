@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { Artistry } from "./Artistry";
+import { Impart } from "./Impart";
 
 export function init() {
   const element = document.getElementById("container");
@@ -9,5 +9,5 @@ export function init() {
   }
 
   const root = createRoot(element);
-  root.render(<Artistry />);
+  root.render(<Impart />);
 }

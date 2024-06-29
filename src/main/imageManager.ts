@@ -44,7 +44,7 @@ class ImageManager {
   }
 
   private async buildThumbnail(taggableImage: TaggableImage) {
-    const thumbnailPath = `${app.getPath("appData")}/artistry/thumbnails`;
+    const thumbnailPath = `${app.getPath("appData")}/impart/thumbnails`;
 
     if (!existsSync(thumbnailPath)) {
       mkdirSync(thumbnailPath);

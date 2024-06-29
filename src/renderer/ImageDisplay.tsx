@@ -26,7 +26,6 @@ export function ImageDisplay({ fileName }: ImageDisplayProps) {
         component="img"
         src={`data:image/png;base64,${image?.data}`}
         borderRadius={2}
-        mb={0.5}
         maxWidth={240}
         maxHeight={200}
       />

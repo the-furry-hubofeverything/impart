@@ -7,7 +7,7 @@ const path = app.getPath("appData");
 
 export const AppDataSource = new DataSource({
   type: "sqlite",
-  database: `${path}/artistry/db.sqlite`,
+  database: `${path}/impart/db.sqlite`,
   entities: [TaggableImage, Thumbnail],
   synchronize: !app.isPackaged,
   logging: app.isPackaged ? false : ["error", "info"],
