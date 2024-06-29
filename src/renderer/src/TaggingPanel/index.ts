@@ -1,1 +1,1 @@
-export { TaggingPanel } from "./TaggingPanel";
+export { TaggingPanel } from './TaggingPanel'
