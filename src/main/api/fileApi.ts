@@ -5,4 +5,6 @@ export function setupFileApi() {
   ipcMain.handle('file/getFiles', () => fileManager.getFiles())
 
   ipcMain.handle('file/selectAndIndexDirectory', () => fileManager.selectAndIndexDirectory())
+
+  ipcMain.handle('file/getDirectories', () => fileManager.getIndexedDirectories())
 }

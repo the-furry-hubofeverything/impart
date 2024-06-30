@@ -17,6 +17,7 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('fileApi', {
       getFiles: () => ipcRenderer.invoke('file/getFiles'),
       selectAndIndexDirectory: () => ipcRenderer.invoke('file/selectAndIndexDirectory'),
+      getDirectories: () => ipcRenderer.invoke('file/getDirectories'),
 
       onFileIndexed: (callback: (values: any) => void) =>
         ipcRenderer.on('file/fileIndexed', (_event, values) => callback(values))

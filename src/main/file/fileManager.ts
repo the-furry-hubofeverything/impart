@@ -8,6 +8,14 @@ import { fileMessenger } from './fileMessenger'
 import { impartApp } from '..'
 
 class FileManager {
+  public async getIndexedDirectories() {
+    const directories = await IndexedDirectory.find()
+
+    return directories.map((d) => ({
+      path: d.path
+    }))
+  }
+
   public async selectAndIndexDirectory() {
     if (!impartApp.mainWindow) {
       throw new Error('Tried to open a file dialog without access to the window')
@@ -22,7 +30,7 @@ class FileManager {
     }
 
     const directory = IndexedDirectory.create({ path: result[0] })
-    directory.save()
+    await directory.save()
 
     this.indexFiles(directory)
   }
