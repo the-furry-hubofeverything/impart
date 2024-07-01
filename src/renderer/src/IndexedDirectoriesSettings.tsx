@@ -1,20 +1,25 @@
-import { Box, IconButton, List, ListItem, ListItemText } from '@mui/material'
-import RemoveIcon from '@mui/icons-material/Remove'
+import { Box, Button, IconButton, List, ListItem, ListItemText } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 
 export interface IndexedDirectoriesSettingsProps {
   directories?: IndexedDirectory[]
+  onChange?: () => void
 }
 
-export function IndexedDirectoriesSettings({ directories }: IndexedDirectoriesSettingsProps) {
+export function IndexedDirectoriesSettings({
+  directories,
+  onChange
+}: IndexedDirectoriesSettingsProps) {
   return (
-    <Box minWidth={480}>
-      <List>
+    <Box minWidth={600}>
+      <List dense>
         {directories?.map((d) => (
           <ListItem
             key={d.path}
             secondaryAction={
               <IconButton color="error">
-                <RemoveIcon />
+                <CloseIcon />
               </IconButton>
             }
           >
@@ -22,6 +27,19 @@ export function IndexedDirectoriesSettings({ directories }: IndexedDirectoriesSe
           </ListItem>
         ))}
       </List>
+      <Box>
+        <Button
+          startIcon={<CreateNewFolderIcon />}
+          variant="contained"
+          size="small"
+          onClick={async () => {
+            await window.fileApi.selectAndIndexDirectory()
+            onChange && onChange()
+          }}
+        >
+          Add Folder
+        </Button>
+      </Box>
     </Box>
   )
 }

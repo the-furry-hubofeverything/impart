@@ -68,10 +68,14 @@ export function Impart({}: ImpartProps) {
             </Box>
           </Stack>
         )}
-        <Dialog open={showModal === 'directories'} onClose={() => setShowModal(null)}>
+        <Dialog
+          open={showModal === 'directories'}
+          onClose={() => setShowModal(null)}
+          maxWidth={false}
+        >
           <DialogTitle>Watched Folders</DialogTitle>
           <DialogContent>
-            <IndexedDirectoriesSettings directories={directories} />
+            <IndexedDirectoriesSettings directories={directories} onChange={reloadDirectories} />
           </DialogContent>
         </Dialog>
       </FileIndexStatusProvider>
