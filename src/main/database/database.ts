@@ -3,15 +3,16 @@ import { DataSource } from 'typeorm'
 import { TaggableImage } from './entities/TaggableImage'
 import { Thumbnail } from './entities/Thumbnail'
 import { IndexedDirectory } from './entities/IndexedDirectory'
+import { Tag } from './entities/Tag'
+import { TagGroup } from './entities/TagGroup'
 
 const path = app.getPath('appData')
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
   database: app.isPackaged ? `${path}/impart/app/db.sqlite` : `${path}/impart/dev/db.sqlite`,
-  entities: [TaggableImage, Thumbnail, IndexedDirectory],
+  entities: [TaggableImage, Thumbnail, IndexedDirectory, Tag, TagGroup],
   synchronize: true,
   dropSchema: true,
-  logging: app.isPackaged ? false : ['error', 'info'],
-  logger: 'simple-console'
+  logging: app.isPackaged ? false : ['error', 'info']
 })
