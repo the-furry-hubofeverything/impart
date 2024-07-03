@@ -10,6 +10,9 @@ export class Tag extends BaseEntity {
   @Column('varchar', { nullable: false })
   label: string
 
+  @Column('varchar', { nullable: false })
+  color: string
+
   @ManyToOne(() => TagGroup, (g) => g.tags)
   group: TagGroup
 

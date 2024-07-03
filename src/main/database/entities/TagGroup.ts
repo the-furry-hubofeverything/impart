@@ -6,9 +6,12 @@ export class TagGroup extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column('varchar', { nullable: false })
-  label: string
+  @Column('varchar')
+  label?: string
 
-  @OneToMany(() => Tag, (t) => t.group)
+  @Column('int')
+  order?: number
+
+  @OneToMany(() => Tag, (t) => t.group, { cascade: true, eager: true })
   tags: Tag[]
 }

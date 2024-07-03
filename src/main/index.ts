@@ -5,6 +5,8 @@ import icon from '../../resources/icon.png?asset'
 import { setupFileApi } from './api/fileApi'
 import { setupImageApi } from './api/imageApi'
 import { AppDataSource } from './database/database'
+import { seedGroups } from './database/seed'
+import { setupTagApi } from './api/tagApi'
 
 interface ImpartApp {
   mainWindow?: BrowserWindow
@@ -61,9 +63,11 @@ app.whenReady().then(async () => {
   })
 
   await AppDataSource.initialize()
+  seedGroups()
 
   setupFileApi()
   setupImageApi()
+  setupTagApi()
 
   createWindow()
 

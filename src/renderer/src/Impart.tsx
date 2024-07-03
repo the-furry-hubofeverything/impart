@@ -63,7 +63,7 @@ export function Impart({}: ImpartProps) {
                 <ImageGrid />
               </Box>
             </Stack>
-            <Box width={300}>
+            <Box minWidth={300} flex={0.25}>
               <TaggingPanel />
             </Box>
           </Stack>

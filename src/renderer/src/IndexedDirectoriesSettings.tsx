@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 
 export interface IndexedDirectoriesSettingsProps {
-  directories?: IndexedDirectory[]
+  directories?: Impart.IndexedDirectory[]
   onChange?: () => void
 }
 
