@@ -80,11 +80,9 @@ class ImageManager {
       mkdirSync(thumbnailPath)
     }
 
-    const image = sharp(filePath)
-      .resize({
-        height: 400
-      })
-      .png()
+    const image = sharp(filePath).resize({
+      height: 400
+    })
 
     const target = `${thumbnailPath}/${path.basename(filePath)}`
     image.toFile(target)
@@ -106,7 +104,6 @@ class ImageManager {
       .resize({
         height: 16
       })
-      .png()
       .toBuffer()
 
     return buffer.toString('base64')
