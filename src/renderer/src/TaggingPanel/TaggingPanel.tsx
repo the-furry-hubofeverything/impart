@@ -12,7 +12,7 @@ import {
   IconButton,
   TextField
 } from '@mui/material'
-import { useFileIndexStatus } from '../FileIndexStatusProvider'
+import { useFiles } from '../FileProvider/FileProvider'
 import { IndexingPanel } from './IndexingPanel'
 import AddIcon from '@mui/icons-material/Add'
 import { useAsyncData } from '@renderer/common/useAsyncData'
@@ -20,7 +20,7 @@ import { useAsyncData } from '@renderer/common/useAsyncData'
 export interface TaggingPanelProps {}
 
 export function TaggingPanel({}: TaggingPanelProps) {
-  const { isIndexing } = useFileIndexStatus()
+  const { isIndexing } = useFiles()
 
   const { data: groups, isLoading } = useAsyncData(() => window.tagApi.getGroups(), [])
 

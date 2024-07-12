@@ -46,6 +46,8 @@ class ImageManager {
     if (!taggableImage) {
       taggableImage = await this.buildImage(filePath)
     }
+
+    return taggableImage
   }
 
   private async buildImage(filePath: string) {

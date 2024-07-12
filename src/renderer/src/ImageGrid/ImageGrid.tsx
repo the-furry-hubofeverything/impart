@@ -1,26 +1,13 @@
 import { Grid } from '@mui/material'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ImageDisplay } from './ImageDisplay'
 import { useAsyncData } from '../common/useAsyncData'
-import { useFileIndexStatus } from '../FileIndexStatusProvider'
+import { useFiles } from '../FileProvider/FileProvider'
 
 export interface ImageGridProps {}
 
 export function ImageGrid({}: ImageGridProps) {
-  const { data: files, executeRequest: reloadFiles } = useAsyncData(
-    () => window.fileApi.getFiles(),
-    []
-  )
-
-  const { isIndexing } = useFileIndexStatus()
-
-  useEffect(() => {
-    if (isIndexing) {
-      const interval = setInterval(reloadFiles, 1000)
-
-      return () => clearInterval(interval)
-    }
-  }, [isIndexing])
+  const { files } = useFiles()
 
   if (!files) {
     return null

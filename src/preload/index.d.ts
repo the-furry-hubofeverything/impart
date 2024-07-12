@@ -23,11 +23,6 @@ declare global {
       pinkynail: string
     }
 
-    interface FileIndexedEvent {
-      amountIndexed: number
-      total: number
-    }
-
     interface IndexedDirectory {
       path: string
     }
@@ -57,7 +52,9 @@ declare global {
       selectAndIndexDirectory: () => Promise<void>
       getDirectories: () => Promise<IndexedDirectory[]>
 
-      onFileIndexed: CallbackFunc<Impart.FileIndexedEvent>
+      onIndexingStarted: CallbackFunc<{ filesFound: number }>
+      onFileIndexed: CallbackFunc<Impart.TaggableImage>
+      onIndexingEnded: CallbackFunc<void>
     }
 
     tagApi: {

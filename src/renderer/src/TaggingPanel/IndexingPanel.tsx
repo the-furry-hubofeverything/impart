@@ -1,10 +1,10 @@
-import { useFileIndexStatus } from '../FileIndexStatusProvider'
+import { useFiles } from '../FileProvider/FileProvider'
 import { Card, CardContent, LinearProgress, Typography } from '@mui/material'
 
 export interface IndexingPanelProps {}
 
 export function IndexingPanel({}: IndexingPanelProps) {
-  const { filesIndexed, total } = useFileIndexStatus()
+  const { filesIndexed, total } = useFiles()
 
   return (
     <Card>

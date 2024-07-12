@@ -39,11 +39,19 @@ class FileManager {
   private async indexFiles(directory: IndexedDirectory) {
     const files = readdirSync(directory.path)
 
-    for (const [index, fileName] of files.entries()) {
-      imageManager.indexImage(`${directory.path}/${fileName}`)
-      fileMessenger.fileIndexed(index + 1, files.length)
-      await sleep(20)
-    }
+    fileMessenger.indexingStarted(files.length)
+
+    await Promise.all(
+      files.map((fileName, index) =>
+        (async () => {
+          await sleep(index * 50)
+          const taggableImage = await imageManager.indexImage(`${directory.path}/${fileName}`)
+          fileMessenger.fileIndexed(taggableImage)
+        })()
+      )
+    )
+
+    fileMessenger.indexingEnded()
   }
 
   public async getFiles() {
