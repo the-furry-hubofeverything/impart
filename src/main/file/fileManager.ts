@@ -6,6 +6,7 @@ import { imageManager } from '../imageManager'
 import { sleep } from '../common/sleep'
 import { fileMessenger } from './fileMessenger'
 import { impartApp } from '..'
+import { AppDataSource } from '../database/database'
 
 class FileManager {
   public async getIndexedDirectories() {
@@ -46,9 +47,7 @@ class FileManager {
   }
 
   public async getFiles() {
-    const files = await TaggableImage.find()
-
-    return files.map((f) => f.path)
+    return await TaggableImage.find()
   }
 }
 

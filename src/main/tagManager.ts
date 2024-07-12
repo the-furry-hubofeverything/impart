@@ -8,8 +8,6 @@ class TagManager {
       }
     })
 
-    console.log('hi')
-
     return groups.map((g) => ({
       id: g.id,
       label: g.label,

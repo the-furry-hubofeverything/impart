@@ -1,6 +1,9 @@
-import { BaseEntity, Column } from 'typeorm'
+import { BaseEntity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
 export abstract class Image extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number
+
   @Column('varchar', { nullable: false })
   path: string
 

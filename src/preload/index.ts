@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('imageApi', {
   getFiles: () => ipcRenderer.invoke('getFiles'),
-  getImage: (fileName: string) => ipcRenderer.invoke('image/getImage', fileName)
+  getThumbnail: (fileName: string) => ipcRenderer.invoke('image/getThumbnail', fileName)
 })
 
 contextBridge.exposeInMainWorld('fileApi', {

@@ -17,30 +17,26 @@ class ImageManager {
     return this.targetPath
   }
 
-  public async getImage(filePath: string) {
-    let taggableImage = await TaggableImage.findOne({
-      where: { path: filePath },
+  public async getImage(imageId: number) {
+    const taggableImage = await TaggableImage.findOne({
+      where: { id: imageId },
       relations: { thumbnail: true }
     })
 
     if (!taggableImage) {
-      taggableImage = await this.buildImage(filePath)
+      throw new Error(`Could not find TaggableImage with ID ${imageId}`)
     }
 
     let thumbnail = taggableImage.thumbnail
 
     if (!thumbnail) {
-      thumbnail = await this.buildThumbnail(filePath)
+      thumbnail = await this.buildThumbnail(taggableImage.path)
 
       taggableImage.thumbnail = thumbnail
       taggableImage.save()
     }
 
-    return {
-      data: await this.getBase64(thumbnail),
-      width: thumbnail.width,
-      height: thumbnail.height
-    }
+    return await this.getBase64(thumbnail)
   }
 
   public async indexImage(filePath: string) {
@@ -55,11 +51,17 @@ class ImageManager {
   private async buildImage(filePath: string) {
     const image = await sharp(filePath).metadata()
 
+    const [thumbnail, pinkynail] = await Promise.all([
+      this.buildThumbnail(filePath),
+      this.buildPinkynail(filePath)
+    ])
+
     const taggableImage = TaggableImage.create({
       path: filePath,
       width: image.width,
       height: image.height,
-      thumbnail: await this.buildThumbnail(filePath)
+      thumbnail,
+      pinkynail
     })
 
     await taggableImage.save()
@@ -95,6 +97,17 @@ class ImageManager {
 
     await thumbnail.save()
     return thumbnail
+  }
+
+  private async buildPinkynail(filePath: string) {
+    const buffer = await sharp(filePath)
+      .resize({
+        height: 16
+      })
+      .png()
+      .toBuffer()
+
+    return buffer.toString('base64')
   }
 
   private async getBase64(image: Image) {

@@ -1,4 +1,4 @@
-import { Stack, Typography, Button, Grid } from '@mui/material'
+import { Grid } from '@mui/material'
 import { useEffect } from 'react'
 import { ImageDisplay } from './ImageDisplay'
 import { useAsyncData } from '../common/useAsyncData'
@@ -26,14 +26,11 @@ export function ImageGrid({}: ImageGridProps) {
     return null
   }
 
-  if (files.length === 0) {
-  }
-
   return (
     <Grid container spacing={1}>
       {files?.map((f) => (
-        <Grid item key={f} xs={true}>
-          <ImageDisplay fileName={f} />
+        <Grid item key={f.path} xs={true}>
+          <ImageDisplay image={f} />
         </Grid>
       ))}
     </Grid>

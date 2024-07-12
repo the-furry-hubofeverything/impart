@@ -1,21 +1,14 @@
-import {
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  OneToOne,
-  PrimaryGeneratedColumn
-} from 'typeorm'
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne } from 'typeorm'
 import { Image } from './Image'
 import { Thumbnail } from './Thumbnail'
 import { Tag } from './Tag'
 
 @Entity()
 export class TaggableImage extends Image {
-  @PrimaryGeneratedColumn()
-  id: number
+  @Column('varchar')
+  pinkynail: string
 
-  @OneToOne(() => Thumbnail, { nullable: true, eager: true, cascade: true })
+  @OneToOne(() => Thumbnail, { nullable: true, cascade: true })
   @JoinColumn()
   thumbnail?: Thumbnail
 
