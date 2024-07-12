@@ -4,12 +4,12 @@ export abstract class Image extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column('varchar', { nullable: false })
+  @Column({ nullable: false })
   path: string
 
-  @Column('int', { nullable: false })
+  @Column({ nullable: false })
   width: number
 
-  @Column('int', { nullable: false })
+  @Column({ nullable: false })
   height: number
 }

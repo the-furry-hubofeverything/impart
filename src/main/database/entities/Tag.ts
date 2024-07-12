@@ -7,10 +7,10 @@ export class Tag extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column('varchar', { nullable: false })
+  @Column({ nullable: false })
   label: string
 
-  @Column('varchar', { nullable: false })
+  @Column({ nullable: false })
   color: string
 
   @ManyToOne(() => TagGroup, (g) => g.tags)

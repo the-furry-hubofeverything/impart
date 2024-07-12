@@ -5,7 +5,7 @@ import { Tag } from './Tag'
 
 @Entity()
 export class TaggableImage extends Image {
-  @Column('varchar')
+  @Column()
   pinkynail: string
 
   @OneToOne(() => Thumbnail, { nullable: true, cascade: true })

@@ -27,6 +27,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.21",
     "@mui/material": "^5.15.21",
+    "reflect-metadata": "^0.2.2",
     "sharp": "^0.33.4",
     "sqlite3": "^5.1.7",
     "typeorm": "^0.3.20"
@@ -35,6 +36,7 @@
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
     "@electron-toolkit/eslint-config-ts": "^2.0.0",
     "@electron-toolkit/tsconfig": "^1.0.1",
+    "@swc/core": "^1.6.13",
     "@types/node": "^20.14.8",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
