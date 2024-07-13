@@ -31,7 +31,7 @@ export function ImageDisplay({ image: taggableImage }: ImageDisplayProps) {
       />
       <Box maxWidth={BOX_WIDTH}>
         <Typography textAlign="center" variant="caption" sx={{ wordBreak: 'break-all' }}>
-          {taggableImage.path}
+          {taggableImage.fileName}
         </Typography>
       </Box>
     </Stack>

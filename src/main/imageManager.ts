@@ -60,6 +60,7 @@ class ImageManager {
 
     const taggableImage = TaggableImage.create({
       path: filePath,
+      fileName: path.basename(filePath),
       width: image.width,
       height: image.height,
       thumbnail,
@@ -91,6 +92,7 @@ class ImageManager {
 
     const thumbnail = Thumbnail.create({
       path: target,
+      fileName: path.basename(target),
       width: buffer.info.width,
       height: buffer.info.height
     })

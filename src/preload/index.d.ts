@@ -5,18 +5,13 @@ type CallbackFunc<Payload> = (callback: (values: Payload) => void) => () => void
 interface Image {
   id: number
   path: string
+  fileName: string
   width: number
   height: number
 }
 
 declare global {
   namespace Impart {
-    interface ImageResult {
-      data: string
-      width: number
-      height: number
-    }
-
     interface Thumbnail extends Image {}
 
     interface TaggableImage extends Image {
