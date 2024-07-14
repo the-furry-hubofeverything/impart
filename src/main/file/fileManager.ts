@@ -1,4 +1,4 @@
-import { dialog } from 'electron'
+import { dialog, shell } from 'electron'
 import { TaggableImage } from '../database/entities/TaggableImage'
 import { IndexedDirectory } from '../database/entities/IndexedDirectory'
 import { readdirSync } from 'fs'
@@ -56,6 +56,16 @@ class FileManager {
 
   public async getFiles() {
     return await TaggableImage.find()
+  }
+
+  public async openFile(taggableImageId: number) {
+    const target = await TaggableImage.findOneBy({ id: taggableImageId })
+
+    if (!target) {
+      throw new Error(`Could not find taggable image with Id ${taggableImageId}`)
+    }
+
+    await shell.openPath(target.path)
   }
 }
 

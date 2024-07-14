@@ -47,6 +47,8 @@ declare global {
       selectAndIndexDirectory: () => Promise<void>
       getDirectories: () => Promise<IndexedDirectory[]>
 
+      openFile: (fileId: number) => void
+
       onIndexingStarted: CallbackFunc<{ filesFound: number }>
       onFileIndexed: CallbackFunc<Impart.TaggableImage>
       onIndexingEnded: CallbackFunc<void>

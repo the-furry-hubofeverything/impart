@@ -29,7 +29,6 @@ export function TaggingPanel({}: TaggingPanelProps) {
       <Card sx={{ flex: 1 }}>
         <CardContent>
           <Stack gap={2}>
-            <TextField label="Search" variant="standard" />
             {groups?.map((g) => (
               <Box
                 key={g.id}

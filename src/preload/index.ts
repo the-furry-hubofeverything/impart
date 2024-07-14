@@ -21,6 +21,8 @@ contextBridge.exposeInMainWorld('fileApi', {
   selectAndIndexDirectory: () => ipcRenderer.invoke('file/selectAndIndexDirectory'),
   getDirectories: () => ipcRenderer.invoke('file/getDirectories'),
 
+  openFile: (fileId: number) => ipcRenderer.send('file/openFile', fileId),
+
   onIndexingStarted: generateCallback('file/indexingStarted'),
   onFileIndexed: generateCallback('file/fileIndexed'),
   onIndexingEnded: generateCallback('file/indexingEnded')
