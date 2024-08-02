@@ -1,16 +1,19 @@
-import { Box, Menu, MenuItem, Skeleton, Stack, Typography } from '@mui/material'
+import { Box, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Typography } from '@mui/material'
 import { useAsyncData } from '../common/useAsyncData'
-import { useState } from 'react'
 import { useContextMenu } from '@renderer/common/useContextMenu'
+import FileOpenIcon from '@mui/icons-material/FileOpen'
+import TagIcon from '@mui/icons-material/LocalOffer'
 
-const BOX_WIDTH = 240
-const BOX_HEIGHT = 200
+const BOX_WIDTH = 220
+const BOX_HEIGHT = 190
 
 export interface ImageDisplayProps {
   image: Impart.TaggableImage
+  onClick?: (mods: { ctrl: boolean; shift: boolean }) => void
+  isSelected?: boolean
 }
 
-export function ImageDisplay({ image: taggableImage }: ImageDisplayProps) {
+export function ImageDisplay({ image: taggableImage, onClick, isSelected }: ImageDisplayProps) {
   const { anchorPosition, handleContextMenu, closeMenu, open: menuOpen } = useContextMenu()
 
   const { data: image, isLoading } = useAsyncData(
@@ -31,6 +34,17 @@ export function ImageDisplay({ image: taggableImage }: ImageDisplayProps) {
       justifyContent="center"
       height="100%"
       width={250}
+      p={1}
+      borderRadius={2}
+      sx={{
+        userSelect: 'none',
+        bgcolor: isSelected ? '#FFFFFF55' : undefined,
+        '&:hover': {
+          bgcolor: isSelected ? '#FFFFFF55' : '#FFFFFF33'
+        }
+      }}
+      onClick={(e) => onClick && onClick({ ctrl: e.ctrlKey, shift: e.shiftKey })}
+      onDoubleClick={() => window.fileApi.openFile(taggableImage.id)}
     >
       <Box
         component="img"
@@ -38,9 +52,9 @@ export function ImageDisplay({ image: taggableImage }: ImageDisplayProps) {
         borderRadius={2}
         width={targetWidth}
         height={targetHeight}
-        onDoubleClick={() => window.fileApi.openFile(taggableImage.id)}
+        sx={{ boxShadow: 2 }}
       />
-      <Box maxWidth={BOX_WIDTH}>
+      <Box maxWidth={BOX_WIDTH} pt={0.25}>
         <Typography textAlign="center" variant="caption" sx={{ wordBreak: 'break-all' }}>
           {taggableImage.fileName}
         </Typography>
@@ -57,7 +71,20 @@ export function ImageDisplay({ image: taggableImage }: ImageDisplayProps) {
             closeMenu()
           }}
         >
-          Open
+          <ListItemIcon>
+            <FileOpenIcon />
+          </ListItemIcon>
+          <ListItemText>Open</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            closeMenu()
+          }}
+        >
+          <ListItemIcon>
+            <TagIcon />
+          </ListItemIcon>
+          <ListItemText>Edit Tags</ListItemText>
         </MenuItem>
       </Menu>
     </Stack>
