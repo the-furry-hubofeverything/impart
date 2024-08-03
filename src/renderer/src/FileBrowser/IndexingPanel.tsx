@@ -1,5 +1,5 @@
-import { useFiles } from '../FileProvider/FileProvider'
 import { Card, CardContent, LinearProgress, Typography } from '@mui/material'
+import { useFiles } from '../FileProvider/FileProvider'
 
 export interface IndexingPanelProps {}
 

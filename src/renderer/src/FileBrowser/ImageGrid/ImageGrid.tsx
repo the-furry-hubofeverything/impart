@@ -1,8 +1,8 @@
 import { Grid } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { ImageDisplay } from './ImageDisplay'
-import { useAsyncData } from '../common/useAsyncData'
-import { useFiles } from '../FileProvider/FileProvider'
+import { useAsyncData } from '../../common/useAsyncData'
+import { useFiles } from '../../FileProvider/FileProvider'
 
 export interface ImageGridProps {}
 

@@ -1,1 +1,0 @@
-export { TaggingPanel } from './TaggingPanel'

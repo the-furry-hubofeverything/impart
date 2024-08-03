@@ -1,5 +1,5 @@
 import { Box, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Typography } from '@mui/material'
-import { useAsyncData } from '../common/useAsyncData'
+import { useAsyncData } from '../../common/useAsyncData'
 import { useContextMenu } from '@renderer/common/useContextMenu'
 import FileOpenIcon from '@mui/icons-material/FileOpen'
 import TagIcon from '@mui/icons-material/LocalOffer'

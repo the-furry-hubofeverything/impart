@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   CssBaseline,
   Dialog,
@@ -10,14 +9,12 @@ import {
   Typography
 } from '@mui/material'
 import { theme } from './theme'
-import { ImageGrid } from './ImageGrid'
-import { TaggingPanel } from './TaggingPanel'
-import { SettingsPanel } from './SettingsPanel'
 import { useAsyncData } from './common/useAsyncData'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import { IndexedDirectoriesSettings } from './IndexedDirectoriesSettings'
 import { useEffect, useState } from 'react'
 import { useFiles } from './FileProvider/FileProvider'
+import { FileBrowser } from './FileBrowser'
 
 export interface ImpartProps {}
 
@@ -60,21 +57,7 @@ export function Impart({}: ImpartProps) {
           </Button>
         </Stack>
       )}
-      {!isLoading && hasDirectories && (
-        <Stack direction="row" p={2} gap={1} height="100vh">
-          <Stack flex={1} overflow="auto" pr={1} gap={2}>
-            <Stack position="sticky" top={4}>
-              <SettingsPanel onClick={(b) => setShowModal(b)} />
-            </Stack>
-            <Box flex={1}>
-              <ImageGrid />
-            </Box>
-          </Stack>
-          <Box minWidth={300} flex={0.25}>
-            <TaggingPanel />
-          </Box>
-        </Stack>
-      )}
+      {!isLoading && hasDirectories && <FileBrowser onPress={(b) => setShowModal(b)} />}
       <Dialog
         open={showModal === 'directories'}
         onClose={() => setShowModal(null)}
