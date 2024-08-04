@@ -12,7 +12,7 @@ export class TaggableImage extends Image {
   @JoinColumn()
   thumbnail?: Thumbnail
 
-  @ManyToMany(() => Tag, (t) => t.images)
+  @ManyToMany(() => Tag, (t) => t.images, { eager: true })
   @JoinTable()
   tags: Tag[]
 }

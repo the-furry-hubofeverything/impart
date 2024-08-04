@@ -10,11 +10,14 @@ import {
 } from '@mui/material'
 import { theme } from './theme'
 import { useAsyncData } from './common/useAsyncData'
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import { IndexedDirectoriesSettings } from './IndexedDirectoriesSettings'
 import { useEffect, useState } from 'react'
 import { useFiles } from './FileProvider/FileProvider'
 import { FileBrowser } from './FileBrowser'
+import { IntroSetup } from './IntroSetup'
+import { EditTags } from './EditTags'
+
+type ImpartState = 'files' | 'editTags'
 
 export interface ImpartProps {}
 
@@ -28,6 +31,9 @@ export function Impart({}: ImpartProps) {
   const hasDirectories = directories && directories.length !== 0
 
   const [showModal, setShowModal] = useState<'directories' | null>(null)
+  const [state, setState] = useState<ImpartState>('files')
+
+  const [selection, setSelection] = useState<Impart.TaggableImage[]>([])
 
   const { fetchAllFiles, ready } = useFiles()
 
@@ -37,27 +43,32 @@ export function Impart({}: ImpartProps) {
     }
   }, [fetchAllFiles, ready])
 
+  const renderContent = () => {
+    switch (state) {
+      case 'files':
+        return (
+          <FileBrowser
+            onSettingsPressed={(b) => setShowModal(b)}
+            onEditTags={(file) => {
+              setSelection([file])
+              setState('editTags')
+            }}
+          />
+        )
+      case 'editTags':
+        if (selection.length !== 1) {
+          throw new Error('Tried to edit tags while zero or multiple images were selected')
+        }
+
+        return <EditTags item={selection[0]} />
+    }
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {!isLoading && !hasDirectories && (
-        <Stack justifyContent="center" alignItems="center" gap={2} height="100vh">
-          <Typography textAlign="center" sx={{ opacity: 0.6 }}>
-            Impart hasn't found any files yet! Add a folder to start organizing your gallery
-          </Typography>
-          <Button
-            startIcon={<CreateNewFolderIcon />}
-            variant="contained"
-            onClick={async () => {
-              await window.fileApi.selectAndIndexDirectory()
-              reloadDirectories()
-            }}
-          >
-            Add Folder
-          </Button>
-        </Stack>
-      )}
-      {!isLoading && hasDirectories && <FileBrowser onPress={(b) => setShowModal(b)} />}
+      {!isLoading && !hasDirectories && <IntroSetup reload={reloadDirectories} />}
+      {!isLoading && hasDirectories && renderContent()}
       <Dialog
         open={showModal === 'directories'}
         onClose={() => setShowModal(null)}

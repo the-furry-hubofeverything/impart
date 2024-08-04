@@ -1,21 +1,22 @@
-import { Box, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Typography } from '@mui/material'
-import { useAsyncData } from '../../common/useAsyncData'
-import { useContextMenu } from '@renderer/common/useContextMenu'
-import FileOpenIcon from '@mui/icons-material/FileOpen'
-import TagIcon from '@mui/icons-material/LocalOffer'
+import { Box, Stack, Typography } from '@mui/material'
+import { useAsyncData } from './useAsyncData'
 
 const BOX_WIDTH = 220
 const BOX_HEIGHT = 190
 
 export interface ImageDisplayProps {
   image: Impart.TaggableImage
-  onClick?: (mods: { ctrl: boolean; shift: boolean }) => void
   isSelected?: boolean
+  onClick?: (mods: { ctrl: boolean; shift: boolean }) => void
+  onRightClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
-export function ImageDisplay({ image: taggableImage, onClick, isSelected }: ImageDisplayProps) {
-  const { anchorPosition, handleContextMenu, closeMenu, open: menuOpen } = useContextMenu()
-
+export function ImageDisplay({
+  image: taggableImage,
+  onClick,
+  onRightClick,
+  isSelected
+}: ImageDisplayProps) {
   const { data: image, isLoading } = useAsyncData(
     () => window.imageApi.getThumbnail(taggableImage.id),
     []
@@ -29,11 +30,13 @@ export function ImageDisplay({ image: taggableImage, onClick, isSelected }: Imag
 
   return (
     <Stack
-      onContextMenu={handleContextMenu}
+      onContextMenu={(e) => {
+        onRightClick && onRightClick(e)
+      }}
       alignItems="center"
       justifyContent="center"
       height="100%"
-      width={250}
+      width={BOX_WIDTH + 20}
       p={1}
       borderRadius={2}
       sx={{
@@ -59,34 +62,6 @@ export function ImageDisplay({ image: taggableImage, onClick, isSelected }: Imag
           {taggableImage.fileName}
         </Typography>
       </Box>
-      <Menu
-        open={menuOpen}
-        onClose={closeMenu}
-        anchorReference="anchorPosition"
-        anchorPosition={anchorPosition}
-      >
-        <MenuItem
-          onClick={() => {
-            window.fileApi.openFile(taggableImage.id)
-            closeMenu()
-          }}
-        >
-          <ListItemIcon>
-            <FileOpenIcon />
-          </ListItemIcon>
-          <ListItemText>Open</ListItemText>
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            closeMenu()
-          }}
-        >
-          <ListItemIcon>
-            <TagIcon />
-          </ListItemIcon>
-          <ListItemText>Edit Tags</ListItemText>
-        </MenuItem>
-      </Menu>
     </Stack>
   )
 }

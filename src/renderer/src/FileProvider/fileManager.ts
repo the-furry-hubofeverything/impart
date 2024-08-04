@@ -59,7 +59,6 @@ export class FileManager {
   }
 
   public async fetchAll() {
-    console.log('I have been called')
     this.files = await window.fileApi.getFiles()
     this.change()
   }

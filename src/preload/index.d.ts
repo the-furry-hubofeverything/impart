@@ -16,6 +16,7 @@ declare global {
 
     interface TaggableImage extends Image {
       pinkynail: string
+      tags: Impart.Tag[]
     }
 
     interface IndexedDirectory {
