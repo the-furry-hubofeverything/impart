@@ -1,5 +1,13 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+function generateEndpoint(channel: string) {
+  return (...args: any[]) => ipcRenderer.invoke(channel, ...args)
+}
+
+function generateCommand(channel: string) {
+  return (...args: any[]) => ipcRenderer.send(channel, ...args)
+}
+
 function generateCallback(channel: string) {
   return (callback: (values: any) => void) => {
     const func = (_event: Electron.IpcRendererEvent, values: any) => callback(values)
@@ -12,16 +20,16 @@ function generateCallback(channel: string) {
 }
 
 contextBridge.exposeInMainWorld('imageApi', {
-  getFiles: () => ipcRenderer.invoke('getFiles'),
-  getThumbnail: (fileName: string) => ipcRenderer.invoke('image/getThumbnail', fileName)
+  getFiles: generateEndpoint('getFiles'),
+  getThumbnail: generateEndpoint('image/getThumbnail')
 })
 
 contextBridge.exposeInMainWorld('fileApi', {
-  getFiles: () => ipcRenderer.invoke('file/getFiles'),
-  selectAndIndexDirectory: () => ipcRenderer.invoke('file/selectAndIndexDirectory'),
-  getDirectories: () => ipcRenderer.invoke('file/getDirectories'),
+  getFiles: generateEndpoint('file/getFiles'),
+  selectAndIndexDirectory: generateEndpoint('file/selectAndIndexDirectory'),
+  getDirectories: generateEndpoint('file/getDirectories'),
 
-  openFile: (fileId: number) => ipcRenderer.send('file/openFile', fileId),
+  openFile: generateCommand('file/openFile'),
 
   onIndexingStarted: generateCallback('file/indexingStarted'),
   onFileIndexed: generateCallback('file/fileIndexed'),
@@ -29,6 +37,6 @@ contextBridge.exposeInMainWorld('fileApi', {
 })
 
 contextBridge.exposeInMainWorld('tagApi', {
-  getGroups: () => ipcRenderer.invoke('tag/getGroups'),
-  editFileTags: (...args: any[]) => ipcRenderer.invoke('tag/editFileTags', ...args)
+  getGroups: generateEndpoint('tag/getGroups'),
+  editFileTags: generateEndpoint('tag/editFileTags')
 })
