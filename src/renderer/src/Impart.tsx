@@ -60,7 +60,7 @@ export function Impart({}: ImpartProps) {
           throw new Error('Tried to edit tags while zero or multiple images were selected')
         }
 
-        return <EditTags item={selection[0]} />
+        return <EditTags item={selection[0]} onFinish={() => setState('files')} />
     }
   }
 

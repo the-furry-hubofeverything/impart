@@ -57,6 +57,7 @@ declare global {
 
     tagApi: {
       getGroups: () => Promise<Impart.TagGroup[]>
+      editFileTags: (fileId: number, tagIds: number[]) => Promise<void>
     }
   }
 }

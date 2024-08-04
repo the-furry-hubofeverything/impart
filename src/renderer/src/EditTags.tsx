@@ -1,14 +1,17 @@
-import { Box, Card, CardContent, Grid, Stack, Typography } from '@mui/material'
+import { Box, Button, Card, CardContent, Grid, IconButton, Stack, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import { ImageDisplay } from './common/ImageDisplay'
 import { TagSelector } from './common/TagSelector'
 import { Tag } from './common/Tag'
+import CheckIcon from '@mui/icons-material/Check'
+import BackIcon from '@mui/icons-material/ArrowBack'
 
 export interface EditTagsProps {
   item: Impart.TaggableImage
+  onFinish?: () => void
 }
 
-export function EditTags({ item }: EditTagsProps) {
+export function EditTags({ item, onFinish }: EditTagsProps) {
   const [tagSelection, setTagSelection] = useState(item.tags ?? [])
 
   const removeFromSelection = (tag: Impart.Tag) => {
@@ -20,8 +23,22 @@ export function EditTags({ item }: EditTagsProps) {
     setTagSelection(copy)
   }
 
+  const save = async () => {
+    await window.tagApi.editFileTags(
+      item.id,
+      tagSelection.map((t) => t.id)
+    )
+    onFinish && onFinish()
+  }
+
   return (
-    <Box>
+    <Box position="relative">
+      <Box position="absolute" top={20} left={20}>
+        <IconButton onClick={onFinish} size="large">
+          <BackIcon fontSize="inherit" />
+        </IconButton>
+      </Box>
+
       <Stack direction="row" p={1} gap={1} height="100vh">
         <Stack flex={1} alignItems="center">
           <Typography variant="h2">Edit Tags</Typography>
@@ -36,6 +53,9 @@ export function EditTags({ item }: EditTagsProps) {
                 </Grid>
               ))}
             </Grid>
+            <Button variant="contained" color="success" startIcon={<CheckIcon />} onClick={save}>
+              Save
+            </Button>
           </Stack>
         </Stack>
         <Box flex={1} alignItems="center">

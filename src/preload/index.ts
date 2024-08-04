@@ -29,5 +29,6 @@ contextBridge.exposeInMainWorld('fileApi', {
 })
 
 contextBridge.exposeInMainWorld('tagApi', {
-  getGroups: () => ipcRenderer.invoke('tag/getGroups')
+  getGroups: () => ipcRenderer.invoke('tag/getGroups'),
+  editFileTags: (...args: any[]) => ipcRenderer.invoke('tag/editFileTags', ...args)
 })
