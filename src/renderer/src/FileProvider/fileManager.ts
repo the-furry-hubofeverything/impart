@@ -58,8 +58,13 @@ export class FileManager {
     this.onChange = callback
   }
 
-  public async fetchAll() {
-    this.files = await window.fileApi.getFiles()
+  public async fetchAll(tagsIds?: number[]) {
+    if (this.files.length > 0) {
+      this.files = []
+      this.change()
+    }
+
+    this.files = await window.fileApi.getFiles(tagsIds)
     this.change()
   }
 

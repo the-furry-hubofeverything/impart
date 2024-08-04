@@ -3,7 +3,7 @@ import { FileManager, FileState } from './fileManager'
 
 interface FileData extends FileState {
   ready: boolean
-  fetchAllFiles: () => Promise<void> | undefined
+  fetchAllFiles: (tagIds?: number[]) => Promise<void> | undefined
 }
 
 const FileContext = createContext<FileData | null>(null)
@@ -29,7 +29,10 @@ export function FileProvider({ children }: FileProviderProps) {
     }
   }, [])
 
-  const fetchAllFiles = useCallback(() => fileManagerRef.current?.fetchAll(), [fileManagerRef])
+  const fetchAllFiles = useCallback(
+    (tagIds?: number[]) => fileManagerRef.current?.fetchAll(tagIds),
+    [fileManagerRef]
+  )
 
   return (
     <FileContext.Provider value={{ ...state, ready, fetchAllFiles }}>

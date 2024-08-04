@@ -7,6 +7,8 @@ import { sleep } from '../common/sleep'
 import { fileMessenger } from './fileMessenger'
 import { impartApp } from '..'
 import { AppDataSource } from '../database/database'
+import { Tag } from '../database/entities/Tag'
+import { In } from 'typeorm'
 
 class FileManager {
   public async getIndexedDirectories() {
@@ -54,8 +56,21 @@ class FileManager {
     fileMessenger.indexingEnded()
   }
 
-  public async getFiles() {
-    return await TaggableImage.find()
+  public async getFiles(tagIds?: number[]) {
+    let query = TaggableImage.createQueryBuilder('files')
+
+    if (tagIds && tagIds.length > 0) {
+      query = query.leftJoin('files.tags', 'tags')
+
+      tagIds.forEach((t) => {
+        query = query.andWhere('tags.id = :id', { id: t })
+      })
+    }
+    // const tags = tagIds ? await Tag.findBy({ id: In(tagIds) }) : []
+
+    // return await TaggableImage.findBy({ tags: tags.length > 0 ? In(tags) : undefined })
+
+    return await query.getMany()
   }
 
   public async openFile(taggableImageId: number) {

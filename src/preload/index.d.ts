@@ -44,7 +44,7 @@ declare global {
     }
 
     fileApi: {
-      getFiles: () => Promise<Impart.TaggableImage[]>
+      getFiles: (tagIds?: number[]) => Promise<Impart.TaggableImage[]>
       selectAndIndexDirectory: () => Promise<void>
       getDirectories: () => Promise<IndexedDirectory[]>
 
