@@ -62,7 +62,7 @@ class FileManager {
     })
 
     if (tagIds && tagIds.length > 0) {
-      tagIds.forEach((t, index) => {
+      Array.from(tagIds).forEach((t, index) => {
         const alias = `tags${index}`
         const variable = `id${index}`
         query = query.innerJoin('files.tags', alias, `${alias}.id = :${variable}`, {
