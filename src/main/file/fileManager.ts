@@ -8,7 +8,7 @@ import { fileMessenger } from './fileMessenger'
 import { impartApp } from '..'
 import { AppDataSource } from '../database/database'
 import { Tag } from '../database/entities/Tag'
-import { In } from 'typeorm'
+import { FindOptionsUtils, In } from 'typeorm'
 
 class FileManager {
   public async getIndexedDirectories() {
@@ -57,18 +57,19 @@ class FileManager {
   }
 
   public async getFiles(tagIds?: number[]) {
-    let query = TaggableImage.createQueryBuilder('files')
+    let query = TaggableImage.createQueryBuilder('files').setFindOptions({
+      loadEagerRelations: true
+    })
 
     if (tagIds && tagIds.length > 0) {
-      query = query.leftJoin('files.tags', 'tags')
-
-      tagIds.forEach((t) => {
-        query = query.andWhere('tags.id = :id', { id: t })
+      tagIds.forEach((t, index) => {
+        const alias = `tags${index}`
+        const variable = `id${index}`
+        query = query.innerJoin('files.tags', alias, `${alias}.id = :${variable}`, {
+          [variable]: t
+        })
       })
     }
-    // const tags = tagIds ? await Tag.findBy({ id: In(tagIds) }) : []
-
-    // return await TaggableImage.findBy({ tags: tags.length > 0 ? In(tags) : undefined })
 
     return await query.getMany()
   }
