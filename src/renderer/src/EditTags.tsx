@@ -5,9 +5,10 @@ import { TagSelector } from './common/TagSelector'
 import { Tag } from './common/Tag'
 import CheckIcon from '@mui/icons-material/Check'
 import BackIcon from '@mui/icons-material/ArrowBack'
+import { isTaggableFile, isTaggableImage } from './common/taggable'
 
 export interface EditTagsProps {
-  item: Impart.TaggableImage
+  item: Impart.Taggable
   onFinish?: () => void
 }
 
@@ -44,7 +45,8 @@ export function EditTags({ item, onFinish }: EditTagsProps) {
           <Typography variant="h2">Edit Tags</Typography>
           <Stack flex={1} justifyContent="center" alignItems="center" gap={4}>
             <Box>
-              <ImageDisplay image={item} />
+              {isTaggableFile(item) && <Box>Hi</Box>}
+              {isTaggableImage(item) && <ImageDisplay image={item} />}
             </Box>
             <Grid container spacing={1}>
               {tagSelection.map((t) => (

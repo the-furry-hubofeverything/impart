@@ -2,7 +2,7 @@ export interface FileState {
   isIndexing: boolean
   filesIndexed: number
   total: number
-  files: Impart.TaggableImage[]
+  files: Impart.Taggable[]
 }
 
 type OnChangeCallback = (state: FileState) => void
@@ -15,7 +15,7 @@ export class FileManager {
   private filesIndexed = 0
   private total = 0
 
-  private files: Impart.TaggableImage[] = []
+  private files: Impart.Taggable[] = []
 
   public static getInitialState(): FileState {
     return {

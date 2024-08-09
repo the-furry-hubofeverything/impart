@@ -1,5 +1,5 @@
 import { impartApp } from '..'
-import { TaggableImage } from '../database/entities/TaggableImage'
+import { Taggable } from '../database/entities/Taggable'
 
 class FileMessenger {
   public indexingStarted(filesFound: number) {
@@ -8,7 +8,7 @@ class FileMessenger {
     })
   }
 
-  public fileIndexed(file: TaggableImage) {
+  public fileIndexed(file: Taggable) {
     impartApp.mainWindow?.webContents.send('file/fileIndexed', file)
   }
 

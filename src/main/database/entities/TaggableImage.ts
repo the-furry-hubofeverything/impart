@@ -15,3 +15,7 @@ export class TaggableImage extends Taggable {
   @JoinColumn()
   thumbnail?: Thumbnail
 }
+
+export function isTaggableImage(t: Taggable): t is TaggableImage {
+  return (t as TaggableImage).image != null
+}

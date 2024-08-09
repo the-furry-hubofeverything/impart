@@ -12,13 +12,13 @@ import TagIcon from '@mui/icons-material/LocalOffer'
 
 export interface FileBrowserProps {
   onSettingsPressed?: (button: 'directories') => void
-  onEditTags?: (file: Impart.TaggableImage) => void
+  onEditTags?: (file: Impart.Taggable) => void
 }
 
 export function FileBrowser({ onSettingsPressed, onEditTags }: FileBrowserProps) {
   const { anchorPosition, closeMenu, open: menuOpen, handleContextMenu } = useContextMenu()
   const { fetchAllFiles, ready, files, isIndexing } = useFiles()
-  const [selection, setSelection] = useState<Impart.TaggableImage[]>([])
+  const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
   const { selectItem, itemIsSelected } = useMultiSelection(
     files,

@@ -33,7 +33,7 @@ export function Impart({}: ImpartProps) {
   const [showModal, setShowModal] = useState<'directories' | null>(null)
   const [state, setState] = useState<ImpartState>('files')
 
-  const [selection, setSelection] = useState<Impart.TaggableImage[]>([])
+  const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
   const { fetchAllFiles, ready } = useFiles()
 

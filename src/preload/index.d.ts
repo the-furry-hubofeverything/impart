@@ -11,7 +11,7 @@ declare global {
       height: number
     }
 
-    interface Taggable {
+    interface BaseTaggable {
       id: number
       tags: Impart.Tag[]
     }
@@ -21,10 +21,16 @@ declare global {
       image: Image
     }
 
-    interface TaggableImage extends Taggable {
+    interface TaggableImage extends BaseTaggable {
       image: Image
       pinkynail: string
     }
+
+    interface TaggableFile extends BaseTaggable {
+      path: string
+    }
+
+    type Taggable = TaggableImage | TaggableFile
 
     interface IndexedDirectory {
       path: string
@@ -51,14 +57,14 @@ declare global {
     }
 
     fileApi: {
-      getFiles: (tagIds?: number[]) => Promise<Impart.TaggableImage[]>
+      getFiles: (tagIds?: number[]) => Promise<Impart.Taggable[]>
       selectAndIndexDirectory: () => Promise<void>
       getDirectories: () => Promise<IndexedDirectory[]>
 
       openFile: (fileId: number) => void
 
       onIndexingStarted: CallbackFunc<{ filesFound: number }>
-      onFileIndexed: CallbackFunc<Impart.TaggableImage>
+      onFileIndexed: CallbackFunc<Impart.Taggable>
       onIndexingEnded: CallbackFunc<void>
     }
 

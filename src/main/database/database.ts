@@ -6,13 +6,14 @@ import { IndexedDirectory } from './entities/IndexedDirectory'
 import { Tag } from './entities/Tag'
 import { TagGroup } from './entities/TagGroup'
 import { Taggable } from './entities/Taggable'
+import { TaggableFile } from './entities/TaggableFile'
 
 const path = app.getPath('appData')
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
   database: app.isPackaged ? `${path}/impart/app/db.sqlite` : `${path}/impart/dev/db.sqlite`,
-  entities: [TaggableImage, Thumbnail, IndexedDirectory, Tag, TagGroup, Taggable],
+  entities: [TaggableImage, Thumbnail, IndexedDirectory, Tag, TagGroup, Taggable, TaggableFile],
   synchronize: true,
   dropSchema: true,
   logging: app.isPackaged ? false : ['error', 'warn', 'info']

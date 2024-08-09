@@ -1,14 +1,14 @@
 import { dialog, shell } from 'electron'
-import { TaggableImage } from '../database/entities/TaggableImage'
 import { IndexedDirectory } from '../database/entities/IndexedDirectory'
 import { readdirSync } from 'fs'
+import path from 'path'
 import { imageManager } from '../imageManager'
 import { sleep } from '../common/sleep'
 import { fileMessenger } from './fileMessenger'
 import { impartApp } from '..'
-import { AppDataSource } from '../database/database'
-import { Tag } from '../database/entities/Tag'
-import { FindOptionsUtils, In } from 'typeorm'
+import { Taggable } from '../database/entities/Taggable'
+import { TaggableFile, isTaggableFile } from '../database/entities/TaggableFile'
+import { isTaggableImage } from '../database/entities/TaggableImage'
 
 class FileManager {
   public async getIndexedDirectories() {
@@ -44,20 +44,46 @@ class FileManager {
     fileMessenger.indexingStarted(files.length)
 
     await Promise.all(
-      files.map((fileName, index) =>
-        (async () => {
-          await sleep(index * 50)
-          const taggableImage = await imageManager.indexImage(`${directory.path}/${fileName}`)
-          fileMessenger.fileIndexed(taggableImage)
-        })()
-      )
+      files.map((fileName, index) => this.index(directory.path, fileName, index * 50))
     )
 
     fileMessenger.indexingEnded()
   }
 
+  private async index(directory: string, fileName: string, delay: number) {
+    await sleep(delay)
+    const fullPath = `${directory}/${fileName}`
+
+    const extension = path.extname(fullPath)
+    let taggable: Taggable
+
+    if (extension === '.jpg' || extension === '.jpeg' || extension === '.png') {
+      taggable = await imageManager.indexImage(fullPath)
+    } else {
+      taggable = await this.indexFile(fullPath)
+    }
+
+    fileMessenger.fileIndexed(taggable)
+  }
+
+  private async indexFile(filePath: string) {
+    console.log('Indexing File: ', filePath)
+
+    let taggableFile = await TaggableFile.findOneBy({ path: filePath })
+
+    if (!taggableFile) {
+      taggableFile = TaggableFile.create({
+        path: filePath
+      })
+
+      await taggableFile.save()
+    }
+
+    return taggableFile
+  }
+
   public async getFiles(tagIds?: number[]) {
-    let query = TaggableImage.createQueryBuilder('files').setFindOptions({
+    let query = Taggable.createQueryBuilder('files').setFindOptions({
       loadEagerRelations: true
     })
 
@@ -74,14 +100,18 @@ class FileManager {
     return await query.getMany()
   }
 
-  public async openFile(taggableImageId: number) {
-    const target = await TaggableImage.findOneBy({ id: taggableImageId })
+  public async openFile(taggableId: number) {
+    const target = await Taggable.findOneBy({ id: taggableId })
 
     if (!target) {
-      throw new Error(`Could not find taggable image with Id ${taggableImageId}`)
+      throw new Error(`Could not find taggable with Id ${taggableId}`)
     }
 
-    await shell.openPath(target.image.path)
+    if (isTaggableFile(target)) {
+      await shell.openPath(target.path)
+    } else if (isTaggableImage(target)) {
+      await shell.openPath(target.image.path)
+    }
   }
 }
 
