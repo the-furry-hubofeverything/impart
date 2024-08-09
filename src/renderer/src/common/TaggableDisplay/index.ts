@@ -1,0 +1,1 @@
+export { TaggableDisplay } from './TaggableDisplay'

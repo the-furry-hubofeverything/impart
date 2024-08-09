@@ -1,5 +1,5 @@
 import { Box, Grid } from '@mui/material'
-import { ImageDisplay } from '../common/ImageDisplay'
+import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
 import { isTaggableFile, isTaggableImage } from '@renderer/common/taggable'
 
 export interface ImageGridProps {
@@ -18,19 +18,12 @@ export function ImageGrid({ files, selection, onSelect, onRightClick }: ImageGri
     <Grid container spacing={1}>
       {files?.map((f) => (
         <Grid item key={f.id} xs={true}>
-          {isTaggableImage(f) && (
-            <ImageDisplay
-              image={f}
-              isSelected={selection?.some((s) => s.id === f.id)}
-              onClick={({ ctrl, shift }) => onSelect && onSelect(f, ctrl, shift)}
-              onRightClick={(e) => onRightClick && onRightClick(f, e)}
-            />
-          )}
-          {isTaggableFile(f) && (
-            <Box width={240} height={190}>
-              Hi
-            </Box>
-          )}
+          <TaggableDisplay
+            taggable={f}
+            isSelected={selection?.some((s) => s.id === f.id)}
+            onClick={({ ctrl, shift }) => onSelect && onSelect(f, ctrl, shift)}
+            onRightClick={(e) => onRightClick && onRightClick(f, e)}
+          />
         </Grid>
       ))}
     </Grid>

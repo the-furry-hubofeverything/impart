@@ -1,11 +1,10 @@
 import { Box, Button, Card, CardContent, Grid, IconButton, Stack, Typography } from '@mui/material'
-import React, { useState } from 'react'
-import { ImageDisplay } from './common/ImageDisplay'
+import { useState } from 'react'
 import { TagSelector } from './common/TagSelector'
 import { Tag } from './common/Tag'
 import CheckIcon from '@mui/icons-material/Check'
 import BackIcon from '@mui/icons-material/ArrowBack'
-import { isTaggableFile, isTaggableImage } from './common/taggable'
+import { TaggableDisplay } from './common/TaggableDisplay'
 
 export interface EditTagsProps {
   item: Impart.Taggable
@@ -45,8 +44,7 @@ export function EditTags({ item, onFinish }: EditTagsProps) {
           <Typography variant="h2">Edit Tags</Typography>
           <Stack flex={1} justifyContent="center" alignItems="center" gap={4}>
             <Box>
-              {isTaggableFile(item) && <Box>Hi</Box>}
-              {isTaggableImage(item) && <ImageDisplay image={item} />}
+              <TaggableDisplay taggable={item} />
             </Box>
             <Grid container spacing={1}>
               {tagSelection.map((t) => (

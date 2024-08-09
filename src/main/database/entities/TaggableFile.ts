@@ -5,6 +5,9 @@ import { Taggable } from './Taggable'
 export class TaggableFile extends Taggable {
   @Column({ nullable: false })
   path: string
+
+  @Column({ nullable: false })
+  fileName: string
 }
 
 export function isTaggableFile(t: Taggable): t is TaggableFile {

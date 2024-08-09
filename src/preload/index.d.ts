@@ -28,6 +28,7 @@ declare global {
 
     interface TaggableFile extends BaseTaggable {
       path: string
+      fileName: string
     }
 
     type Taggable = TaggableImage | TaggableFile

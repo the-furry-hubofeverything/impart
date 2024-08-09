@@ -73,7 +73,8 @@ class FileManager {
 
     if (!taggableFile) {
       taggableFile = TaggableFile.create({
-        path: filePath
+        path: filePath,
+        fileName: path.basename(filePath)
       })
 
       await taggableFile.save()
