@@ -1,18 +1,17 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne } from 'typeorm'
+import { ChildEntity, Column, JoinColumn, OneToOne } from 'typeorm'
 import { Image } from './Image'
 import { Thumbnail } from './Thumbnail'
-import { Tag } from './Tag'
+import { Taggable } from './Taggable'
 
-@Entity()
-export class TaggableImage extends Image {
+@ChildEntity()
+export class TaggableImage extends Taggable {
   @Column()
   pinkynail: string
+
+  @Column(() => Image)
+  image: Image
 
   @OneToOne(() => Thumbnail, { nullable: true, cascade: true })
   @JoinColumn()
   thumbnail?: Thumbnail
-
-  @ManyToMany(() => Tag, (t) => t.images, { eager: true })
-  @JoinTable()
-  tags: Tag[]
 }

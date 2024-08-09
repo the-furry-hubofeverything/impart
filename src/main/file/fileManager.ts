@@ -81,7 +81,7 @@ class FileManager {
       throw new Error(`Could not find taggable image with Id ${taggableImageId}`)
     }
 
-    await shell.openPath(target.path)
+    await shell.openPath(target.image.path)
   }
 }
 

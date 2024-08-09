@@ -23,7 +23,7 @@ export function ImageDisplay({
   )
 
   const boxRatio = BOX_WIDTH / BOX_HEIGHT
-  const imageRatio = taggableImage.width / taggableImage.height
+  const imageRatio = taggableImage.image.width / taggableImage.image.height
 
   const targetWidth = imageRatio > boxRatio ? BOX_WIDTH : BOX_HEIGHT * imageRatio
   const targetHeight = imageRatio > boxRatio ? BOX_WIDTH / imageRatio : BOX_HEIGHT
@@ -51,7 +51,7 @@ export function ImageDisplay({
     >
       <Box
         component="img"
-        src={`data:image/${taggableImage.fileName.endsWith('png') ? 'png' : 'jpg'};base64,${isLoading ? taggableImage.pinkynail : image}`}
+        src={`data:image/${taggableImage.image.fileName.endsWith('png') ? 'png' : 'jpg'};base64,${isLoading ? taggableImage.pinkynail : image}`}
         borderRadius={2}
         width={targetWidth}
         height={targetHeight}
@@ -59,7 +59,7 @@ export function ImageDisplay({
       />
       <Box maxWidth={BOX_WIDTH} pt={0.25}>
         <Typography textAlign="center" variant="caption" sx={{ wordBreak: 'break-all' }}>
-          {taggableImage.fileName}
+          {taggableImage.image.fileName}
         </Typography>
       </Box>
     </Stack>

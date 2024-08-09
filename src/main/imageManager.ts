@@ -30,18 +30,18 @@ class ImageManager {
     let thumbnail = taggableImage.thumbnail
 
     if (!thumbnail) {
-      thumbnail = await this.buildThumbnail(taggableImage.path)
+      thumbnail = await this.buildThumbnail(taggableImage.image.path)
 
       taggableImage.thumbnail = thumbnail
       taggableImage.save()
     }
 
-    return await this.getBase64(thumbnail)
+    return await this.getBase64(thumbnail.image)
   }
 
   public async indexImage(filePath: string) {
     console.log('Indexing Image: ', filePath)
-    let taggableImage = await TaggableImage.findOneBy({ path: filePath })
+    let taggableImage = await TaggableImage.findOneBy({ image: { path: filePath } })
 
     if (!taggableImage) {
       taggableImage = await this.buildImage(filePath)
@@ -59,10 +59,12 @@ class ImageManager {
     ])
 
     const taggableImage = TaggableImage.create({
-      path: filePath,
-      fileName: path.basename(filePath),
-      width: image.width,
-      height: image.height,
+      image: {
+        path: filePath,
+        fileName: path.basename(filePath),
+        width: image.width,
+        height: image.height
+      },
       thumbnail,
       pinkynail
     })
@@ -91,10 +93,12 @@ class ImageManager {
     const buffer = await image.toBuffer({ resolveWithObject: true })
 
     const thumbnail = Thumbnail.create({
-      path: target,
-      fileName: path.basename(target),
-      width: buffer.info.width,
-      height: buffer.info.height
+      image: {
+        path: target,
+        fileName: path.basename(target),
+        width: buffer.info.width,
+        height: buffer.info.height
+      }
     })
 
     await thumbnail.save()

@@ -23,7 +23,7 @@ export function ImageGrid({ files, selection, onSelect, onRightClick }: ImageGri
   return (
     <Grid container spacing={1}>
       {files?.map((f) => (
-        <Grid item key={f.path} xs={true}>
+        <Grid item key={f.id} xs={true}>
           <ImageDisplay
             image={f}
             isSelected={selection?.some((s) => s.id === f.id)}

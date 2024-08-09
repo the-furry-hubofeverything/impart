@@ -2,21 +2,28 @@ import { ElectronAPI } from '@electron-toolkit/preload'
 
 type CallbackFunc<Payload> = (callback: (values: Payload) => void) => () => void
 
-interface Image {
-  id: number
-  path: string
-  fileName: string
-  width: number
-  height: number
-}
-
 declare global {
   namespace Impart {
-    interface Thumbnail extends Image {}
+    interface Image {
+      path: string
+      fileName: string
+      width: number
+      height: number
+    }
 
-    interface TaggableImage extends Image {
-      pinkynail: string
+    interface Taggable {
+      id: number
       tags: Impart.Tag[]
+    }
+
+    interface Thumbnail {
+      id: number
+      image: Image
+    }
+
+    interface TaggableImage extends Taggable {
+      image: Image
+      pinkynail: string
     }
 
     interface IndexedDirectory {

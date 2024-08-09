@@ -1,9 +1,6 @@
 import { BaseEntity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
-export abstract class Image extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number
-
+export class Image {
   @Column({ nullable: false })
   path: string
 
