@@ -1,6 +1,6 @@
-import { Tag } from './database/entities/Tag'
-import { TagGroup } from './database/entities/TagGroup'
-import { TaggableImage } from './database/entities/TaggableImage'
+import { Tag } from '../database/entities/Tag'
+import { TagGroup } from '../database/entities/TagGroup'
+import { TaggableImage } from '../database/entities/TaggableImage'
 import { In } from 'typeorm'
 
 class TagManager {

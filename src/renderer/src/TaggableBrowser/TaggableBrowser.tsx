@@ -1,27 +1,27 @@
 import { Stack, Box, Collapse, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { ImageGrid } from './ImageGrid'
+import { TaggableGrid } from './TaggableGrid'
 import { SettingsPanel } from './SettingsPanel'
 import { TaggingPanel } from './TaggingPanel'
-import { useFiles } from '@renderer/FileProvider'
+import { useTaggables } from '@renderer/TaggableProvider'
 import { IndexingPanel } from './IndexingPanel'
 import { useMultiSelection } from '@renderer/common/useMultiSelection'
 import { useContextMenu } from '@renderer/common/useContextMenu'
 import FileOpenIcon from '@mui/icons-material/FileOpen'
 import TagIcon from '@mui/icons-material/LocalOffer'
 
-export interface FileBrowserProps {
+export interface TaggableBrowserProps {
   onSettingsPressed?: (button: 'directories') => void
   onEditTags?: (file: Impart.Taggable) => void
 }
 
-export function FileBrowser({ onSettingsPressed, onEditTags }: FileBrowserProps) {
+export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrowserProps) {
   const { anchorPosition, closeMenu, open: menuOpen, handleContextMenu } = useContextMenu()
-  const { fetchAllFiles, ready, files, isIndexing } = useFiles()
+  const { fetchAllTaggables, ready, taggables, isIndexing } = useTaggables()
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
   const { selectItem, itemIsSelected } = useMultiSelection(
-    files,
+    taggables,
     selection,
     setSelection,
     (a, b) => a.id === b.id
@@ -29,9 +29,9 @@ export function FileBrowser({ onSettingsPressed, onEditTags }: FileBrowserProps)
 
   useEffect(() => {
     if (ready) {
-      fetchAllFiles()
+      fetchAllTaggables()
     }
-  }, [fetchAllFiles, ready])
+  }, [fetchAllTaggables, ready])
 
   return (
     <>
@@ -39,8 +39,8 @@ export function FileBrowser({ onSettingsPressed, onEditTags }: FileBrowserProps)
         <Stack flex={1} overflow="auto" pr={1} gap={2}>
           <Stack position="sticky" top={4}></Stack>
           <Box flex={1}>
-            <ImageGrid
-              files={files}
+            <TaggableGrid
+              taggables={taggables}
               selection={selection}
               onSelect={selectItem}
               onRightClick={(image, e) => {

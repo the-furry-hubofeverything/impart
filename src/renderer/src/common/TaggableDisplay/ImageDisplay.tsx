@@ -4,17 +4,17 @@ import { BOX_HEIGHT, BOX_WIDTH } from './TaggableDisplay'
 import { useAsyncData } from '../useAsyncData'
 
 export interface ImageDisplayProps {
-  taggable: Impart.TaggableImage
+  image: Impart.IndexedImage
 }
 
-export function ImageDisplay({ taggable }: ImageDisplayProps) {
+export function ImageDisplay({ image }: ImageDisplayProps) {
   const { data: thumbnail, isLoading } = useAsyncData(
-    () => window.imageApi.getThumbnail(taggable.id),
-    [taggable]
+    () => window.fileApi.getThumbnail(image.id),
+    [image]
   )
 
   const boxRatio = BOX_WIDTH / BOX_HEIGHT
-  const aspectRatio = taggable.image.width / taggable.image.height
+  const aspectRatio = image.dimensions.width / image.dimensions.height
 
   const targetWidth = aspectRatio > boxRatio ? BOX_WIDTH : BOX_HEIGHT * aspectRatio
   const targetHeight = aspectRatio > boxRatio ? BOX_WIDTH / aspectRatio : BOX_HEIGHT
@@ -22,7 +22,7 @@ export function ImageDisplay({ taggable }: ImageDisplayProps) {
   return (
     <Box
       component="img"
-      src={`data:image/${taggable.image.fileName.endsWith('png') ? 'png' : 'jpg'};base64,${isLoading ? taggable.pinkynail : thumbnail}`}
+      src={`data:image/${image.fileName.endsWith('png') ? 'png' : 'jpg'};base64,${isLoading ? image.pinkynail : thumbnail}`}
       borderRadius={2}
       width={targetWidth}
       height={targetHeight}

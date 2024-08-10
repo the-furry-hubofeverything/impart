@@ -12,8 +12,8 @@ import { theme } from './theme'
 import { useAsyncData } from './common/useAsyncData'
 import { IndexedDirectoriesSettings } from './IndexedDirectoriesSettings'
 import { useEffect, useState } from 'react'
-import { useFiles } from './FileProvider/FileProvider'
-import { FileBrowser } from './FileBrowser'
+import { useTaggables } from './TaggableProvider/TaggableProvider'
+import { FileBrowser } from './TaggableBrowser'
 import { IntroSetup } from './IntroSetup'
 import { EditTags } from './EditTags'
 
@@ -26,7 +26,7 @@ export function Impart({}: ImpartProps) {
     data: directories,
     isLoading,
     executeRequest: reloadDirectories
-  } = useAsyncData(() => window.fileApi.getDirectories(), [])
+  } = useAsyncData(() => window.taggableApi.getDirectories(), [])
 
   const hasDirectories = directories && directories.length !== 0
 
@@ -35,13 +35,13 @@ export function Impart({}: ImpartProps) {
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
-  const { fetchAllFiles, ready } = useFiles()
+  const { fetchAllTaggables, ready } = useTaggables()
 
   useEffect(() => {
     if (ready) {
-      fetchAllFiles()
+      fetchAllTaggables()
     }
-  }, [fetchAllFiles, ready])
+  }, [fetchAllTaggables, ready])
 
   const renderContent = () => {
     switch (state) {

@@ -9,7 +9,7 @@ import {
   Chip,
   IconButton
 } from '@mui/material'
-import { useFiles } from '@renderer/FileProvider'
+import { useTaggables } from '@renderer/TaggableProvider'
 import { TagSelector } from '@renderer/common/TagSelector'
 import { useAsyncData } from '@renderer/common/useAsyncData'
 import { useEffect, useState } from 'react'
@@ -18,11 +18,11 @@ export interface TaggingPanelProps {}
 
 export function TaggingPanel({}: TaggingPanelProps) {
   const [selection, setSelection] = useState<Impart.Tag[]>([])
-  const { fetchAllFiles } = useFiles()
+  const { fetchAllTaggables } = useTaggables()
 
   useEffect(() => {
-    fetchAllFiles(selection.map((t) => t.id))
-  }, [fetchAllFiles, selection])
+    fetchAllTaggables(selection.map((t) => t.id))
+  }, [fetchAllTaggables, selection])
 
   return (
     <Card sx={{ flex: 1 }}>

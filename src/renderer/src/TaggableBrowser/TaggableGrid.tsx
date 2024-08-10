@@ -1,22 +1,21 @@
-import { Box, Grid } from '@mui/material'
+import { Grid } from '@mui/material'
 import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
-import { isTaggableFile, isTaggableImage } from '@renderer/common/taggable'
 
-export interface ImageGridProps {
-  files?: Impart.Taggable[]
+export interface TaggableGridProps {
+  taggables?: Impart.Taggable[]
   selection?: Impart.Taggable[]
   onSelect?: (item: Impart.Taggable, add: boolean, range: boolean) => void
   onRightClick?: (item: Impart.Taggable, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
-export function ImageGrid({ files, selection, onSelect, onRightClick }: ImageGridProps) {
-  if (!files) {
+export function TaggableGrid({ taggables, selection, onSelect, onRightClick }: TaggableGridProps) {
+  if (!taggables) {
     return null
   }
 
   return (
     <Grid container spacing={1}>
-      {files?.map((f) => (
+      {taggables?.map((f) => (
         <Grid item key={f.id} xs={true}>
           <TaggableDisplay
             taggable={f}

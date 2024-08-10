@@ -1,18 +1,18 @@
-import { dialog, shell } from 'electron'
-import { IndexedDirectory } from '../database/entities/IndexedDirectory'
+import { dialog } from 'electron'
+import { Directory } from '../database/entities/Directory'
 import { readdirSync } from 'fs'
 import path from 'path'
-import { imageManager } from '../imageManager'
+import { indexingManager } from '../indexables/indexingManager'
 import { sleep } from '../common/sleep'
-import { fileMessenger } from './fileMessenger'
+import { fileMessenger } from '../indexables/indexMessenger'
 import { impartApp } from '..'
 import { Taggable } from '../database/entities/Taggable'
-import { TaggableFile, isTaggableFile } from '../database/entities/TaggableFile'
-import { isTaggableImage } from '../database/entities/TaggableImage'
+import { TaggableFile } from '../database/entities/TaggableFile'
+import { TaggableImage } from '../database/entities/TaggableImage'
 
-class FileManager {
+class TaggableManager {
   public async getIndexedDirectories() {
-    const directories = await IndexedDirectory.find()
+    const directories = await Directory.find()
 
     return directories.map((d) => ({
       path: d.path
@@ -32,13 +32,13 @@ class FileManager {
       return
     }
 
-    const directory = IndexedDirectory.create({ path: result[0] })
+    const directory = Directory.create({ path: result[0] })
     await directory.save()
 
     this.indexFiles(directory)
   }
 
-  private async indexFiles(directory: IndexedDirectory) {
+  private async indexFiles(directory: Directory) {
     const files = readdirSync(directory.path)
 
     fileMessenger.indexingStarted(files.length)
@@ -58,32 +58,16 @@ class FileManager {
     let taggable: Taggable
 
     if (extension === '.jpg' || extension === '.jpeg' || extension === '.png') {
-      taggable = await imageManager.indexImage(fullPath)
+      taggable = TaggableImage.create({ image: await indexingManager.indexImage(fullPath) })
     } else {
-      taggable = await this.indexFile(fullPath)
+      taggable = TaggableFile.create({ file: await indexingManager.indexFile(fullPath) })
     }
 
+    await taggable.save()
     fileMessenger.fileIndexed(taggable)
   }
 
-  private async indexFile(filePath: string) {
-    console.log('Indexing File: ', filePath)
-
-    let taggableFile = await TaggableFile.findOneBy({ path: filePath })
-
-    if (!taggableFile) {
-      taggableFile = TaggableFile.create({
-        path: filePath,
-        fileName: path.basename(filePath)
-      })
-
-      await taggableFile.save()
-    }
-
-    return taggableFile
-  }
-
-  public async getFiles(tagIds?: number[]) {
+  public async getTaggables(tagIds?: number[]) {
     let query = Taggable.createQueryBuilder('files').setFindOptions({
       loadEagerRelations: true
     })
@@ -100,20 +84,6 @@ class FileManager {
 
     return await query.getMany()
   }
-
-  public async openFile(taggableId: number) {
-    const target = await Taggable.findOneBy({ id: taggableId })
-
-    if (!target) {
-      throw new Error(`Could not find taggable with Id ${taggableId}`)
-    }
-
-    if (isTaggableFile(target)) {
-      await shell.openPath(target.path)
-    } else if (isTaggableImage(target)) {
-      await shell.openPath(target.image.path)
-    }
-  }
 }
 
-export const fileManager = new FileManager()
+export const taggableManager = new TaggableManager()

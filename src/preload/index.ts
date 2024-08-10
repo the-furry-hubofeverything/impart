@@ -19,21 +19,19 @@ function generateCallback(channel: string) {
   }
 }
 
-contextBridge.exposeInMainWorld('imageApi', {
-  getFiles: generateEndpoint('getFiles'),
-  getThumbnail: generateEndpoint('image/getThumbnail')
-})
-
 contextBridge.exposeInMainWorld('fileApi', {
-  getFiles: generateEndpoint('file/getFiles'),
-  selectAndIndexDirectory: generateEndpoint('file/selectAndIndexDirectory'),
-  getDirectories: generateEndpoint('file/getDirectories'),
-
+  getThumbnail: generateEndpoint('file/getThumbnail'),
   openFile: generateCommand('file/openFile'),
 
   onIndexingStarted: generateCallback('file/indexingStarted'),
   onFileIndexed: generateCallback('file/fileIndexed'),
   onIndexingEnded: generateCallback('file/indexingEnded')
+})
+
+contextBridge.exposeInMainWorld('taggableApi', {
+  getTaggables: generateEndpoint('taggable/getTaggables'),
+  selectAndIndexDirectory: generateEndpoint('taggable/selectAndIndexDirectory'),
+  getDirectories: generateEndpoint('taggable/getDirectories')
 })
 
 contextBridge.exposeInMainWorld('tagApi', {

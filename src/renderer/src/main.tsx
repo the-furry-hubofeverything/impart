@@ -1,15 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Impart } from './Impart'
-import { FileProvider } from './FileProvider/FileProvider'
 import { TagProvider } from './TagProvider'
+import { TaggableProvider } from './TaggableProvider'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <FileProvider>
+    <TaggableProvider>
       <TagProvider>
         <Impart />
       </TagProvider>
-    </FileProvider>
+    </TaggableProvider>
   </React.StrictMode>
 )

@@ -1,11 +1,17 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
-import { Image } from './Image'
+import { Dimensions } from './Dimensions'
 
 @Entity()
 export class Thumbnail extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column(() => Image)
-  image: Image
+  @Column({ nullable: false })
+  path: string
+
+  @Column({ nullable: false })
+  fileName: string
+
+  @Column(() => Dimensions)
+  dimensions: Dimensions
 }

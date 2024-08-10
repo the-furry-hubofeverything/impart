@@ -4,12 +4,23 @@ type CallbackFunc<Payload> = (callback: (values: Payload) => void) => () => void
 
 declare global {
   namespace Impart {
-    interface Image {
-      path: string
-      fileName: string
+    interface Dimensions {
       width: number
       height: number
     }
+
+    interface Indexable {
+      id: number
+      path: string
+      fileName: string
+    }
+
+    interface IndexedImage extends Indexable {
+      dimensions: Dimensions
+      pinkynail: string
+    }
+
+    interface IndexedFile extends Indexable {}
 
     interface BaseTaggable {
       id: number
@@ -18,22 +29,21 @@ declare global {
 
     interface Thumbnail {
       id: number
-      image: Image
+      dimensions: Dimensions
     }
 
     interface TaggableImage extends BaseTaggable {
-      image: Image
-      pinkynail: string
+      image: IndexedImage
+      sourceFile?: IndexedFile
     }
 
     interface TaggableFile extends BaseTaggable {
-      path: string
-      fileName: string
+      file: IndexedFile
     }
 
     type Taggable = TaggableImage | TaggableFile
 
-    interface IndexedDirectory {
+    interface Directory {
       path: string
     }
 
@@ -53,20 +63,19 @@ declare global {
   interface Window {
     electron: ElectronAPI
 
-    imageApi: {
-      getThumbnail: (imageId: number) => Promise<string>
-    }
-
     fileApi: {
-      getFiles: (tagIds?: number[]) => Promise<Impart.Taggable[]>
-      selectAndIndexDirectory: () => Promise<void>
-      getDirectories: () => Promise<IndexedDirectory[]>
-
-      openFile: (fileId: number) => void
+      getThumbnail: (imageId: number) => Promise<string>
+      openFile: (indexableId: number) => void
 
       onIndexingStarted: CallbackFunc<{ filesFound: number }>
       onFileIndexed: CallbackFunc<Impart.Taggable>
       onIndexingEnded: CallbackFunc<void>
+    }
+
+    taggableApi: {
+      getTaggables: (tagIds?: number[]) => Promise<Impart.Taggable[]>
+      selectAndIndexDirectory: () => Promise<void>
+      getDirectories: () => Promise<IndexedDirectory[]>
     }
 
     tagApi: {

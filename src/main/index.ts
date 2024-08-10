@@ -3,10 +3,9 @@ import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { setupTaggableApi } from './api/taggableApi'
 import { setupFileApi } from './api/fileApi'
-import { setupImageApi } from './api/imageApi'
 import { AppDataSource } from './database/database'
-import { seedGroups } from './database/seed'
 import { setupTagApi } from './api/tagApi'
 
 interface ImpartApp {
@@ -64,10 +63,9 @@ app.whenReady().then(async () => {
   })
 
   await AppDataSource.initialize()
-  //seedGroups()
 
   setupFileApi()
-  setupImageApi()
+  setupTaggableApi()
   setupTagApi()
 
   createWindow()

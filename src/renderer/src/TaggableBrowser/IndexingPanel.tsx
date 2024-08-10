@@ -1,10 +1,10 @@
 import { Card, CardContent, LinearProgress, Typography } from '@mui/material'
-import { useFiles } from '../FileProvider/FileProvider'
+import { useTaggables } from '../TaggableProvider/TaggableProvider'
 
 export interface IndexingPanelProps {}
 
 export function IndexingPanel({}: IndexingPanelProps) {
-  const { filesIndexed, total } = useFiles()
+  const { filesIndexed, total } = useTaggables()
 
   return (
     <Card>

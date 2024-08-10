@@ -1,13 +1,13 @@
-export interface FileState {
+export interface TaggableState {
   isIndexing: boolean
   filesIndexed: number
   total: number
-  files: Impart.Taggable[]
+  taggables: Impart.Taggable[]
 }
 
-type OnChangeCallback = (state: FileState) => void
+type OnChangeCallback = (state: TaggableState) => void
 
-export class FileManager {
+export class TaggableManager {
   private listeners: (() => void)[] = []
   private onChange?: OnChangeCallback
 
@@ -15,14 +15,14 @@ export class FileManager {
   private filesIndexed = 0
   private total = 0
 
-  private files: Impart.Taggable[] = []
+  private taggables: Impart.Taggable[] = []
 
-  public static getInitialState(): FileState {
+  public static getInitialState(): TaggableState {
     return {
       isIndexing: false,
       filesIndexed: 0,
       total: 0,
-      files: []
+      taggables: []
     }
   }
 
@@ -39,7 +39,7 @@ export class FileManager {
     this.listeners.push(
       window.fileApi.onFileIndexed((t) => {
         this.filesIndexed++
-        this.files.push(t)
+        this.taggables.push(t)
         this.change()
       })
     )
@@ -59,12 +59,12 @@ export class FileManager {
   }
 
   public async fetchAll(tagsIds?: number[]) {
-    if (this.files.length > 0) {
-      this.files = []
+    if (this.taggables.length > 0) {
+      this.taggables = []
       this.change()
     }
 
-    this.files = await window.fileApi.getFiles(tagsIds)
+    this.taggables = await window.taggableApi.getTaggables(tagsIds)
     this.change()
   }
 
@@ -74,7 +74,7 @@ export class FileManager {
         isIndexing: this.isIndexing,
         filesIndexed: this.filesIndexed,
         total: this.total,
-        files: this.files
+        taggables: this.taggables
       })
   }
 

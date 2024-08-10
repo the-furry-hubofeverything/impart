@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 
 export interface IndexedDirectoriesSettingsProps {
-  directories?: Impart.IndexedDirectory[]
+  directories?: Impart.Directory[]
   onChange?: () => void
 }
 
@@ -33,7 +33,7 @@ export function IndexedDirectoriesSettings({
           variant="contained"
           size="small"
           onClick={async () => {
-            await window.fileApi.selectAndIndexDirectory()
+            await window.taggableApi.selectAndIndexDirectory()
             onChange && onChange()
           }}
         >
