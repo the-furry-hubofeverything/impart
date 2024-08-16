@@ -4,7 +4,7 @@ import { BOX_HEIGHT, BOX_WIDTH } from './TaggableDisplay'
 import { useAsyncData } from '../useAsyncData'
 
 export interface ImageDisplayProps {
-  image: Impart.IndexedImage
+  image: Impart.TaggableImage
 }
 
 export function ImageDisplay({ image }: ImageDisplayProps) {
@@ -22,7 +22,7 @@ export function ImageDisplay({ image }: ImageDisplayProps) {
   return (
     <Box
       component="img"
-      src={`data:image/${image.fileName.endsWith('png') ? 'png' : 'jpg'};base64,${isLoading ? image.pinkynail : thumbnail}`}
+      src={`data:image/${image.fileIndex.fileName.endsWith('png') ? 'png' : 'jpg'};base64,${isLoading ? image.pinkynail : thumbnail}`}
       borderRadius={2}
       width={targetWidth}
       height={targetHeight}

@@ -1,9 +1,20 @@
-import { Stack, Box, Typography, Divider, Grid, Chip, IconButton } from '@mui/material'
+import {
+  Stack,
+  Box,
+  Typography,
+  Divider,
+  Grid,
+  IconButton,
+  Button,
+  Chip,
+  TextField
+} from '@mui/material'
 import { useTags } from '@renderer/TagProvider'
 import AddIcon from '@mui/icons-material/Add'
-import { useMultiSelection } from './useMultiSelection'
-import { useEffect, useMemo, useState } from 'react'
-import { Tag } from './Tag'
+import { useMultiSelection } from '../useMultiSelection'
+import { useMemo } from 'react'
+import { Tag } from '../Tag'
+import SparkleIcon from '@mui/icons-material/AutoAwesome'
 
 export interface TagSelectorProps {
   selection?: Impart.Tag[]
@@ -11,7 +22,7 @@ export interface TagSelectorProps {
 }
 
 export function TagSelector({ selection, onChange }: TagSelectorProps) {
-  const { data: groups } = useTags()
+  const { data: groups, isLoading } = useTags()
   const tags = useMemo(() => groups?.flatMap((g) => g.tags) ?? [], [groups])
 
   const { selectItem, itemIsSelected } = useMultiSelection(
@@ -21,6 +32,17 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
     (a, b) => a.id === b.id,
     { toggleMode: true }
   )
+
+  if (!isLoading && groups?.length === 0) {
+    return (
+      <Stack alignItems="center" gap={2} pt={5}>
+        <Typography>No tag groups have been created yet!</Typography>
+        <Button variant="contained" startIcon={<SparkleIcon />} color="success">
+          Create New Group
+        </Button>
+      </Stack>
+    )
+  }
 
   return (
     <Stack gap={2}>

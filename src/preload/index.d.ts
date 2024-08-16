@@ -9,18 +9,14 @@ declare global {
       height: number
     }
 
-    interface Indexable {
-      id: number
+    interface FileIndex {
       path: string
       fileName: string
     }
 
-    interface IndexedImage extends Indexable {
-      dimensions: Dimensions
-      pinkynail: string
-    }
-
-    interface IndexedFile extends Indexable {}
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+    //TAGGABLE
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
     interface BaseTaggable {
       id: number
@@ -33,12 +29,13 @@ declare global {
     }
 
     interface TaggableImage extends BaseTaggable {
-      image: IndexedImage
-      sourceFile?: IndexedFile
+      fileIndex: FileIndex
+      dimensions: Dimensions
+      pinkynail: string
     }
 
     interface TaggableFile extends BaseTaggable {
-      file: IndexedFile
+      fileIndex: FileIndex
     }
 
     type Taggable = TaggableImage | TaggableFile
@@ -46,6 +43,10 @@ declare global {
     interface Directory {
       path: string
     }
+
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+    //TAGS
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
     interface Tag {
       id: number
@@ -55,7 +56,9 @@ declare global {
 
     interface TagGroup {
       id: number
-      label: string
+      label?: string
+      order?: number
+      defaultTagColor?: string
       tags: Tag[]
     }
   }

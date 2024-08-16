@@ -33,7 +33,7 @@ export function useAsyncDataCallback<
     }
   }, deps)
 
-  return { data, isLoading, error, executeRequest }
+  return { data, setData, isLoading, error, executeRequest }
 }
 
 export function useAsyncData<T>(
@@ -44,6 +44,7 @@ export function useAsyncData<T>(
   const [isLoading, setIsLoading] = useState(true)
   const {
     data,
+    setData,
     error,
     isLoading: callbackIsLoading,
     executeRequest
@@ -59,6 +60,7 @@ export function useAsyncData<T>(
 
   return {
     data,
+    setData,
     isLoading: isLoading || callbackIsLoading,
     error,
     executeRequest

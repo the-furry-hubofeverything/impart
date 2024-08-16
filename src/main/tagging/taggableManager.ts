@@ -58,9 +58,9 @@ class TaggableManager {
     let taggable: Taggable
 
     if (extension === '.jpg' || extension === '.jpeg' || extension === '.png') {
-      taggable = TaggableImage.create({ image: await indexingManager.indexImage(fullPath) })
+      taggable = await indexingManager.indexImage(fullPath)
     } else {
-      taggable = TaggableFile.create({ file: await indexingManager.indexFile(fullPath) })
+      taggable = await indexingManager.indexFile(fullPath)
     }
 
     await taggable.save()

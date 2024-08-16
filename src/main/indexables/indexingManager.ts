@@ -3,9 +3,9 @@ import { existsSync, mkdirSync } from 'fs'
 import sharp from 'sharp'
 import { Thumbnail } from '../database/entities/Thumbnail'
 import path from 'path'
-import { IndexedImage } from '../database/entities/IndexedImage'
-import { IndexedFile } from '../database/entities/IndexedFile'
-import { Indexable } from '../database/entities/Indexable'
+import { TaggableImage, isTaggableImage } from '../database/entities/TaggableImage'
+import { TaggableFile, isTaggableFile } from '../database/entities/TaggableFile'
+import { Taggable } from '../database/entities/Taggable'
 
 class IndexingManager {
   private targetPath: string | undefined
@@ -18,31 +18,31 @@ class IndexingManager {
     return this.targetPath
   }
 
-  public async getThumbnail(indexedImageId: number) {
-    const indexedImage = await IndexedImage.findOne({
-      where: { id: indexedImageId },
+  public async getThumbnail(imageId: number) {
+    const taggableImage = await TaggableImage.findOne({
+      where: { id: imageId },
       relations: { thumbnail: true }
     })
 
-    if (!indexedImage) {
-      throw new Error(`Could not find IndexedImage with ID ${indexedImageId}`)
+    if (!taggableImage) {
+      throw new Error(`Could not find TaggableImage with ID ${imageId}`)
     }
 
-    let thumbnail = indexedImage.thumbnail
+    let thumbnail = taggableImage.thumbnail
 
     if (!thumbnail) {
-      thumbnail = await this.buildThumbnail(indexedImage.path)
+      thumbnail = await this.buildThumbnail(taggableImage.fileIndex.path)
 
-      indexedImage.thumbnail = thumbnail
-      indexedImage.save()
+      taggableImage.thumbnail = thumbnail
+      taggableImage.save()
     }
 
-    return await this.getBase64(indexedImage)
+    return await this.getBase64(taggableImage)
   }
 
   public async indexImage(filePath: string) {
     console.log('Indexing Image: ', filePath)
-    let indexedImage = await IndexedImage.findOneBy({ path: filePath })
+    let indexedImage = await TaggableImage.findOneBy({ fileIndex: { path: filePath } })
 
     if (!indexedImage) {
       indexedImage = await this.buildImage(filePath)
@@ -59,9 +59,11 @@ class IndexingManager {
       this.buildPinkynail(filePath)
     ])
 
-    const indexedImage = IndexedImage.create({
-      path: filePath,
-      fileName: path.basename(filePath),
+    const indexedImage = TaggableImage.create({
+      fileIndex: {
+        path: filePath,
+        fileName: path.basename(filePath)
+      },
       dimensions: {
         width: image.width,
         height: image.height
@@ -116,19 +118,18 @@ class IndexingManager {
     return buffer.toString('base64')
   }
 
-  private async getBase64(image: IndexedImage) {
-    return (await sharp(image.path).toBuffer()).toString('base64')
+  private async getBase64(image: TaggableImage) {
+    return (await sharp(image.fileIndex.path).toBuffer()).toString('base64')
   }
 
   public async indexFile(filePath: string) {
     console.log('Indexing File: ', filePath)
 
-    let indexedFile = await IndexedFile.findOneBy({ path: filePath })
+    let indexedFile = await TaggableFile.findOneBy({ fileIndex: { path: filePath } })
 
     if (!indexedFile) {
-      indexedFile = IndexedFile.create({
-        path: filePath,
-        fileName: path.basename(filePath)
+      indexedFile = TaggableFile.create({
+        fileIndex: { path: filePath, fileName: path.basename(filePath) }
       })
 
       await indexedFile.save()
@@ -138,13 +139,15 @@ class IndexingManager {
   }
 
   public async openFile(taggableId: number) {
-    const target = await Indexable.findOneBy({ id: taggableId })
+    const target = await Taggable.findOneBy({ id: taggableId })
 
     if (!target) {
       throw new Error(`Could not find taggable with Id ${taggableId}`)
     }
 
-    await shell.openPath(target.path)
+    if (isTaggableFile(target) || isTaggableImage(target)) {
+      await shell.openPath(target.fileIndex.path)
+    }
   }
 }
 

@@ -38,11 +38,9 @@ export function TaggableDisplay({
         }
       }}
       onClick={(e) => onClick && onClick({ ctrl: e.ctrlKey, shift: e.shiftKey })}
-      onDoubleClick={() =>
-        window.fileApi.openFile(isTaggableFile(taggable) ? taggable.file.id : taggable.image.id)
-      }
+      onDoubleClick={() => window.fileApi.openFile(taggable.id)}
     >
-      {isTaggableImage(taggable) && <ImageDisplay image={taggable.image} />}
+      {isTaggableImage(taggable) && <ImageDisplay image={taggable} />}
       {isTaggableFile(taggable) && (
         <Stack width={BOX_WIDTH} px={2} alignItems="center" justifyContent="center">
           <InsertDriveFileIcon sx={{ fontSize: 120 }} />
@@ -50,7 +48,7 @@ export function TaggableDisplay({
       )}
       <Box maxWidth={BOX_WIDTH} pt={0.25}>
         <Typography textAlign="center" variant="caption" sx={{ wordBreak: 'break-all' }}>
-          {isTaggableFile(taggable) ? taggable.file.fileName : taggable.image.fileName}
+          {taggable.fileIndex.fileName}
         </Typography>
       </Box>
     </Stack>

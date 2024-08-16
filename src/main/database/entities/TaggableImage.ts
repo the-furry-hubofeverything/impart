@@ -2,20 +2,24 @@ import { ChildEntity, Column, JoinColumn, OneToOne } from 'typeorm'
 import { Dimensions } from './Dimensions'
 import { Thumbnail } from './Thumbnail'
 import { Taggable } from './Taggable'
-import { IndexedImage } from './IndexedImage'
-import { IndexedFile } from './IndexedFile'
+import { FileIndex } from './FileIndex'
 
 @ChildEntity()
 export class TaggableImage extends Taggable {
-  @OneToOne(() => IndexedImage, { eager: true })
-  @JoinColumn()
-  image: IndexedImage
+  @Column()
+  pinkynail: string
 
-  @OneToOne(() => IndexedFile)
+  @Column(() => FileIndex)
+  fileIndex: FileIndex
+
+  @Column(() => Dimensions)
+  dimensions: Dimensions
+
+  @OneToOne(() => Thumbnail, { nullable: true, cascade: true })
   @JoinColumn()
-  sourceFile?: IndexedFile
+  thumbnail?: Thumbnail
 }
 
 export function isTaggableImage(t: Taggable): t is TaggableImage {
-  return (t as TaggableImage).image != null
+  return (t as TaggableImage).pinkynail != null
 }

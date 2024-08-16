@@ -7,6 +7,7 @@ import { setupTaggableApi } from './api/taggableApi'
 import { setupFileApi } from './api/fileApi'
 import { AppDataSource } from './database/database'
 import { setupTagApi } from './api/tagApi'
+import { seedGroups } from './database/seed'
 
 interface ImpartApp {
   mainWindow?: BrowserWindow
@@ -63,6 +64,7 @@ app.whenReady().then(async () => {
   })
 
   await AppDataSource.initialize()
+  seedGroups()
 
   setupFileApi()
   setupTaggableApi()
