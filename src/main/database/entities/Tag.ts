@@ -8,11 +8,14 @@ export class Tag extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ nullable: false })
-  label: string
+  @Column({ nullable: true })
+  label?: string
 
-  @Column({ nullable: false })
-  color: string
+  @Column({ nullable: true })
+  order: number
+
+  @Column({ nullable: true })
+  color?: string
 
   @ManyToOne(() => TagGroup, (g) => g.tags)
   group: TagGroup

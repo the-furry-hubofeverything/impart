@@ -14,7 +14,7 @@ export function Tag({ tag, selected, onClick }: TagProps) {
       onClick={() => onClick && onClick()}
       sx={(theme) => ({
         bgcolor: tag.color,
-        color: theme.palette.getContrastText(tag.color),
+        color: tag.color ? theme.palette.getContrastText(tag.color) : undefined,
         boxShadow: selected
           ? `0px 0px 0px 2px ${theme.palette.secondary.light}, 0px 0px 0px 5px ${theme.palette.secondary.dark}`
           : undefined,
@@ -22,7 +22,7 @@ export function Tag({ tag, selected, onClick }: TagProps) {
         '&:hover': {
           opacity: 0.8,
           bgcolor: tag.color,
-          color: theme.palette.getContrastText(tag.color)
+          color: tag.color ? theme.palette.getContrastText(tag.color) : undefined
         }
       })}
     />

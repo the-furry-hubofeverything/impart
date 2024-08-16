@@ -50,14 +50,15 @@ declare global {
 
     interface Tag {
       id: number
-      label: string
-      color: string
+      label?: string
+      order: number
+      color?: string
     }
 
     interface TagGroup {
       id: number
       label?: string
-      order?: number
+      order: number
       defaultTagColor?: string
       tags: Tag[]
     }
@@ -84,6 +85,8 @@ declare global {
     tagApi: {
       getGroups: () => Promise<Impart.TagGroup[]>
       editFileTags: (fileId: number, tagIds: number[]) => Promise<void>
+      createGroup: () => Promise<Impart.TagGroup>
+      createTag: () => Promise<Impart.Tag>
     }
   }
 }

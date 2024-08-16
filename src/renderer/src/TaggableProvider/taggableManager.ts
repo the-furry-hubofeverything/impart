@@ -32,7 +32,7 @@ export class TaggableManager {
         this.isIndexing = true
         this.filesIndexed = 0
         this.total = e.filesFound
-        this.change()
+        this.sync()
       })
     )
 
@@ -40,7 +40,7 @@ export class TaggableManager {
       window.fileApi.onFileIndexed((t) => {
         this.filesIndexed++
         this.taggables.push(t)
-        this.change()
+        this.sync()
       })
     )
 
@@ -48,7 +48,7 @@ export class TaggableManager {
       window.fileApi.onIndexingEnded(() => {
         setTimeout(() => {
           this.isIndexing = false
-          this.change()
+          this.sync()
         }, 3000)
       })
     )
@@ -61,14 +61,14 @@ export class TaggableManager {
   public async fetchAll(tagsIds?: number[]) {
     if (this.taggables.length > 0) {
       this.taggables = []
-      this.change()
+      this.sync()
     }
 
     this.taggables = await window.taggableApi.getTaggables(tagsIds)
-    this.change()
+    this.sync()
   }
 
-  private change() {
+  private sync() {
     this.onChange &&
       this.onChange({
         isIndexing: this.isIndexing,

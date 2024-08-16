@@ -31,6 +31,30 @@ class TagManager {
     file.tags = tags
     await file.save()
   }
+
+  public async createGroup() {
+    const maxOrder = await TagGroup.maximum('order', {})
+
+    const group = TagGroup.create({
+      order: (maxOrder ?? 0) + 1
+    })
+    await group.save()
+
+    return group
+  }
+
+  public async createTag(groupId: number) {
+    const maxOrder = await Tag.maximum('order', { group: { id: groupId } })
+
+    const tag = Tag.create({
+      order: (maxOrder ?? 0) + 1,
+      group: { id: groupId }
+    })
+
+    await tag.save()
+
+    return tag
+  }
 }
 
 export const tagManager = new TagManager()

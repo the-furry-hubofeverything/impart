@@ -6,11 +6,11 @@ export class TagGroup extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column()
+  @Column({ nullable: true })
   label?: string
 
-  @Column()
-  order?: number
+  @Column({ nullable: false })
+  order: number
 
   @Column({ nullable: true })
   defaultTagColor?: string
