@@ -15,7 +15,7 @@ export function TaggingPanel({}: TaggingPanelProps) {
 
   return (
     <Card sx={{ flex: 1 }}>
-      <CardContent>
+      <CardContent sx={{ height: '100%' }}>
         <TagSelector selection={selection} onChange={setSelection} />
       </CardContent>
     </Card>

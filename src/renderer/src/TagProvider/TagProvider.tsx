@@ -1,9 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import update, { Spec } from 'immutability-helper'
 
 interface TagData {
   groups?: Impart.TagGroup[]
   createGroup: () => Promise<void>
   editGroup: (...params: Parameters<typeof window.tagApi.editGroup>) => Promise<void>
+  createTag: (grouupId: number) => Promise<void>
 }
 
 const TagContext = createContext<TagData | null>(null)
@@ -44,8 +46,20 @@ export function TagProvider({ children }: TagProviderProps) {
     [groups]
   )
 
+  const createTag = useCallback(
+    async (groupId: number) => {
+      const tag = await window.tagApi.createTag(groupId)
+
+      const groupIndex = groups?.findIndex((g) => g.id === groupId) ?? -1
+      setGroups(update(groups, { [groupIndex]: { tags: { $push: [tag] } } }))
+    },
+    [groups]
+  )
+
   return (
-    <TagContext.Provider value={{ groups, createGroup, editGroup }}>{children}</TagContext.Provider>
+    <TagContext.Provider value={{ groups, createGroup, editGroup, createTag }}>
+      {children}
+    </TagContext.Provider>
   )
 }
 

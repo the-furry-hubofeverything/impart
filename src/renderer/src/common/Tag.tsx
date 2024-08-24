@@ -1,5 +1,5 @@
-import { Chip } from '@mui/material'
-import React from 'react'
+import { Chip, Paper, TextField } from '@mui/material'
+import React, { useState } from 'react'
 
 export interface TagProps {
   tag: Impart.Tag
@@ -8,23 +8,35 @@ export interface TagProps {
 }
 
 export function Tag({ tag, selected, onClick }: TagProps) {
-  return (
-    <Chip
-      label={tag.label}
-      onClick={() => onClick && onClick()}
-      sx={(theme) => ({
-        bgcolor: tag.color,
-        color: tag.color ? theme.palette.getContrastText(tag.color) : undefined,
-        boxShadow: selected
-          ? `0px 0px 0px 2px ${theme.palette.secondary.light}, 0px 0px 0px 5px ${theme.palette.secondary.dark}`
-          : undefined,
+  const [editMode, setEditMode] = useState(false)
 
-        '&:hover': {
-          opacity: 0.8,
+  if (editMode) {
+    return (
+      <Paper sx={{ bgcolor: tag.color }}>
+        <TextField />
+      </Paper>
+    )
+  }
+
+  return (
+    <>
+      <Chip
+        label={tag.label ?? 'Unnamed Tag'}
+        onClick={() => onClick && onClick()}
+        sx={(theme) => ({
           bgcolor: tag.color,
-          color: tag.color ? theme.palette.getContrastText(tag.color) : undefined
-        }
-      })}
-    />
+          color: tag.color ? theme.palette.getContrastText(tag.color) : undefined,
+          boxShadow: selected
+            ? `0px 0px 0px 2px ${theme.palette.secondary.light}, 0px 0px 0px 5px ${theme.palette.secondary.dark}`
+            : undefined,
+
+          '&:hover': {
+            opacity: 0.8,
+            bgcolor: tag.color,
+            color: tag.color ? theme.palette.getContrastText(tag.color) : undefined
+          }
+        })}
+      />
+    </>
   )
 }

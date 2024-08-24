@@ -26,7 +26,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
   const { groups, createGroup } = useTagGroups()
   const tags = useMemo(() => groups?.flatMap((g) => g.tags ?? []) ?? [], [groups])
 
-  const { selectItem, itemIsSelected } = useMultiSelection(
+  const { selectItem } = useMultiSelection(
     tags,
     selection ?? [],
     onChange,
@@ -51,7 +51,19 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
   }
 
   return (
-    <Stack gap={2}>
+    <Stack
+      gap={2}
+      height="100%"
+      sx={{
+        '& .MuiButton-root': {
+          opacity: 0,
+          transition: '0.2s'
+        },
+        '&:hover .MuiButton-root': {
+          opacity: 1
+        }
+      }}
+    >
       {groups?.map((g) => (
         <TagGroup key={g.id} group={g} selectedTags={selection} onSelect={selectItem} />
       ))}

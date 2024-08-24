@@ -15,7 +15,7 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
   const [internalLabel, setInternalLabel] = useState(group.label)
   const [editMode, setEditMode] = useState(false)
 
-  const { editGroup } = useTagGroups()
+  const { editGroup, createTag } = useTagGroups()
 
   const update = async () => {
     await editGroup(group.id, internalLabel)
@@ -45,6 +45,11 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
             value={internalLabel}
             onChange={(e) => setInternalLabel(e.currentTarget.value)}
             onBlur={update}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                update()
+              }
+            }}
           />
         </Stack>
       )}
@@ -70,7 +75,7 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
           </Grid>
         ))}
         <Grid item>
-          <IconButton size="small">
+          <IconButton size="small" onClick={() => createTag(group.id)}>
             <AddIcon />
           </IconButton>
         </Grid>

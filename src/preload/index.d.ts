@@ -87,7 +87,7 @@ declare global {
       editFileTags: (fileId: number, tagIds: number[]) => Promise<void>
       createGroup: () => Promise<Impart.TagGroup>
       editGroup: (id: number, label?: string, defaultTagColor?: string) => Promise<Impart.TagGroup>
-      createTag: () => Promise<Impart.Tag>
+      createTag: (groupId: number) => Promise<Impart.Tag>
     }
   }
 }
