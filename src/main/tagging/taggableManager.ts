@@ -7,8 +7,6 @@ import { sleep } from '../common/sleep'
 import { fileMessenger } from '../indexables/indexMessenger'
 import { impartApp } from '..'
 import { Taggable } from '../database/entities/Taggable'
-import { TaggableFile } from '../database/entities/TaggableFile'
-import { TaggableImage } from '../database/entities/TaggableImage'
 
 class TaggableManager {
   public async getIndexedDirectories() {

@@ -64,7 +64,7 @@ app.whenReady().then(async () => {
   })
 
   await AppDataSource.initialize()
-  seedGroups()
+  // seedGroups()
 
   setupFileApi()
   setupTaggableApi()

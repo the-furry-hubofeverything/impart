@@ -23,8 +23,8 @@ export interface TagSelectorProps {
 }
 
 export function TagSelector({ selection, onChange }: TagSelectorProps) {
-  const { groups } = useTagGroups()
-  const tags = useMemo(() => groups?.flatMap((g) => g.tags) ?? [], [groups])
+  const { groups, createGroup } = useTagGroups()
+  const tags = useMemo(() => groups?.flatMap((g) => g.tags ?? []) ?? [], [groups])
 
   const { selectItem, itemIsSelected } = useMultiSelection(
     tags,
@@ -38,7 +38,12 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
     return (
       <Stack alignItems="center" gap={2} pt={5}>
         <Typography>No tag groups have been created yet!</Typography>
-        <Button variant="contained" startIcon={<SparkleIcon />} color="success">
+        <Button
+          variant="contained"
+          startIcon={<SparkleIcon />}
+          color="success"
+          onClick={createGroup}
+        >
           Create New Group
         </Button>
       </Stack>
@@ -48,15 +53,9 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
   return (
     <Stack gap={2}>
       {groups?.map((g) => (
-        <TagGroup
-          key={g.id}
-          group={g}
-          startInEditMode={g.freshlyCreated}
-          selectedTags={selection}
-          onSelect={selectItem}
-        />
+        <TagGroup key={g.id} group={g} selectedTags={selection} onSelect={selectItem} />
       ))}
-      <Button>
+      <Button onClick={createGroup}>
         <AddIcon />
       </Button>
     </Stack>

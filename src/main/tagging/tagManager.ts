@@ -7,7 +7,7 @@ class TagManager {
   public async getTagGroups() {
     const groups = await TagGroup.find({
       order: {
-        order: 'ASC'
+        groupOrder: 'ASC'
       }
     })
 
@@ -33,21 +33,32 @@ class TagManager {
   }
 
   public async createGroup() {
-    const maxOrder = await TagGroup.maximum('order', {})
+    const maxOrder = await TagGroup.maximum('groupOrder', {})
 
     const group = TagGroup.create({
-      order: (maxOrder ?? 0) + 1
+      groupOrder: (maxOrder ?? 0) + 1
     })
     await group.save()
 
     return group
   }
 
+  public async editGroup(id: number, label?: string, defaultTagColor?: string) {
+    const groupEntity = await TagGroup.findOneByOrFail({ id })
+
+    groupEntity.label = label
+    groupEntity.defaultTagColor = defaultTagColor
+
+    await groupEntity.save()
+
+    return groupEntity
+  }
+
   public async createTag(groupId: number) {
-    const maxOrder = await Tag.maximum('order', { group: { id: groupId } })
+    const maxOrder = await Tag.maximum('tagOrder', { group: { id: groupId } })
 
     const tag = Tag.create({
-      order: (maxOrder ?? 0) + 1,
+      tagOrder: (maxOrder ?? 0) + 1,
       group: { id: groupId }
     })
 

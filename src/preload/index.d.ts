@@ -51,16 +51,16 @@ declare global {
     interface Tag {
       id: number
       label?: string
-      order: number
+      tagOrder: number
       color?: string
     }
 
     interface TagGroup {
       id: number
       label?: string
-      order: number
+      groupOrder: number
       defaultTagColor?: string
-      tags: Tag[]
+      tags?: Tag[]
     }
   }
 
@@ -86,6 +86,7 @@ declare global {
       getGroups: () => Promise<Impart.TagGroup[]>
       editFileTags: (fileId: number, tagIds: number[]) => Promise<void>
       createGroup: () => Promise<Impart.TagGroup>
+      editGroup: (id: number, label?: string, defaultTagColor?: string) => Promise<Impart.TagGroup>
       createTag: () => Promise<Impart.Tag>
     }
   }

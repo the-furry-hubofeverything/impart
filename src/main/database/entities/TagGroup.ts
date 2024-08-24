@@ -10,7 +10,7 @@ export class TagGroup extends BaseEntity {
   label?: string
 
   @Column({ nullable: false })
-  order: number
+  groupOrder: number
 
   @Column({ nullable: true })
   defaultTagColor?: string

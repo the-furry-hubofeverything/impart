@@ -12,7 +12,7 @@ export class Tag extends BaseEntity {
   label?: string
 
   @Column({ nullable: true })
-  order: number
+  tagOrder: number
 
   @Column({ nullable: true })
   color?: string

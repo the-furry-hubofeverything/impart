@@ -1,8 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { TagManager, TagState } from './tagManager'
 
-interface TagData extends TagState {
-  ready: boolean
+interface TagData {
+  groups?: Impart.TagGroup[]
+  createGroup: () => Promise<void>
+  editGroup: (id: number, label?: string, defaultTagColor?: string) => Promise<void>
 }
 
 const TagContext = createContext<TagData | null>(null)
@@ -12,24 +13,38 @@ export interface TagProviderProps {
 }
 
 export function TagProvider({ children }: TagProviderProps) {
-  const [ready, setReady] = useState(false)
-  const [state, setState] = useState<TagState>(TagManager.getInitialState())
-  const fileManagerRef = useRef<TagManager>()
+  const [groups, setGroups] = useState<Impart.TagGroup[]>()
 
   useEffect(() => {
-    fileManagerRef.current = new TagManager()
-    fileManagerRef.current.setOnChange(setState)
-    setReady(true)
-
-    fileManagerRef.current.loadGroups()
-
-    return () => {
-      fileManagerRef.current = undefined
-      setReady(false)
-    }
+    ;(async () => {
+      setGroups(await window.tagApi.getGroups())
+    })()
   }, [])
 
-  return <TagContext.Provider value={{ ...state, ready }}>{children}</TagContext.Provider>
+  const createGroup = useCallback(async () => {
+    const group = await window.tagApi.createGroup()
+    setGroups((g) => g?.concat([group]))
+  }, [])
+
+  const editGroup = useCallback(
+    async (id: number, label?: string, defaultTagColor?: string) => {
+      const group = await window.tagApi.editGroup(id, label, defaultTagColor)
+      const copy = groups?.slice()
+
+      copy?.splice(
+        copy.findIndex((c) => c.id === id),
+        1,
+        group
+      )
+
+      setGroups(copy)
+    },
+    [groups]
+  )
+
+  return (
+    <TagContext.Provider value={{ groups, createGroup, editGroup }}>{children}</TagContext.Provider>
+  )
 }
 
 export function useTagGroups() {
