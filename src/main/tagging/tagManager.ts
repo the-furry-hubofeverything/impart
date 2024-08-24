@@ -66,6 +66,17 @@ export class TagManager {
 
     return tag
   }
+
+  public async editTag(tagId: number, label?: string, color?: string) {
+    const tagEntity = await Tag.findOneByOrFail({ id: tagId })
+
+    tagEntity.label = label
+    tagEntity.color = color
+
+    await tagEntity.save()
+
+    return tagEntity
+  }
 }
 
 export const tagManager = new TagManager()

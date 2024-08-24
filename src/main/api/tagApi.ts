@@ -16,4 +16,9 @@ export function setupTagApi() {
   )
 
   ipcMain.handle('tag/createTag', (e, groupId: number) => tagManager.createTag(groupId))
+  ipcMain.handle(
+    'tag/editTag',
+    (e, ...params: Parameters<InstanceType<typeof TagManager>['editTag']>) =>
+      tagManager.editTag(...params)
+  )
 }

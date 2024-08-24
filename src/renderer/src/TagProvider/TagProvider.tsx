@@ -1,11 +1,27 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import update, { Spec } from 'immutability-helper'
 
+function findTagAndGroupIndex(tagId: number, groups: Impart.TagGroup[]) {
+  for (const [groupIndex, group] of groups.entries()) {
+    const tagIndex = group.tags?.findIndex((t) => t.id === tagId)
+
+    if (tagIndex != null && tagIndex != -1) {
+      return {
+        tagIndex,
+        groupIndex
+      }
+    }
+  }
+
+  return null
+}
+
 interface TagData {
   groups?: Impart.TagGroup[]
   createGroup: () => Promise<void>
   editGroup: (...params: Parameters<typeof window.tagApi.editGroup>) => Promise<void>
   createTag: (grouupId: number) => Promise<void>
+  editTag: (...params: Parameters<typeof window.tagApi.editTag>) => Promise<void>
 }
 
 const TagContext = createContext<TagData | null>(null)
@@ -56,8 +72,28 @@ export function TagProvider({ children }: TagProviderProps) {
     [groups]
   )
 
+  const editTag = useCallback(
+    async (...params: Parameters<typeof window.tagApi.editTag>) => {
+      const tag = window.tagApi.editTag(...params)
+      const [id, label, color] = params
+
+      const indices = findTagAndGroupIndex(id, groups ?? [])
+      if (!indices) {
+        throw new Error('Tried to update non-existent tag')
+      }
+
+      const { tagIndex, groupIndex } = indices
+      setGroups(
+        update(groups, {
+          [groupIndex]: { tags: { [tagIndex]: { label: { $set: label }, color: { $set: color } } } }
+        })
+      )
+    },
+    [groups]
+  )
+
   return (
-    <TagContext.Provider value={{ groups, createGroup, editGroup, createTag }}>
+    <TagContext.Provider value={{ groups, createGroup, editGroup, createTag, editTag }}>
       {children}
     </TagContext.Provider>
   )

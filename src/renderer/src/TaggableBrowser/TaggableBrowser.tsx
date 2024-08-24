@@ -6,9 +6,10 @@ import { TaggingPanel } from './TaggingPanel'
 import { useTaggables } from '@renderer/TaggableProvider'
 import { IndexingPanel } from './IndexingPanel'
 import { useMultiSelection } from '@renderer/common/useMultiSelection'
-import { useContextMenu } from '@renderer/common/useContextMenu'
+import { useContextMenu } from '@renderer/common/ContextMenu/useContextMenu'
 import FileOpenIcon from '@mui/icons-material/FileOpen'
 import TagIcon from '@mui/icons-material/LocalOffer'
+import { ContextMenu } from '@renderer/common/ContextMenu'
 
 export interface TaggableBrowserProps {
   onSettingsPressed?: (button: 'directories') => void
@@ -16,7 +17,6 @@ export interface TaggableBrowserProps {
 }
 
 export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrowserProps) {
-  const { anchorPosition, closeMenu, open: menuOpen, handleContextMenu } = useContextMenu()
   const { fetchAllTaggables, ready, taggables, isIndexing } = useTaggables()
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
@@ -37,8 +37,37 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
     <>
       <Stack direction="row" p={1} gap={1} height="100vh">
         <Stack flex={1} overflow="auto" pr={1} gap={2}>
-          <Stack position="sticky" top={4}></Stack>
-          <Box flex={1}>
+          <ContextMenu
+            flex={1}
+            options={(closeMenu) => [
+              <MenuItem
+                key={1}
+                onClick={() => {
+                  window.fileApi.openFile(selection[0].id)
+                  closeMenu()
+                }}
+                disabled={selection.length > 1}
+              >
+                <ListItemIcon>
+                  <FileOpenIcon />
+                </ListItemIcon>
+                <ListItemText>Open</ListItemText>
+              </MenuItem>,
+              <MenuItem
+                key={2}
+                onClick={() => {
+                  onEditTags && onEditTags(selection[0])
+                  closeMenu()
+                }}
+                disabled={selection.length > 1}
+              >
+                <ListItemIcon>
+                  <TagIcon />
+                </ListItemIcon>
+                <ListItemText>Edit Tags</ListItemText>
+              </MenuItem>
+            ]}
+          >
             <TaggableGrid
               taggables={taggables}
               selection={selection}
@@ -47,11 +76,9 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
                 if (!itemIsSelected(image)) {
                   selectItem(image)
                 }
-
-                handleContextMenu(e)
               }}
             />
-          </Box>
+          </ContextMenu>
         </Stack>
         <Box minWidth={300} flex={0.25}>
           <Stack width="100%" height="100%">
@@ -67,37 +94,6 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
           </Stack>
         </Box>
       </Stack>
-      <Menu
-        open={menuOpen}
-        onClose={closeMenu}
-        anchorReference="anchorPosition"
-        anchorPosition={anchorPosition}
-      >
-        <MenuItem
-          onClick={() => {
-            window.fileApi.openFile(selection[0].id)
-            closeMenu()
-          }}
-          disabled={selection.length > 1}
-        >
-          <ListItemIcon>
-            <FileOpenIcon />
-          </ListItemIcon>
-          <ListItemText>Open</ListItemText>
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            onEditTags && onEditTags(selection[0])
-            closeMenu()
-          }}
-          disabled={selection.length > 1}
-        >
-          <ListItemIcon>
-            <TagIcon />
-          </ListItemIcon>
-          <ListItemText>Edit Tags</ListItemText>
-        </MenuItem>
-      </Menu>
     </>
   )
 }

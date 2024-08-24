@@ -1,5 +1,8 @@
-import { Chip, Paper, TextField } from '@mui/material'
+import { Box, Chip, ListItemIcon, ListItemText, MenuItem, Paper, TextField } from '@mui/material'
 import React, { useState } from 'react'
+import { ContextMenu } from './ContextMenu'
+import EditIcon from '@mui/icons-material/Edit'
+import { useTagGroups } from '@renderer/TagProvider'
 
 export interface TagProps {
   tag: Impart.Tag
@@ -8,35 +11,72 @@ export interface TagProps {
 }
 
 export function Tag({ tag, selected, onClick }: TagProps) {
-  const [editMode, setEditMode] = useState(false)
+  const [editMode, setEditMode] = useState(true)
+  const [internalLabel, setInternalLabel] = useState(tag.label ?? '')
+
+  const { editTag } = useTagGroups()
+
+  const edit = async () => {
+    await editTag(tag.id, internalLabel, tag.color)
+    setEditMode(false)
+  }
 
   if (editMode) {
     return (
-      <Paper sx={{ bgcolor: tag.color }}>
-        <TextField />
+      <Paper sx={{ bgcolor: tag.color ?? 'primary.main', borderRadius: 5 }}>
+        <Box px={0.5} py={0.5}>
+          <TextField
+            size="small"
+            placeholder="Tag Name"
+            value={internalLabel}
+            onChange={(e) => setInternalLabel(e.currentTarget.value)}
+            // onBlur={edit}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                edit()
+              }
+            }}
+            sx={{ width: Math.max(90, internalLabel.length * 5.5 + 35) }}
+            InputProps={{ sx: { borderRadius: 4, bgcolor: 'rgb(255 255 255 / 50%)' } }}
+          />
+        </Box>
       </Paper>
     )
   }
 
   return (
-    <>
+    <ContextMenu
+      options={(close) => [
+        <MenuItem
+          onClick={() => {
+            setEditMode(true)
+            close()
+          }}
+        >
+          <ListItemIcon>
+            <EditIcon />
+          </ListItemIcon>
+          <ListItemText>Edit</ListItemText>
+        </MenuItem>
+      ]}
+    >
       <Chip
-        label={tag.label ?? 'Unnamed Tag'}
+        label={tag.label ? tag.label : 'Unnamed Tag'}
         onClick={() => onClick && onClick()}
         sx={(theme) => ({
-          bgcolor: tag.color,
-          color: tag.color ? theme.palette.getContrastText(tag.color) : undefined,
+          bgcolor: tag.color ?? 'primary.main',
+          color: theme.palette.getContrastText(tag.color ?? theme.palette.primary.main),
           boxShadow: selected
             ? `0px 0px 0px 2px ${theme.palette.secondary.light}, 0px 0px 0px 5px ${theme.palette.secondary.dark}`
             : undefined,
 
           '&:hover': {
             opacity: 0.8,
-            bgcolor: tag.color,
-            color: tag.color ? theme.palette.getContrastText(tag.color) : undefined
+            bgcolor: tag.color ?? 'primary.main',
+            color: theme.palette.getContrastText(tag.color ?? theme.palette.primary.main)
           }
         })}
       />
-    </>
+    </ContextMenu>
   )
 }
