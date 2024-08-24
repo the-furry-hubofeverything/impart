@@ -1,6 +1,5 @@
 import { ipcMain } from 'electron'
-import { tagManager } from '../tagging/tagManager'
-import { TagGroup } from '../database/entities/TagGroup'
+import { TagManager, tagManager } from '../tagging/tagManager'
 
 export function setupTagApi() {
   ipcMain.handle('tag/getGroups', () => tagManager.getTagGroups())
@@ -10,8 +9,10 @@ export function setupTagApi() {
   )
 
   ipcMain.handle('tag/createGroup', () => tagManager.createGroup())
-  ipcMain.handle('tag/editGroup', (e, id: number, label?: string, defaultTagColor?: string) =>
-    tagManager.editGroup(id, label, defaultTagColor)
+  ipcMain.handle(
+    'tag/editGroup',
+    (e, ...params: Parameters<InstanceType<typeof TagManager>['editGroup']>) =>
+      tagManager.editGroup(...params)
   )
 
   ipcMain.handle('tag/createTag', (e, groupId: number) => tagManager.createTag(groupId))

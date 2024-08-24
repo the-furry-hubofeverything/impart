@@ -3,7 +3,7 @@ import { TagGroup } from '../database/entities/TagGroup'
 import { TaggableImage } from '../database/entities/TaggableImage'
 import { In } from 'typeorm'
 
-class TagManager {
+export class TagManager {
   public async getTagGroups() {
     const groups = await TagGroup.find({
       order: {
