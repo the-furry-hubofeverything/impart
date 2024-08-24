@@ -36,7 +36,7 @@ export function Tag({ tag, selected, onClick }: TagProps) {
                 edit()
               }
             }}
-            sx={{ width: Math.max(90, internalLabel.length * 5.5 + 35) }}
+            sx={{ width: internalLabel == '' ? 90 : internalLabel.length * 5.5 + 35 }}
             InputProps={{ sx: { borderRadius: 4, bgcolor: 'rgb(255 255 255 / 50%)' } }}
           />
         </Box>
