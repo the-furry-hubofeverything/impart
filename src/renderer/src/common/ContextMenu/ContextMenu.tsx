@@ -1,9 +1,16 @@
-import { Box, BoxProps, Menu } from '@mui/material'
+import { Box, BoxProps, Divider, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
 import React from 'react'
 import { useContextMenu } from './useContextMenu'
 
+export interface ContextMenuOption {
+  label: React.ReactNode
+  icon?: React.ReactNode
+  disabled?: boolean
+  onClick?: () => void
+}
+
 export interface ContextMenuProps extends BoxProps {
-  options?: (close: () => void) => React.ReactNode[]
+  options?: (ContextMenuOption | 'divider')[]
 }
 
 export function ContextMenu({ options, children, ...boxProps }: ContextMenuProps) {
@@ -20,7 +27,23 @@ export function ContextMenu({ options, children, ...boxProps }: ContextMenuProps
         anchorReference="anchorPosition"
         anchorPosition={anchorPosition}
       >
-        {options && options(closeMenu)}
+        {options?.map((o, index) =>
+          o === 'divider' ? (
+            <Divider key={index} />
+          ) : (
+            <MenuItem
+              key={index}
+              onClick={() => {
+                o.onClick && o.onClick()
+                closeMenu()
+              }}
+              disabled={o.disabled}
+            >
+              {o.icon && <ListItemIcon>{o.icon}</ListItemIcon>}
+              <ListItemText inset={!o.icon}>{o.label}</ListItemText>
+            </MenuItem>
+          )
+        )}
       </Menu>
     </>
   )

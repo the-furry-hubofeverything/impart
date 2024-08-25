@@ -56,47 +56,26 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
         <Stack flex={1} overflow="auto" pr={1} gap={2}>
           <ContextMenu
             flex={1}
-            options={(closeMenu) => [
-              <MenuItem
-                key={1}
-                onClick={() => {
-                  window.fileApi.openFile(selection[0].id)
-                  closeMenu()
-                }}
-                disabled={selection.length > 1}
-              >
-                <ListItemIcon>
-                  <FileOpenIcon />
-                </ListItemIcon>
-                <ListItemText>Open</ListItemText>
-              </MenuItem>,
-              <MenuItem
-                key={2}
-                onClick={() => {
-                  window.fileApi.openFile(selectedImage!.source!.id)
-                  closeMenu()
-                }}
-                disabled={!selectedImage || selectedImage.source == null}
-              >
-                <ListItemIcon>
-                  <BrushIcon />
-                </ListItemIcon>
-                <ListItemText>Open Source</ListItemText>
-              </MenuItem>,
-              <Divider key="wow" />,
-              <MenuItem
-                key={3}
-                onClick={() => {
-                  onEditTags && onEditTags(selection[0])
-                  closeMenu()
-                }}
-                disabled={selection.length > 1}
-              >
-                <ListItemIcon>
-                  <TagIcon />
-                </ListItemIcon>
-                <ListItemText>Edit Tags</ListItemText>
-              </MenuItem>
+            options={[
+              {
+                icon: <FileOpenIcon />,
+                label: 'Open',
+                disabled: selection.length > 1,
+                onClick: () => window.fileApi.openFile(selection[0].id)
+              },
+              {
+                icon: <BrushIcon />,
+                label: 'Open Source',
+                disabled: !selectedImage || selectedImage.source == null,
+                onClick: () => window.fileApi.openFile(selectedImage!.source!.id)
+              },
+              'divider',
+              {
+                icon: <TagIcon />,
+                label: 'Edit Tags',
+                disabled: selection.length > 1,
+                onClick: () => onEditTags && onEditTags(selection[0])
+              }
             ]}
           >
             <TaggableGrid

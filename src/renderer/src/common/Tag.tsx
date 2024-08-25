@@ -46,18 +46,12 @@ export function Tag({ tag, selected, onClick }: TagProps) {
 
   return (
     <ContextMenu
-      options={(close) => [
-        <MenuItem
-          onClick={() => {
-            setEditMode(true)
-            close()
-          }}
-        >
-          <ListItemIcon>
-            <EditIcon />
-          </ListItemIcon>
-          <ListItemText>Edit</ListItemText>
-        </MenuItem>
+      options={[
+        {
+          icon: <EditIcon />,
+          label: 'Edit',
+          onClick: () => setEditMode(true)
+        }
       ]}
     >
       <Chip
