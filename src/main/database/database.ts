@@ -15,5 +15,5 @@ export const AppDataSource = new DataSource({
   entities: [Directory, Tag, TagGroup, Taggable, TaggableFile, TaggableImage],
   synchronize: true,
   // dropSchema: true,
-  logging: app.isPackaged ? false : ['error', 'warn', 'info', 'query']
+  logging: app.isPackaged ? false : ['error', 'warn', 'info']
 })

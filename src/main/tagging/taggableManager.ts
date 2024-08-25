@@ -52,7 +52,7 @@ class TaggableManager {
     await sleep(delay)
     const fullPath = `${directory}/${fileName}`
 
-    const extension = path.extname(fullPath)
+    const extension = path.extname(fullPath).toLocaleLowerCase()
 
     if (extension === '.jpg' || extension === '.jpeg' || extension === '.png') {
       await indexingManager.indexImage(fullPath)
@@ -70,13 +70,16 @@ class TaggableManager {
       Array.from(tagIds).forEach((t, index) => {
         const alias = `tags${index}`
         const variable = `id${index}`
-        query = query.innerJoin('files.tags', alias, `${alias}.id = :${variable}`, {
+        query.innerJoin('files.tags', alias, `${alias}.id = :${variable}`, {
           [variable]: t
         })
       })
     }
 
-    query.leftJoin('files.images', 'associatedImages').where('associatedImages.id IS NULL')
+    query
+      .leftJoin('files.images', 'associatedImages')
+      .where('associatedImages.id IS NULL')
+      .orderBy('files.fileIndex.fileName')
 
     return await query.getMany()
   }

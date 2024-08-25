@@ -1,4 +1,13 @@
-import { Stack, Box, Collapse, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material'
+import {
+  Stack,
+  Box,
+  Collapse,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Divider
+} from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { TaggableGrid } from './TaggableGrid'
 import { SettingsPanel } from './SettingsPanel'
@@ -10,6 +19,8 @@ import { useContextMenu } from '@renderer/common/ContextMenu/useContextMenu'
 import FileOpenIcon from '@mui/icons-material/FileOpen'
 import TagIcon from '@mui/icons-material/LocalOffer'
 import { ContextMenu } from '@renderer/common/ContextMenu'
+import { isTaggableFile, isTaggableImage } from '@renderer/common/taggable'
+import BrushIcon from '@mui/icons-material/Brush'
 
 export interface TaggableBrowserProps {
   onSettingsPressed?: (button: 'directories') => void
@@ -33,6 +44,12 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
     }
   }, [fetchAllTaggables, ready])
 
+  let selectedImage: Impart.TaggableImage | undefined = undefined
+
+  if (selection.length > 0 && isTaggableImage(selection[0])) {
+    selectedImage = selection[0]
+  }
+
   return (
     <>
       <Stack direction="row" p={1} gap={1} height="100vh">
@@ -55,6 +72,20 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
               </MenuItem>,
               <MenuItem
                 key={2}
+                onClick={() => {
+                  window.fileApi.openFile(selectedImage!.source!.id)
+                  closeMenu()
+                }}
+                disabled={!selectedImage || selectedImage.source == null}
+              >
+                <ListItemIcon>
+                  <BrushIcon />
+                </ListItemIcon>
+                <ListItemText>Open Source</ListItemText>
+              </MenuItem>,
+              <Divider key="wow" />,
+              <MenuItem
+                key={3}
                 onClick={() => {
                   onEditTags && onEditTags(selection[0])
                   closeMenu()
