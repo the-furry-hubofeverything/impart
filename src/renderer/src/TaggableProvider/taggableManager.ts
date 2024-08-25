@@ -1,3 +1,5 @@
+import { isTaggableImage } from '@renderer/common/taggable'
+
 export interface TaggableState {
   isIndexing: boolean
   filesIndexed: number
@@ -37,9 +39,47 @@ export class TaggableManager {
     )
 
     this.listeners.push(
-      window.fileApi.onFileIndexed((t) => {
+      window.fileApi.onFileIndexed((indexedTaggable) => {
         this.filesIndexed++
-        this.taggables.push(t)
+
+        if (isTaggableImage(indexedTaggable)) {
+          this.taggables.push(indexedTaggable)
+
+          //Remove the source from the display in case it beat the file here
+          if (indexedTaggable.source != null) {
+            const fileIndex = this.taggables.findIndex((t) => t.id === indexedTaggable.source?.id)
+
+            if (fileIndex != -1) {
+              this.taggables.splice(fileIndex, 1)
+            }
+          }
+        } else if (
+          !this.taggables.some((t) => isTaggableImage(t) && t.source?.id == indexedTaggable.id)
+        ) {
+          //Otherwise, since we have a file, we only want to add it if it isn't the source of
+          // another image
+          this.taggables.push(indexedTaggable)
+        }
+
+        this.sync()
+      })
+    )
+
+    this.listeners.push(
+      window.fileApi.onSourceFileAssociated(({ file, image }) => {
+        //Find the image and update its source
+        const taggableImage = this.taggables.find((t) => t.id === image.id)
+        if (taggableImage && isTaggableImage(taggableImage)) {
+          taggableImage.source = file
+        }
+
+        //Remove the taggable file if it's currently being displayed
+        const fileIndex = this.taggables.findIndex((t) => t.id === file.id)
+
+        if (fileIndex != -1) {
+          this.taggables.splice(fileIndex, 1)
+        }
+
         this.sync()
       })
     )

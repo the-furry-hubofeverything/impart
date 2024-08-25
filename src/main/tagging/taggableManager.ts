@@ -53,16 +53,12 @@ class TaggableManager {
     const fullPath = `${directory}/${fileName}`
 
     const extension = path.extname(fullPath)
-    let taggable: Taggable
 
     if (extension === '.jpg' || extension === '.jpeg' || extension === '.png') {
-      taggable = await indexingManager.indexImage(fullPath)
+      await indexingManager.indexImage(fullPath)
     } else {
-      taggable = await indexingManager.indexFile(fullPath)
+      await indexingManager.indexFile(fullPath)
     }
-
-    await taggable.save()
-    fileMessenger.fileIndexed(taggable)
   }
 
   public async getTaggables(tagIds?: number[]) {
@@ -79,6 +75,8 @@ class TaggableManager {
         })
       })
     }
+
+    query.leftJoin('files.images', 'associatedImages').where('associatedImages.id IS NULL')
 
     return await query.getMany()
   }

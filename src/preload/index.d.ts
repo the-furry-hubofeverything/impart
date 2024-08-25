@@ -26,6 +26,7 @@ declare global {
     interface TaggableImage extends BaseTaggable {
       fileIndex: FileIndex
       dimensions: Dimensions
+      source?: TaggableFile
     }
 
     interface TaggableFile extends BaseTaggable {
@@ -66,6 +67,10 @@ declare global {
 
       onIndexingStarted: CallbackFunc<{ filesFound: number }>
       onFileIndexed: CallbackFunc<Impart.Taggable>
+      onSourceFileAssociated: CallbackFunc<{
+        image: Impart.TaggableImage
+        file: Impart.TaggableFile
+      }>
       onIndexingEnded: CallbackFunc<void>
     }
 

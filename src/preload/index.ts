@@ -25,6 +25,7 @@ contextBridge.exposeInMainWorld('fileApi', {
 
   onIndexingStarted: generateCallback('file/indexingStarted'),
   onFileIndexed: generateCallback('file/fileIndexed'),
+  onSourceFileAssociated: generateCallback('file/sourceFileAssociated'),
   onIndexingEnded: generateCallback('file/indexingEnded')
 })
 

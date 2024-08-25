@@ -14,6 +14,6 @@ export const AppDataSource = new DataSource({
   database: app.isPackaged ? `${path}/impart/app/db.sqlite` : `${path}/impart/dev/db.sqlite`,
   entities: [Directory, Tag, TagGroup, Taggable, TaggableFile, TaggableImage],
   synchronize: true,
-  dropSchema: true,
-  logging: app.isPackaged ? false : ['error', 'warn', 'info']
+  // dropSchema: true,
+  logging: app.isPackaged ? false : ['error', 'warn', 'info', 'query']
 })
