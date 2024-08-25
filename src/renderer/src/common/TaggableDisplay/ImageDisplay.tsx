@@ -22,7 +22,7 @@ export function ImageDisplay({ image }: ImageDisplayProps) {
   return (
     <Box
       component="img"
-      src={`data:image/${image.fileIndex.fileName.endsWith('png') ? 'png' : 'jpg'};base64,${isLoading ? image.pinkynail : thumbnail}`}
+      src={`thum:///${image.fileIndex.path}`}
       borderRadius={2}
       width={targetWidth}
       height={targetHeight}

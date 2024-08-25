@@ -15,7 +15,7 @@ export class TaggableImage extends Taggable {
   @Column(() => Dimensions)
   dimensions: Dimensions
 
-  @OneToOne(() => Thumbnail, { nullable: true, cascade: true })
+  @OneToOne(() => Thumbnail, { nullable: true, cascade: true, eager: true })
   @JoinColumn()
   thumbnail?: Thumbnail
 }

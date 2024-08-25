@@ -25,6 +25,8 @@ declare global {
 
     interface Thumbnail {
       id: number
+      path: string
+      fileName: string
       dimensions: Dimensions
     }
 
@@ -32,6 +34,7 @@ declare global {
       fileIndex: FileIndex
       dimensions: Dimensions
       pinkynail: string
+      thumbnail: Thumbnail
     }
 
     interface TaggableFile extends BaseTaggable {

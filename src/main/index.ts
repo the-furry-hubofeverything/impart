@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, protocol, net, nativeImage } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -8,6 +8,8 @@ import { setupFileApi } from './api/fileApi'
 import { AppDataSource } from './database/database'
 import { setupTagApi } from './api/tagApi'
 import { seedGroups } from './database/seed'
+import path from 'path'
+import url from 'url'
 
 interface ImpartApp {
   mainWindow?: BrowserWindow
@@ -55,6 +57,18 @@ function createWindow(): void {
 app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
+
+  protocol.handle('thum', async (request) => {
+    let url = request.url.slice('thum:///'.length).replaceAll('/', '\\').replaceAll('%20', ' ')
+    // The Windows implementation will ignore size.height and scale the height according to size.width.
+    const image = await nativeImage.createThumbnailFromPath(url, {
+      width: 400,
+      height: 400
+    })
+    return new Response(image.toPNG(), {
+      headers: { 'content-type': 'image/png' }
+    })
+  })
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
