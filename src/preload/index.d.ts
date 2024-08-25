@@ -23,18 +23,9 @@ declare global {
       tags: Impart.Tag[]
     }
 
-    interface Thumbnail {
-      id: number
-      path: string
-      fileName: string
-      dimensions: Dimensions
-    }
-
     interface TaggableImage extends BaseTaggable {
       fileIndex: FileIndex
       dimensions: Dimensions
-      pinkynail: string
-      thumbnail: Thumbnail
     }
 
     interface TaggableFile extends BaseTaggable {
@@ -71,7 +62,6 @@ declare global {
     electron: ElectronAPI
 
     fileApi: {
-      getThumbnail: (imageId: number) => Promise<string>
       openFile: (indexableId: number) => void
 
       onIndexingStarted: CallbackFunc<{ filesFound: number }>

@@ -8,11 +8,6 @@ export interface ImageDisplayProps {
 }
 
 export function ImageDisplay({ image }: ImageDisplayProps) {
-  const { data: thumbnail, isLoading } = useAsyncData(
-    () => window.fileApi.getThumbnail(image.id),
-    [image]
-  )
-
   const boxRatio = BOX_WIDTH / BOX_HEIGHT
   const aspectRatio = image.dimensions.width / image.dimensions.height
 

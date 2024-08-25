@@ -10,5 +10,5 @@ export class TaggableFile extends Taggable {
 }
 
 export function isTaggableFile(t: Taggable): t is TaggableFile {
-  return (t as TaggableImage).pinkynail == null
+  return (t as TaggableImage).dimensions == null
 }

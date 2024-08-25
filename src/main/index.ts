@@ -8,8 +8,6 @@ import { setupFileApi } from './api/fileApi'
 import { AppDataSource } from './database/database'
 import { setupTagApi } from './api/tagApi'
 import { seedGroups } from './database/seed'
-import path from 'path'
-import url from 'url'
 
 interface ImpartApp {
   mainWindow?: BrowserWindow
@@ -65,6 +63,13 @@ app.whenReady().then(async () => {
       width: 400,
       height: 400
     })
+
+    if (url.endsWith('jpg') || url.endsWith('jpeg')) {
+      return new Response(image.toJPEG(100), {
+        headers: { 'content-type': 'image/jpg' }
+      })
+    }
+
     return new Response(image.toPNG(), {
       headers: { 'content-type': 'image/png' }
     })
