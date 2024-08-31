@@ -1,9 +1,23 @@
-import { Box, Typography, Divider, Grid, IconButton, Stack, TextField } from '@mui/material'
+import {
+  Box,
+  Typography,
+  Divider,
+  Grid,
+  IconButton,
+  Stack,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button
+} from '@mui/material'
 import React, { useState } from 'react'
 import { Tag } from '../Tag'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import { useTagGroups } from '@renderer/TagProvider'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 export interface TagGroupProps {
   group: Impart.TagGroup
@@ -15,11 +29,21 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
   const [internalLabel, setInternalLabel] = useState(group.label)
   const [editMode, setEditMode] = useState(false)
 
-  const { editGroup, createTag } = useTagGroups()
+  const { editGroup, createTag, deleteGroup } = useTagGroups()
+
+  const [showRemoveWarning, setShowRemoveWarning] = useState(false)
 
   const update = async () => {
     await editGroup(group.id, internalLabel)
     setEditMode(false)
+  }
+
+  const remove = () => {
+    if ((group.tags?.length ?? 0) > 0) {
+      setShowRemoveWarning(true)
+    } else {
+      deleteGroup(group.id)
+    }
   }
 
   return (
@@ -59,6 +83,9 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
             <Typography variant="h5" onClick={() => setEditMode(true)}>
               {group.label ?? 'Unnamed Group'}
             </Typography>
+            <IconButton color="error" onClick={remove}>
+              <DeleteIcon />
+            </IconButton>
           </Stack>
           <Divider />
         </>
@@ -80,6 +107,23 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
           </IconButton>
         </Grid>
       </Grid>
+      <Dialog open={showRemoveWarning} onClose={() => setShowRemoveWarning(false)}>
+        <DialogTitle>Remove Group?</DialogTitle>
+        <DialogContent>
+          This will remove {group.tags?.length} tags as well. This action cannot be reversed.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowRemoveWarning(false)}>Cancel</Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={() => deleteGroup(group.id)}
+          >
+            Remove
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }

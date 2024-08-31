@@ -15,6 +15,6 @@ export class TagGroup extends BaseEntity {
   @Column({ nullable: true })
   defaultTagColor?: string
 
-  @OneToMany(() => Tag, (t) => t.group, { cascade: true, eager: true })
+  @OneToMany(() => Tag, (t) => t.group, { cascade: true, eager: true, onDelete: 'CASCADE' })
   tags: Tag[]
 }

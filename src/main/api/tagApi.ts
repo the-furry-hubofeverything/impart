@@ -14,6 +14,11 @@ export function setupTagApi() {
     (e, ...params: Parameters<InstanceType<typeof TagManager>['editGroup']>) =>
       tagManager.editGroup(...params)
   )
+  ipcMain.handle(
+    'tag/deleteGroup',
+    (e, ...params: Parameters<InstanceType<typeof TagManager>['deleteGroup']>) =>
+      tagManager.deleteGroup(...params)
+  )
 
   ipcMain.handle('tag/createTag', (e, groupId: number) => tagManager.createTag(groupId))
   ipcMain.handle(

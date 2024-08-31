@@ -54,6 +54,11 @@ export class TagManager {
     return groupEntity
   }
 
+  public async deleteGroup(id: number) {
+    const groupEntity = await TagGroup.findOneByOrFail({ id })
+    await groupEntity.remove()
+  }
+
   public async createTag(groupId: number) {
     const maxOrder = await Tag.maximum('tagOrder', { group: { id: groupId } })
 

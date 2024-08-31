@@ -83,8 +83,11 @@ declare global {
     tagApi: {
       getGroups: () => Promise<Impart.TagGroup[]>
       editFileTags: (fileId: number, tagIds: number[]) => Promise<void>
+
       createGroup: () => Promise<Impart.TagGroup>
       editGroup: (id: number, label?: string, defaultTagColor?: string) => Promise<Impart.TagGroup>
+      deleteGroup: (id: number) => Promise<void>
+
       createTag: (groupId: number) => Promise<Impart.Tag>
       editTag: (tagId: number, label?: string, color?: string) => Promise<Impart.Tag>
     }

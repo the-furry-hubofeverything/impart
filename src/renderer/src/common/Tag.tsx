@@ -51,8 +51,7 @@ export function Tag({ tag, selected, onClick }: TagProps) {
         {
           icon: <EditIcon />,
           label: 'Edit',
-          onClick: () => setEditMode(true),
-          shortcut: 'Dbl Clk'
+          onClick: () => setEditMode(true)
         }
       ]}
     >
