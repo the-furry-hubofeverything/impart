@@ -53,7 +53,7 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
   return (
     <>
       <Stack direction="row" gap={1} height="100vh">
-        <Stack flex={1} pr={1} gap={2}>
+        <Stack overflow="auto" flex={1} pr={1} gap={2}>
           <ContextMenu
             flex={1}
             options={[

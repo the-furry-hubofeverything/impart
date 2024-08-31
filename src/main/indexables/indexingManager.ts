@@ -9,6 +9,7 @@ import { fileMessenger } from './indexMessenger'
 import { Directory } from '../database/entities/Directory'
 import { impartApp } from '..'
 import { sleep } from '../common/sleep'
+import { imageSize } from 'image-size'
 
 async function delay(call: () => Promise<any>, delay: number) {
   await sleep(delay)
@@ -49,7 +50,7 @@ class IndexingManager {
     fileMessenger.indexingStepStarted(files.length, 'indexing')
 
     await Promise.all(
-      files.map((fileName, index) => delay(() => this.index(directory.path, fileName), index * 50))
+      files.map((fileName, index) => delay(() => this.index(directory.path, fileName), index * 20))
     )
 
     const unsourcedImages = await TaggableImage.findBy({ source: IsNull() })
@@ -83,14 +84,12 @@ class IndexingManager {
       return indexedImage
     }
 
-    const image = nativeImage.createFromPath(filePath)
-
     indexedImage = TaggableImage.create({
       fileIndex: {
         path: filePath,
         fileName: path.basename(filePath)
       },
-      dimensions: image.getSize()
+      dimensions: imageSize(filePath)
     })
 
     await indexedImage.save()
