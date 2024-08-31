@@ -2,6 +2,7 @@ import { isTaggableImage } from '@renderer/common/taggable'
 
 export interface TaggableState {
   isIndexing: boolean
+  indexingStep?: Impart.IndexingStep
   filesIndexed: number
   total: number
   taggables: Impart.Taggable[]
@@ -14,6 +15,7 @@ export class TaggableManager {
   private onChange?: OnChangeCallback
 
   private isIndexing = false
+  private indexingStep?: Impart.IndexingStep
   private filesIndexed = 0
   private total = 0
 
@@ -30,8 +32,9 @@ export class TaggableManager {
 
   public constructor() {
     this.listeners.push(
-      window.fileApi.onIndexingStarted((e) => {
+      window.fileApi.onIndexingStepStarted((e) => {
         this.isIndexing = true
+        this.indexingStep = e.step
         this.filesIndexed = 0
         this.total = e.filesFound
         this.sync()
@@ -40,8 +43,6 @@ export class TaggableManager {
 
     this.listeners.push(
       window.fileApi.onFileIndexed((indexedTaggable) => {
-        this.filesIndexed++
-
         if (isTaggableImage(indexedTaggable)) {
           this.taggables.push(indexedTaggable)
 
@@ -85,9 +86,16 @@ export class TaggableManager {
     )
 
     this.listeners.push(
+      window.fileApi.onStepProgress(() => {
+        this.filesIndexed++
+      })
+    )
+
+    this.listeners.push(
       window.fileApi.onIndexingEnded(() => {
         setTimeout(() => {
           this.isIndexing = false
+          this.indexingStep = undefined
           this.sync()
         }, 3000)
       })
@@ -112,6 +120,7 @@ export class TaggableManager {
     this.onChange &&
       this.onChange({
         isIndexing: this.isIndexing,
+        indexingStep: this.indexingStep,
         filesIndexed: this.filesIndexed,
         total: this.total,
         taggables: this.taggables

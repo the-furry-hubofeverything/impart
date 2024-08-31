@@ -57,6 +57,12 @@ declare global {
       defaultTagColor?: string
       tags?: Tag[]
     }
+
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+    //MISC
+    //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+
+    type IndexingStep = 'indexing' | 'sourceAssociation'
   }
 
   interface Window {
@@ -65,12 +71,13 @@ declare global {
     fileApi: {
       openFile: (indexableId: number) => void
 
-      onIndexingStarted: CallbackFunc<{ filesFound: number }>
+      onIndexingStepStarted: CallbackFunc<{ filesFound: number; step: Impart.IndexingStep }>
       onFileIndexed: CallbackFunc<Impart.Taggable>
       onSourceFileAssociated: CallbackFunc<{
         image: Impart.TaggableImage
         file: Impart.TaggableFile
       }>
+      onStepProgress: CallbackFunc<void>
       onIndexingEnded: CallbackFunc<void>
     }
 

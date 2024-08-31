@@ -23,9 +23,10 @@ contextBridge.exposeInMainWorld('fileApi', {
   getThumbnail: generateEndpoint('file/getThumbnail'),
   openFile: generateCommand('file/openFile'),
 
-  onIndexingStarted: generateCallback('file/indexingStarted'),
+  onIndexingStepStarted: generateCallback('file/indexingStarted'),
   onFileIndexed: generateCallback('file/fileIndexed'),
   onSourceFileAssociated: generateCallback('file/sourceFileAssociated'),
+  onStepProgress: generateCallback('file/madeStepProgress'),
   onIndexingEnded: generateCallback('file/indexingEnded')
 })
 

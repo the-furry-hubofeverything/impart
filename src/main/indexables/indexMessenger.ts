@@ -3,10 +3,13 @@ import { Taggable } from '../database/entities/Taggable'
 import { TaggableFile } from '../database/entities/TaggableFile'
 import { TaggableImage } from '../database/entities/TaggableImage'
 
+type IndexingStep = 'indexing' | 'sourceAssociation'
+
 class FileMessenger {
-  public indexingStarted(filesFound: number) {
+  public indexingStepStarted(filesFound: number, step: IndexingStep) {
     impartApp.mainWindow?.webContents.send('file/indexingStarted', {
-      filesFound
+      filesFound,
+      step
     })
   }
 
@@ -16,6 +19,10 @@ class FileMessenger {
 
   public sourceFileAssociated(image: TaggableImage, file: TaggableFile) {
     impartApp.mainWindow?.webContents.send('file/sourceFileAssociated', { image, file })
+  }
+
+  public madeStepProgress() {
+    impartApp.mainWindow?.webContents.send('file/madeStepProgress')
   }
 
   public indexingEnded() {
