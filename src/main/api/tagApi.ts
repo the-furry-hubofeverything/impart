@@ -26,4 +26,9 @@ export function setupTagApi() {
     (e, ...params: Parameters<InstanceType<typeof TagManager>['editTag']>) =>
       tagManager.editTag(...params)
   )
+  ipcMain.handle(
+    'tag/deleteTag',
+    (e, ...params: Parameters<InstanceType<typeof TagManager>['deleteTag']>) =>
+      tagManager.deleteTag(...params)
+  )
 }

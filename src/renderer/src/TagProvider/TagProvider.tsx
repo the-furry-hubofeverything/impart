@@ -1,13 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { produce } from 'immer'
 
-interface TagData {
+interface TagData extends ReturnType<typeof useTagApi> {
   groups?: Impart.TagGroup[]
-  createGroup: () => Promise<void>
-  editGroup: (...params: Parameters<typeof window.tagApi.editGroup>) => Promise<void>
-  deleteGroup: (...params: Parameters<typeof window.tagApi.deleteGroup>) => Promise<void>
-  createTag: (grouupId: number) => Promise<void>
-  editTag: (...params: Parameters<typeof window.tagApi.editTag>) => Promise<void>
 }
 
 const TagContext = createContext<TagData | null>(null)
@@ -25,6 +20,15 @@ export function TagProvider({ children }: TagProviderProps) {
     })()
   }, [])
 
+  const tagApi = useTagApi(groups, setGroups)
+
+  return <TagContext.Provider value={{ groups, ...tagApi }}>{children}</TagContext.Provider>
+}
+
+function useTagApi(
+  groups: Impart.TagGroup[] | undefined,
+  setGroups: React.Dispatch<React.SetStateAction<Impart.TagGroup[] | undefined>>
+) {
   const createGroup = useCallback(async () => {
     const group = await window.tagApi.createGroup()
     setGroups((g) => g?.concat([group]))
@@ -112,13 +116,27 @@ export function TagProvider({ children }: TagProviderProps) {
     [groups]
   )
 
-  return (
-    <TagContext.Provider
-      value={{ groups, createGroup, editGroup, createTag, editTag, deleteGroup }}
-    >
-      {children}
-    </TagContext.Provider>
+  const deleteTag = useCallback(
+    async (id: number) => {
+      await window.tagApi.deleteTag(id)
+
+      setGroups(
+        produce(groups, (next) => {
+          for (const group of next ?? []) {
+            const tagIndex = group.tags?.findIndex((t) => t.id === id) ?? -1
+
+            if (tagIndex != -1) {
+              group.tags?.splice(tagIndex, 1)
+              return
+            }
+          }
+        })
+      )
+    },
+    [groups]
   )
+
+  return { createGroup, editGroup, deleteGroup, createTag, editTag, deleteTag }
 }
 
 export function useTagGroups() {

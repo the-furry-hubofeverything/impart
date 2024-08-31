@@ -1,8 +1,9 @@
-import { Box, Chip, ListItemIcon, ListItemText, MenuItem, Paper, TextField } from '@mui/material'
-import React, { useState } from 'react'
+import { Box, Chip, Paper, TextField } from '@mui/material'
+import { useState } from 'react'
 import { ContextMenu } from './ContextMenu'
 import EditIcon from '@mui/icons-material/Edit'
 import { useTagGroups } from '@renderer/TagProvider'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 export interface TagProps {
   tag: Impart.Tag
@@ -14,7 +15,7 @@ export function Tag({ tag, selected, onClick }: TagProps) {
   const [editMode, setEditMode] = useState(false)
   const [internalLabel, setInternalLabel] = useState(tag.label ?? '')
 
-  const { editTag } = useTagGroups()
+  const { editTag, deleteTag } = useTagGroups()
 
   const edit = async () => {
     await editTag(tag.id, internalLabel, tag.color)
@@ -52,6 +53,12 @@ export function Tag({ tag, selected, onClick }: TagProps) {
           icon: <EditIcon />,
           label: 'Edit',
           onClick: () => setEditMode(true)
+        },
+        {
+          icon: <DeleteIcon />,
+          label: 'Delete',
+          onClick: () => deleteTag(tag.id),
+          danger: true
         }
       ]}
     >

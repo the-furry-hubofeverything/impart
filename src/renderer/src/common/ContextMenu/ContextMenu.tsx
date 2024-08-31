@@ -16,6 +16,7 @@ export interface ContextMenuOption {
   icon?: React.ReactNode
   shortcut?: string
   disabled?: boolean
+  danger?: boolean
   onClick?: () => void
 }
 
@@ -50,10 +51,19 @@ export function ContextMenu({ options, children, ...boxProps }: ContextMenuProps
               }}
               disabled={o.disabled}
             >
-              {o.icon && <ListItemIcon>{o.icon}</ListItemIcon>}
-              <ListItemText inset={!o.icon}>{o.label}</ListItemText>
+              {o.icon && (
+                <ListItemIcon sx={{ color: o.danger ? 'error.main' : undefined }}>
+                  {o.icon}
+                </ListItemIcon>
+              )}
+              <ListItemText inset={!o.icon} sx={{ color: o.danger ? 'error.dark' : undefined }}>
+                {o.label}
+              </ListItemText>
               {o.shortcut && (
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                <Typography
+                  variant="body2"
+                  sx={{ color: o.danger ? 'error.light' : 'text.secondary' }}
+                >
                   {o.shortcut}
                 </Typography>
               )}

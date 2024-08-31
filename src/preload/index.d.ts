@@ -97,6 +97,7 @@ declare global {
 
       createTag: (groupId: number) => Promise<Impart.Tag>
       editTag: (tagId: number, label?: string, color?: string) => Promise<Impart.Tag>
+      deleteTag: (id: number) => Promise<void>
     }
   }
 }

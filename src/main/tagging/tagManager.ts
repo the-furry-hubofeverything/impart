@@ -82,6 +82,11 @@ export class TagManager {
 
     return tagEntity
   }
+
+  public async deleteTag(id: number) {
+    const tagEntity = await Tag.findOneByOrFail({ id })
+    await tagEntity.remove()
+  }
 }
 
 export const tagManager = new TagManager()
