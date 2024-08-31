@@ -11,7 +11,7 @@ export interface TagProps {
 }
 
 export function Tag({ tag, selected, onClick }: TagProps) {
-  const [editMode, setEditMode] = useState(true)
+  const [editMode, setEditMode] = useState(false)
   const [internalLabel, setInternalLabel] = useState(tag.label ?? '')
 
   const { editTag } = useTagGroups()
@@ -29,14 +29,15 @@ export function Tag({ tag, selected, onClick }: TagProps) {
             size="small"
             placeholder="Tag Name"
             value={internalLabel}
+            autoFocus
             onChange={(e) => setInternalLabel(e.currentTarget.value)}
-            // onBlur={edit}
+            onBlur={edit}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 edit()
               }
             }}
-            sx={{ width: internalLabel == '' ? 90 : internalLabel.length * 5.5 + 35 }}
+            sx={{ width: internalLabel == '' ? 90 : internalLabel.length * 5.5 + 38 }}
             InputProps={{ sx: { borderRadius: 4, bgcolor: 'rgb(255 255 255 / 50%)' } }}
           />
         </Box>
@@ -50,13 +51,14 @@ export function Tag({ tag, selected, onClick }: TagProps) {
         {
           icon: <EditIcon />,
           label: 'Edit',
-          onClick: () => setEditMode(true)
+          onClick: () => setEditMode(true),
+          shortcut: 'Dbl Clk'
         }
       ]}
     >
       <Chip
+        onClick={onClick}
         label={tag.label ? tag.label : 'Unnamed Tag'}
-        onClick={() => onClick && onClick()}
         sx={(theme) => ({
           bgcolor: tag.color ?? 'primary.main',
           color: theme.palette.getContrastText(tag.color ?? theme.palette.primary.main),

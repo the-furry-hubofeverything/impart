@@ -52,7 +52,7 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
 
   return (
     <>
-      <Stack direction="row" p={1} gap={1} height="100vh">
+      <Stack direction="row" gap={1} height="100vh">
         <Stack flex={1} overflow="auto" pr={1} gap={2}>
           <ContextMenu
             flex={1}
@@ -90,7 +90,7 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
             />
           </ContextMenu>
         </Stack>
-        <Box minWidth={300} flex={0.25}>
+        <Box minWidth={300} flex={0.25} py={1} pr={1}>
           <Stack width="100%" height="100%">
             <TaggingPanel />
             <Collapse in={isIndexing}>
