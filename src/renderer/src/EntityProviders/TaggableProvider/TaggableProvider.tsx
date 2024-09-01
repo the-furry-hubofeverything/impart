@@ -3,8 +3,7 @@ import { TaggableManager, TaggableState } from './taggableManager'
 import { useDirectories } from '../DirectoryProvider'
 
 interface TaggableData extends TaggableState {
-  startNewFetch: (tagIds?: number[]) => Promise<void>
-  fetchNext: () => Promise<boolean>
+  fetchTaggables: (options?: Impart.FetchTaggablesOptions) => Promise<void>
 }
 
 const TaggableContext = createContext<TaggableData | null>(null)
@@ -27,15 +26,13 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
     })
   }, [])
 
-  const startNewFetch = useCallback(
-    (tagIds?: number[]) => taggableManager.startNewFetch({ tagIds }),
+  const fetchTaggables = useCallback(
+    (options?: Impart.FetchTaggablesOptions) => taggableManager.fetchTaggables(options),
     []
   )
 
-  const fetchNext = useCallback(() => taggableManager.fetchNext(), [])
-
   return (
-    <TaggableContext.Provider value={{ ...state, startNewFetch, fetchNext }}>
+    <TaggableContext.Provider value={{ ...state, fetchTaggables }}>
       {children}
     </TaggableContext.Provider>
   )

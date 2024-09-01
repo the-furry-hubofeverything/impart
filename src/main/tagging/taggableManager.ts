@@ -5,7 +5,7 @@ export interface FetchTaggablesOptions {
 }
 
 export class TaggableManager {
-  public async getTaggables(page: number, options?: FetchTaggablesOptions) {
+  public async getTaggables(options?: FetchTaggablesOptions) {
     let query = Taggable.createQueryBuilder('files').setFindOptions({
       loadEagerRelations: true
     })
@@ -27,8 +27,6 @@ export class TaggableManager {
       .leftJoin('files.images', 'associatedImages')
       .where('associatedImages.id IS NULL')
       .orderBy('files.fileIndex.fileName')
-      .take(100)
-      .skip((page - 1) * 100)
 
     return await query.getMany()
   }

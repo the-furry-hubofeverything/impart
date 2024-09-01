@@ -7,11 +7,11 @@ export interface TaggingPanelProps {}
 
 export function TaggingPanel({}: TaggingPanelProps) {
   const [selection, setSelection] = useState<Impart.Tag[]>([])
-  const { startNewFetch } = useTaggables()
+  const { fetchTaggables } = useTaggables()
 
   useEffect(() => {
-    startNewFetch(selection.map((t) => t.id))
-  }, [startNewFetch, selection])
+    fetchTaggables({ tagIds: selection.map((t) => t.id) })
+  }, [fetchTaggables, selection])
 
   return (
     <Card sx={{ flex: 1 }}>

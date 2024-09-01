@@ -22,11 +22,11 @@ export function Impart({}: ImpartProps) {
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
-  const { startNewFetch } = useTaggables()
+  const { fetchTaggables } = useTaggables()
 
   useEffect(() => {
-    startNewFetch()
-  }, [startNewFetch])
+    fetchTaggables()
+  }, [fetchTaggables])
 
   const renderContent = () => {
     if (showSettings) {

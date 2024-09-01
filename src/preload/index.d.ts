@@ -90,10 +90,7 @@ declare global {
     }
 
     taggableApi: {
-      getTaggables: (
-        page: number,
-        options?: Impart.FetchTaggablesOptions
-      ) => Promise<Impart.Taggable[]>
+      getTaggables: (options?: Impart.FetchTaggablesOptions) => Promise<Impart.Taggable[]>
     }
 
     tagApi: {
