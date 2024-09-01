@@ -15,7 +15,9 @@ export function ImageDisplay({ image }: ImageDisplayProps) {
   return (
     <Box
       component={'img'}
-      //Loading NEEDS to come before the source
+      //The loading attr NEEDS to go before the src, otherwise chromium
+      // immediately sprints to downloading the image before it reads
+      // the rest of the attributes
       loading="lazy"
       src={`thum:///${image.fileIndex.path}`}
       alt={image.fileIndex.fileName}

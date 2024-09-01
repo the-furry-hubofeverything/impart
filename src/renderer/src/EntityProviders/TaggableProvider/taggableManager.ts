@@ -112,9 +112,6 @@ export class TaggableManager {
   }
 
   public async fetchTaggables(options?: Impart.FetchTaggablesOptions) {
-    this.taggables = []
-    this.sync()
-
     this.taggables = await window.taggableApi.getTaggables(options)
     this.sync()
   }

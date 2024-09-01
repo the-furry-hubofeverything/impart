@@ -29,6 +29,7 @@ declare global {
     interface BaseTaggable {
       id: number
       tags: Impart.Tag[]
+      dateModified: Date
     }
 
     interface TaggableImage extends BaseTaggable {
@@ -45,6 +46,7 @@ declare global {
 
     interface FetchTaggablesOptions {
       tagIds?: number[]
+      order?: 'alpha' | 'date'
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*

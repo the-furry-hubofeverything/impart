@@ -1,5 +1,5 @@
-import { app, dialog, nativeImage, shell } from 'electron'
-import { existsSync, mkdirSync, readdirSync } from 'fs'
+import { shell } from 'electron'
+import { readdirSync, statSync } from 'fs'
 import path from 'path'
 import { TaggableImage, isTaggableImage } from '../database/entities/TaggableImage'
 import { TaggableFile, isTaggableFile } from '../database/entities/TaggableFile'
@@ -7,7 +7,6 @@ import { Taggable } from '../database/entities/Taggable'
 import { IsNull, Like } from 'typeorm'
 import { fileMessenger } from './indexMessenger'
 import { Directory } from '../database/entities/Directory'
-import { impartApp } from '..'
 import { sleep } from '../common/sleep'
 import { imageSize } from 'image-size'
 
@@ -63,7 +62,8 @@ class IndexingManager {
         fileName: path.basename(filePath)
       },
       directory,
-      dimensions: imageSize(filePath)
+      dimensions: imageSize(filePath),
+      dateModified: statSync(filePath).mtime
     })
 
     await indexedImage.save()
@@ -83,7 +83,8 @@ class IndexingManager {
 
     indexedFile = TaggableFile.create({
       fileIndex: { path: filePath, fileName: path.basename(filePath) },
-      directory
+      directory,
+      dateModified: statSync(filePath).mtime
     })
 
     await indexedFile.save()

@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  Column,
   Entity,
   JoinTable,
   ManyToMany,
@@ -23,4 +24,7 @@ export class Taggable extends BaseEntity {
 
   @ManyToOne(() => Directory, { nullable: false, onDelete: 'CASCADE' })
   directory: Directory
+
+  @Column({ nullable: false })
+  dateModified: Date
 }
