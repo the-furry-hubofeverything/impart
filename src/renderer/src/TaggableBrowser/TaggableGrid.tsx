@@ -1,4 +1,5 @@
 import { Grid } from '@mui/material'
+import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
 
 export interface TaggableGridProps {

@@ -23,14 +23,14 @@ export interface IndexedDirectoriesSettingsProps {
 
 export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSettingsProps) {
   const { data: directories, executeRequest: reloadDirectories } = useDirectories()
-  const { fetchAllTaggables } = useTaggables()
+  const { startNewFetch } = useTaggables()
 
   const [targetForDeletion, setTargetForDeletion] = useState<Impart.CountedDirectory>()
   const [showDeleteWarning, setShowDeleteWarning] = useState(false)
 
   const remove = async (path: string) => {
     await window.indexApi.deleteDirectory(path)
-    fetchAllTaggables()
+    startNewFetch()
     reloadDirectories()
   }
 

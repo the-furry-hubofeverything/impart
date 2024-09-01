@@ -1,8 +1,10 @@
 import { ipcMain } from 'electron'
-import { taggableManager } from '../tagging/taggableManager'
+import { TaggableManager, taggableManager } from '../tagging/taggableManager'
 
 export function setupTaggableApi() {
-  ipcMain.handle('taggable/getTaggables', (e, tagIds?: number[]) =>
-    taggableManager.getTaggables(tagIds)
+  ipcMain.handle(
+    'taggable/getTaggables',
+    (e, ...params: Parameters<InstanceType<typeof TaggableManager>['getTaggables']>) =>
+      taggableManager.getTaggables(...params)
   )
 }

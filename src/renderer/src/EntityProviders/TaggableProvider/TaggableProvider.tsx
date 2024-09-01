@@ -3,8 +3,8 @@ import { TaggableManager, TaggableState } from './taggableManager'
 import { useDirectories } from '../DirectoryProvider'
 
 interface TaggableData extends TaggableState {
-  ready: boolean
-  fetchAllTaggables: (tagIds?: number[]) => Promise<void> | undefined
+  startNewFetch: (tagIds?: number[]) => Promise<void>
+  fetchNext: () => Promise<boolean>
 }
 
 const TaggableContext = createContext<TaggableData | null>(null)
@@ -13,36 +13,29 @@ export interface TaggableProviderProps {
   children?: React.ReactNode
 }
 
+const taggableManager = new TaggableManager()
+
 export function TaggableProvider({ children }: TaggableProviderProps) {
-  const [ready, setReady] = useState(false)
   const [state, setState] = useState<TaggableState>(TaggableManager.getInitialState())
-  const fileManagerRef = useRef<TaggableManager>()
   const { executeRequest: reloadDirectories } = useDirectories()
 
   useEffect(() => {
-    console.log('TAGGABLE MANAGER LOADED')
-    fileManagerRef.current = new TaggableManager()
-    fileManagerRef.current.setOnChange(setState)
-    fileManagerRef.current.setOnFinishIndexing(() => {
+    taggableManager.setOnChange(setState)
+    taggableManager.setOnFinishIndexing(() => {
       console.log('Finished indexing, reloading directories')
       reloadDirectories()
     })
-    setReady(true)
+  }, [])
 
-    return () => {
-      fileManagerRef.current?.destroy()
-      fileManagerRef.current = undefined
-      setReady(false)
-    }
-  }, [reloadDirectories])
-
-  const fetchAllTaggables = useCallback(
-    (tagIds?: number[]) => fileManagerRef.current?.fetchAll(tagIds),
-    [fileManagerRef]
+  const startNewFetch = useCallback(
+    (tagIds?: number[]) => taggableManager.startNewFetch({ tagIds }),
+    []
   )
 
+  const fetchNext = useCallback(() => taggableManager.fetchNext(), [])
+
   return (
-    <TaggableContext.Provider value={{ ...state, ready, fetchAllTaggables }}>
+    <TaggableContext.Provider value={{ ...state, startNewFetch, fetchNext }}>
       {children}
     </TaggableContext.Provider>
   )

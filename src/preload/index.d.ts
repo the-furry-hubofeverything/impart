@@ -43,6 +43,10 @@ declare global {
 
     type Taggable = TaggableImage | TaggableFile
 
+    interface FetchTaggablesOptions {
+      tagIds?: number[]
+    }
+
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
     //TAGS
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
@@ -86,7 +90,10 @@ declare global {
     }
 
     taggableApi: {
-      getTaggables: (tagIds?: number[]) => Promise<Impart.Taggable[]>
+      getTaggables: (
+        page: number,
+        options?: Impart.FetchTaggablesOptions
+      ) => Promise<Impart.Taggable[]>
     }
 
     tagApi: {

@@ -16,6 +16,10 @@ export class TaggableManager {
   private onChange?: OnChangeCallback
   private onFinishIndexing?: OnFinishIndexingCallback
 
+  private fetchOptions?: Impart.FetchTaggablesOptions
+  private page = 1
+  private doneFetching = false
+
   private isIndexing = false
   private indexingStep?: Impart.IndexingStep
   private filesIndexed = 0
@@ -111,14 +115,32 @@ export class TaggableManager {
     this.onFinishIndexing = callback
   }
 
-  public async fetchAll(tagsIds?: number[]) {
-    if (this.taggables.length > 0) {
-      this.taggables = []
-      this.sync()
+  public async startNewFetch(options?: Impart.FetchTaggablesOptions) {
+    this.taggables = []
+    this.sync()
+
+    this.page = 0
+    this.fetchOptions = options
+    this.fetchNext()
+    this.sync()
+  }
+
+  public async fetchNext() {
+    if (this.doneFetching) {
+      return true
     }
 
-    this.taggables = await window.taggableApi.getTaggables(tagsIds)
+    this.page++
+    const taggables = await window.taggableApi.getTaggables(this.page, this.fetchOptions)
+
+    if (taggables.length < 100) {
+      this.doneFetching = true
+    }
+
+    this.taggables = this.taggables.concat(taggables)
     this.sync()
+
+    return this.doneFetching
   }
 
   private sync() {

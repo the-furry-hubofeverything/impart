@@ -28,7 +28,7 @@ export interface TaggableBrowserProps {
 }
 
 export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrowserProps) {
-  const { fetchAllTaggables, ready, taggables, isIndexing } = useTaggables()
+  const { taggables, isIndexing, fetchNext } = useTaggables()
   const [showIndexingPanel, setShowIndexingPanel] = useState(false)
 
   useEffect(() => {
@@ -50,22 +50,25 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
     (a, b) => a.id === b.id
   )
 
-  useEffect(() => {
-    if (ready) {
-      fetchAllTaggables()
-    }
-  }, [fetchAllTaggables, ready])
-
   let selectedImage: Impart.TaggableImage | undefined = undefined
 
   if (selection.length > 0 && isTaggableImage(selection[0])) {
     selectedImage = selection[0]
   }
 
+  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const bottom =
+      e.currentTarget.scrollHeight - e.currentTarget.scrollTop === e.currentTarget.clientHeight
+    if (bottom) {
+      console.log('FETCHING NEXT')
+      fetchNext()
+    }
+  }
+
   return (
     <>
       <Stack direction="row" gap={1} height="100vh">
-        <Stack overflow="auto" flex={1} pr={1} gap={2}>
+        <Stack overflow="auto" flex={1} pr={1} gap={2} onScroll={onScroll}>
           <ContextMenu
             flex={1}
             options={[
