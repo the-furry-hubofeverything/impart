@@ -1,13 +1,4 @@
-import {
-  Stack,
-  Box,
-  Collapse,
-  Card,
-  CardActions,
-  ToggleButtonGroup,
-  ToggleButton,
-  Tooltip
-} from '@mui/material'
+import { Stack, Box, Collapse, Card, CardActions } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { TaggableGrid } from './TaggableGrid'
 import { SettingsPanel } from './SettingsPanel'
@@ -15,13 +6,9 @@ import { TaggingPanel } from './TaggingPanel'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { IndexingPanel } from './IndexingPanel'
 import { useMultiSelection } from '@renderer/common/useMultiSelection'
-import FileOpenIcon from '@mui/icons-material/FileOpen'
-import TagIcon from '@mui/icons-material/LocalOffer'
 import { ContextMenu } from '@renderer/common/ContextMenu'
-import { isTaggableImage } from '@renderer/common/taggable'
-import BrushIcon from '@mui/icons-material/Brush'
-import SortByAlphaIcon from '@mui/icons-material/SortByAlpha'
-import ClockIcon from '@mui/icons-material/AccessTime'
+import { GridActions } from './GridActions'
+import { getTaggableContextMenuOptions } from './taggableContextMenuOptions'
 
 export interface TaggableBrowserProps {
   onSettingsPressed?: () => void
@@ -56,68 +43,18 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
     (a, b) => a.id === b.id
   )
 
-  let selectedImage: Impart.TaggableImage | undefined = undefined
-
-  if (selection.length > 0 && isTaggableImage(selection[0])) {
-    selectedImage = selection[0]
-  }
-
   return (
     <>
       <Stack direction="row" gap={1} height="100vh">
         <Stack overflow="auto" position={'relative'} flex={1} pr={1} gap={2}>
           <Box position="sticky" top={8} pl={1}>
             <Card sx={{ opacity: 0.4, transition: '0.2s', '&:hover': { opacity: 1 } }}>
-              <CardActions sx={{ justifyContent: 'flex-end' }}>
-                <ToggleButtonGroup
-                  value={order}
-                  size="small"
-                  exclusive
-                  onChange={(e, value) => {
-                    if (value) {
-                      setFetchOptions({ order: value })
-                    }
-                  }}
-                >
-                  <Tooltip title="Sort Alphabetically">
-                    <ToggleButton value={'alpha'}>
-                      <SortByAlphaIcon />
-                    </ToggleButton>
-                  </Tooltip>
-
-                  <Tooltip title="Sort by Last Modified">
-                    <ToggleButton value={'date'}>
-                      <ClockIcon />
-                    </ToggleButton>
-                  </Tooltip>
-                </ToggleButtonGroup>
+              <CardActions>
+                <GridActions />
               </CardActions>
             </Card>
           </Box>
-          <ContextMenu
-            flex={1}
-            options={[
-              {
-                icon: <FileOpenIcon />,
-                label: 'Open',
-                disabled: selection.length > 1,
-                onClick: () => window.fileApi.openFile(selection[0].id)
-              },
-              {
-                icon: <BrushIcon />,
-                label: 'Open Source',
-                disabled: !selectedImage || selectedImage.source == null,
-                onClick: () => window.fileApi.openFile(selectedImage!.source!.id)
-              },
-              'divider',
-              {
-                icon: <TagIcon />,
-                label: 'Edit Tags',
-                disabled: selection.length > 1,
-                onClick: () => onEditTags && onEditTags(selection[0])
-              }
-            ]}
-          >
+          <ContextMenu flex={1} options={getTaggableContextMenuOptions(selection, onEditTags)}>
             <TaggableGrid
               taggables={taggables}
               selection={selection}
