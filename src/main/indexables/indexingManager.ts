@@ -1,5 +1,5 @@
 import { shell } from 'electron'
-import { readdirSync, statSync } from 'fs'
+import { readdir, stat } from 'fs/promises'
 import path from 'path'
 import { TaggableImage, isTaggableImage } from '../database/entities/TaggableImage'
 import { TaggableFile, isTaggableFile } from '../database/entities/TaggableFile'
@@ -17,7 +17,8 @@ async function delay(call: () => Promise<any>, delay: number) {
 
 class IndexingManager {
   public async indexFiles(directory: Directory) {
-    const files = readdirSync(directory.path)
+    const dirents = await readdir(directory.path, { withFileTypes: true })
+    const files = dirents.filter((dirent) => dirent.isFile()).map((dirent) => dirent.name)
 
     fileMessenger.indexingStepStarted(files.length, 'indexing')
 
@@ -63,7 +64,7 @@ class IndexingManager {
       },
       directory,
       dimensions: imageSize(filePath),
-      dateModified: statSync(filePath).mtime
+      dateModified: (await stat(filePath)).mtime
     })
 
     await indexedImage.save()
@@ -84,7 +85,7 @@ class IndexingManager {
     indexedFile = TaggableFile.create({
       fileIndex: { path: filePath, fileName: path.basename(filePath) },
       directory,
-      dateModified: statSync(filePath).mtime
+      dateModified: (await stat(filePath)).mtime
     })
 
     await indexedFile.save()
