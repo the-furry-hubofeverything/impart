@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { TaggableManager, TaggableState } from './taggableManager'
+import { useDirectories } from '../DirectoryProvider'
 
 interface TaggableData extends TaggableState {
   ready: boolean
@@ -16,10 +17,16 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
   const [ready, setReady] = useState(false)
   const [state, setState] = useState<TaggableState>(TaggableManager.getInitialState())
   const fileManagerRef = useRef<TaggableManager>()
+  const { executeRequest: reloadDirectories } = useDirectories()
 
   useEffect(() => {
+    console.log('TAGGABLE MANAGER LOADED')
     fileManagerRef.current = new TaggableManager()
     fileManagerRef.current.setOnChange(setState)
+    fileManagerRef.current.setOnFinishIndexing(() => {
+      console.log('Finished indexing, reloading directories')
+      reloadDirectories()
+    })
     setReady(true)
 
     return () => {
@@ -27,7 +34,7 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
       fileManagerRef.current = undefined
       setReady(false)
     }
-  }, [])
+  }, [reloadDirectories])
 
   const fetchAllTaggables = useCallback(
     (tagIds?: number[]) => fileManagerRef.current?.fetchAll(tagIds),

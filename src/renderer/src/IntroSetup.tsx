@@ -16,7 +16,7 @@ export function IntroSetup({ reload }: IntroSetupProps) {
         startIcon={<CreateNewFolderIcon />}
         variant="contained"
         onClick={async () => {
-          await window.taggableApi.selectAndIndexDirectory()
+          await window.indexApi.selectAndIndexDirectory()
           reload()
         }}
       >

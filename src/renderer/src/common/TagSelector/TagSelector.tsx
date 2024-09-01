@@ -15,7 +15,7 @@ import { useMemo } from 'react'
 import { Tag } from '../Tag'
 import SparkleIcon from '@mui/icons-material/AutoAwesome'
 import { TagGroup } from './TagGroup'
-import { useTagGroups } from '@renderer/TagProvider'
+import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 
 export interface TagSelectorProps {
   selection?: Impart.Tag[]

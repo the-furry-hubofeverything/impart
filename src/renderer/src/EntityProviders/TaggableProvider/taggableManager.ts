@@ -9,10 +9,12 @@ export interface TaggableState {
 }
 
 type OnChangeCallback = (state: TaggableState) => void
+type OnFinishIndexingCallback = () => void
 
 export class TaggableManager {
   private listeners: (() => void)[] = []
   private onChange?: OnChangeCallback
+  private onFinishIndexing?: OnFinishIndexingCallback
 
   private isIndexing = false
   private indexingStep?: Impart.IndexingStep
@@ -93,17 +95,20 @@ export class TaggableManager {
 
     this.listeners.push(
       window.fileApi.onIndexingEnded(() => {
-        setTimeout(() => {
-          this.isIndexing = false
-          this.indexingStep = undefined
-          this.sync()
-        }, 3000)
+        this.onFinishIndexing && this.onFinishIndexing()
+        this.indexingStep = undefined
+        this.isIndexing = false
+        this.sync()
       })
     )
   }
 
   public setOnChange(callback: OnChangeCallback) {
     this.onChange = callback
+  }
+
+  public setOnFinishIndexing(callback: OnFinishIndexingCallback) {
+    this.onFinishIndexing = callback
   }
 
   public async fetchAll(tagsIds?: number[]) {

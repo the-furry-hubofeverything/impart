@@ -31,9 +31,7 @@ contextBridge.exposeInMainWorld('fileApi', {
 })
 
 contextBridge.exposeInMainWorld('taggableApi', {
-  getTaggables: generateEndpoint('taggable/getTaggables'),
-  selectAndIndexDirectory: generateEndpoint('taggable/selectAndIndexDirectory'),
-  getDirectories: generateEndpoint('taggable/getDirectories')
+  getTaggables: generateEndpoint('taggable/getTaggables')
 })
 
 contextBridge.exposeInMainWorld('tagApi', {
@@ -47,4 +45,10 @@ contextBridge.exposeInMainWorld('tagApi', {
   createTag: generateEndpoint('tag/createTag'),
   editTag: generateEndpoint('tag/editTag'),
   deleteTag: generateEndpoint('tag/deleteTag')
+})
+
+contextBridge.exposeInMainWorld('indexApi', {
+  selectAndIndexDirectory: generateEndpoint('index/selectAndIndexDirectory'),
+  getDirectories: generateEndpoint('index/getDirectories'),
+  deleteDirectory: generateEndpoint('index/deleteDirectory')
 })

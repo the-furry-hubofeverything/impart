@@ -2,7 +2,7 @@ import { Box, Chip, Paper, TextField } from '@mui/material'
 import { useState } from 'react'
 import { ContextMenu } from './ContextMenu'
 import EditIcon from '@mui/icons-material/Edit'
-import { useTagGroups } from '@renderer/TagProvider'
+import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/Delete'
 
 export interface TagProps {
@@ -51,7 +51,7 @@ export function Tag({ tag, selected, onClick }: TagProps) {
       options={[
         {
           icon: <EditIcon />,
-          label: 'Edit',
+          label: 'Edit...',
           onClick: () => setEditMode(true)
         },
         {

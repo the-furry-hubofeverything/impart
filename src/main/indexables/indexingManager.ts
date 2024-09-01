@@ -17,40 +17,13 @@ async function delay(call: () => Promise<any>, delay: number) {
 }
 
 class IndexingManager {
-  public async getIndexedDirectories() {
-    const directories = await Directory.find()
-
-    return directories.map((d) => ({
-      path: d.path
-    }))
-  }
-
-  public async selectAndIndexDirectory() {
-    if (!impartApp.mainWindow) {
-      throw new Error('Tried to open a file dialog without access to the window')
-    }
-
-    const result = dialog.showOpenDialogSync(impartApp.mainWindow, {
-      properties: ['openDirectory']
-    })
-
-    if (!result) {
-      return
-    }
-
-    const directory = Directory.create({ path: result[0] })
-    await directory.save()
-
-    this.indexFiles(directory)
-  }
-
-  private async indexFiles(directory: Directory) {
+  public async indexFiles(directory: Directory) {
     const files = readdirSync(directory.path)
 
     fileMessenger.indexingStepStarted(files.length, 'indexing')
 
     await Promise.all(
-      files.map((fileName, index) => delay(() => this.index(directory.path, fileName), index * 20))
+      files.map((fileName, index) => delay(() => this.index(directory, fileName), index * 20))
     )
 
     const unsourcedImages = await TaggableImage.findBy({ source: IsNull() })
@@ -62,21 +35,21 @@ class IndexingManager {
     fileMessenger.indexingEnded()
   }
 
-  private async index(directory: string, fileName: string) {
-    const fullPath = `${directory}/${fileName}`
+  private async index(directory: Directory, fileName: string) {
+    const fullPath = `${directory.path}/${fileName}`
 
     const extension = path.extname(fullPath).toLocaleLowerCase()
 
     if (extension === '.jpg' || extension === '.jpeg' || extension === '.png') {
-      await this.indexImage(fullPath)
+      await this.indexImage(fullPath, directory)
     } else {
-      await this.indexFile(fullPath)
+      await this.indexFile(fullPath, directory)
     }
 
     fileMessenger.madeStepProgress()
   }
 
-  private async indexImage(filePath: string) {
+  private async indexImage(filePath: string, directory: Directory) {
     console.log('Indexing Image: ', filePath)
     let indexedImage = await TaggableImage.findOneBy({ fileIndex: { path: filePath } })
 
@@ -89,6 +62,7 @@ class IndexingManager {
         path: filePath,
         fileName: path.basename(filePath)
       },
+      directory,
       dimensions: imageSize(filePath)
     })
 
@@ -98,7 +72,7 @@ class IndexingManager {
     return indexedImage
   }
 
-  private async indexFile(filePath: string) {
+  private async indexFile(filePath: string, directory: Directory) {
     console.log('Indexing File: ', filePath)
 
     let indexedFile = await TaggableFile.findOneBy({ fileIndex: { path: filePath } })
@@ -108,7 +82,8 @@ class IndexingManager {
     }
 
     indexedFile = TaggableFile.create({
-      fileIndex: { path: filePath, fileName: path.basename(filePath) }
+      fileIndex: { path: filePath, fileName: path.basename(filePath) },
+      directory
     })
 
     await indexedFile.save()

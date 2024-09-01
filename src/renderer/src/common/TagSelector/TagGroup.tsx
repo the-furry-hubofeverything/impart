@@ -16,7 +16,7 @@ import React, { useState } from 'react'
 import { Tag } from '../Tag'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
-import { useTagGroups } from '@renderer/TagProvider'
+import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/Delete'
 
 export interface TagGroupProps {

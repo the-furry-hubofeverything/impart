@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@mui/material'
-import { useTaggables } from '@renderer/TaggableProvider'
+import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TagSelector } from '@renderer/common/TagSelector'
 import { useEffect, useState } from 'react'
 

@@ -12,21 +12,18 @@ import { theme } from './theme'
 import { useAsyncData } from './common/useAsyncData'
 import { IndexedDirectoriesSettings } from './IndexedDirectoriesSettings'
 import { useEffect, useState } from 'react'
-import { useTaggables } from './TaggableProvider/TaggableProvider'
+import { useTaggables } from './EntityProviders/TaggableProvider/TaggableProvider'
 import { FileBrowser } from './TaggableBrowser'
 import { IntroSetup } from './IntroSetup'
 import { EditTags } from './EditTags'
+import { useDirectories } from './EntityProviders/DirectoryProvider'
 
 type ImpartState = 'files' | 'editTags'
 
 export interface ImpartProps {}
 
 export function Impart({}: ImpartProps) {
-  const {
-    data: directories,
-    isLoading,
-    executeRequest: reloadDirectories
-  } = useAsyncData(() => window.taggableApi.getDirectories(), [])
+  const { data: directories, startingUp, executeRequest: reloadDirectories } = useDirectories()
 
   const hasDirectories = directories && directories.length !== 0
 
@@ -67,8 +64,8 @@ export function Impart({}: ImpartProps) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {!isLoading && !hasDirectories && <IntroSetup reload={reloadDirectories} />}
-      {!isLoading && hasDirectories && renderContent()}
+      {!startingUp && !hasDirectories && <IntroSetup reload={reloadDirectories} />}
+      {!startingUp && hasDirectories && renderContent()}
       <Dialog
         open={showModal === 'directories'}
         onClose={() => setShowModal(null)}
@@ -76,7 +73,7 @@ export function Impart({}: ImpartProps) {
       >
         <DialogTitle>Watched Folders</DialogTitle>
         <DialogContent>
-          <IndexedDirectoriesSettings directories={directories} onChange={reloadDirectories} />
+          <IndexedDirectoriesSettings onChange={() => setShowModal(null)} />
         </DialogContent>
       </Dialog>
     </ThemeProvider>

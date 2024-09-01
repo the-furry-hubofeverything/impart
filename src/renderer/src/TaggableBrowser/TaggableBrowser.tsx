@@ -12,7 +12,7 @@ import React, { useEffect, useState } from 'react'
 import { TaggableGrid } from './TaggableGrid'
 import { SettingsPanel } from './SettingsPanel'
 import { TaggingPanel } from './TaggingPanel'
-import { useTaggables } from '@renderer/TaggableProvider'
+import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { IndexingPanel } from './IndexingPanel'
 import { useMultiSelection } from '@renderer/common/useMultiSelection'
 import { useContextMenu } from '@renderer/common/ContextMenu/useContextMenu'
@@ -29,6 +29,18 @@ export interface TaggableBrowserProps {
 
 export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrowserProps) {
   const { fetchAllTaggables, ready, taggables, isIndexing } = useTaggables()
+  const [showIndexingPanel, setShowIndexingPanel] = useState(false)
+
+  useEffect(() => {
+    if (isIndexing) {
+      setShowIndexingPanel(true)
+    } else {
+      const timer = setTimeout(() => setShowIndexingPanel(false), 3000)
+
+      return () => clearTimeout(timer)
+    }
+  }, [isIndexing])
+
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
   const { selectItem, itemIsSelected } = useMultiSelection(
@@ -93,7 +105,7 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
         <Box minWidth={300} flex={0.25} py={1} pr={1}>
           <Stack width="100%" height="100%">
             <TaggingPanel />
-            <Collapse in={isIndexing}>
+            <Collapse in={showIndexingPanel}>
               <Box pt={2}>
                 <IndexingPanel />
               </Box>

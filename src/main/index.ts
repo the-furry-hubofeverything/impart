@@ -8,6 +8,7 @@ import { setupFileApi } from './api/fileApi'
 import { AppDataSource } from './database/database'
 import { setupTagApi } from './api/tagApi'
 import { seedGroups } from './database/seed'
+import { setupIndexApi } from './api/indexApi'
 
 interface ImpartApp {
   mainWindow?: BrowserWindow
@@ -88,6 +89,7 @@ app.whenReady().then(async () => {
   setupFileApi()
   setupTaggableApi()
   setupTagApi()
+  setupIndexApi()
 
   createWindow()
 

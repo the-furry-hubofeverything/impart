@@ -1,16 +1,23 @@
 import { Box, Button, IconButton, List, ListItem, ListItemText } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
+import { useDirectories } from './EntityProviders/DirectoryProvider'
+import { useTaggables } from './EntityProviders/TaggableProvider'
 
 export interface IndexedDirectoriesSettingsProps {
-  directories?: Impart.Directory[]
   onChange?: () => void
 }
 
-export function IndexedDirectoriesSettings({
-  directories,
-  onChange
-}: IndexedDirectoriesSettingsProps) {
+export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSettingsProps) {
+  const { data: directories, executeRequest: reloadDirectories } = useDirectories()
+  const { fetchAllTaggables } = useTaggables()
+
+  const remove = async (path: string) => {
+    await window.indexApi.deleteDirectory(path)
+    fetchAllTaggables()
+    reloadDirectories()
+  }
+
   return (
     <Box minWidth={600}>
       <List dense>
@@ -18,7 +25,7 @@ export function IndexedDirectoriesSettings({
           <ListItem
             key={d.path}
             secondaryAction={
-              <IconButton color="error">
+              <IconButton color="error" onClick={() => remove(d.path)}>
                 <CloseIcon />
               </IconButton>
             }
@@ -33,7 +40,7 @@ export function IndexedDirectoriesSettings({
           variant="contained"
           size="small"
           onClick={async () => {
-            await window.taggableApi.selectAndIndexDirectory()
+            await window.indexApi.selectAndIndexDirectory()
             onChange && onChange()
           }}
         >

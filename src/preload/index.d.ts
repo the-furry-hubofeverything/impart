@@ -18,6 +18,14 @@ declare global {
     //TAGGABLE
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
+    interface Directory {
+      path: string
+    }
+
+    interface CountedDirectory extends Directory {
+      taggableCount: number
+    }
+
     interface BaseTaggable {
       id: number
       tags: Impart.Tag[]
@@ -34,10 +42,6 @@ declare global {
     }
 
     type Taggable = TaggableImage | TaggableFile
-
-    interface Directory {
-      path: string
-    }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
     //TAGS
@@ -83,8 +87,6 @@ declare global {
 
     taggableApi: {
       getTaggables: (tagIds?: number[]) => Promise<Impart.Taggable[]>
-      selectAndIndexDirectory: () => Promise<void>
-      getDirectories: () => Promise<IndexedDirectory[]>
     }
 
     tagApi: {
@@ -98,6 +100,12 @@ declare global {
       createTag: (groupId: number) => Promise<Impart.Tag>
       editTag: (tagId: number, label?: string, color?: string) => Promise<Impart.Tag>
       deleteTag: (id: number) => Promise<void>
+    }
+
+    indexApi: {
+      selectAndIndexDirectory: () => Promise<void>
+      getDirectories: () => Promise<Impart.CountedDirectory[]>
+      deleteDirectory: (path: string) => Promise<void>
     }
   }
 }
