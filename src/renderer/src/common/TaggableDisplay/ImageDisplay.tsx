@@ -1,6 +1,5 @@
 import { Box } from '@mui/material'
 import { BOX_HEIGHT, BOX_WIDTH } from './TaggableDisplay'
-import { LazyLoadImage } from 'react-lazy-load-image-component'
 
 export interface ImageDisplayProps {
   image: Impart.TaggableImage
@@ -16,6 +15,7 @@ export function ImageDisplay({ image }: ImageDisplayProps) {
   return (
     <Box
       component={'img'}
+      //Loading NEEDS to come before the source
       loading="lazy"
       src={`thum:///${image.fileIndex.path}`}
       alt={image.fileIndex.fileName}
