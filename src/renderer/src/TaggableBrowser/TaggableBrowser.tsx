@@ -23,7 +23,7 @@ import { isTaggableFile, isTaggableImage } from '@renderer/common/taggable'
 import BrushIcon from '@mui/icons-material/Brush'
 
 export interface TaggableBrowserProps {
-  onSettingsPressed?: (button: 'directories') => void
+  onSettingsPressed?: () => void
   onEditTags?: (file: Impart.Taggable) => void
 }
 
@@ -111,7 +111,7 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
               </Box>
             </Collapse>
             <Box pt={2}>
-              <SettingsPanel onClick={(b) => onSettingsPressed && onSettingsPressed(b)} />
+              <SettingsPanel onClick={() => onSettingsPressed && onSettingsPressed()} />
             </Box>
           </Stack>
         </Box>

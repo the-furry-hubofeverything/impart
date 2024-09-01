@@ -1,22 +1,12 @@
-import {
-  Button,
-  CssBaseline,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Stack,
-  ThemeProvider,
-  Typography
-} from '@mui/material'
+import { CssBaseline, ThemeProvider } from '@mui/material'
 import { theme } from './theme'
-import { useAsyncData } from './common/useAsyncData'
-import { IndexedDirectoriesSettings } from './IndexedDirectoriesSettings'
 import { useEffect, useState } from 'react'
 import { useTaggables } from './EntityProviders/TaggableProvider/TaggableProvider'
 import { FileBrowser } from './TaggableBrowser'
 import { IntroSetup } from './IntroSetup'
 import { EditTags } from './EditTags'
 import { useDirectories } from './EntityProviders/DirectoryProvider'
+import { Settings } from './Settings'
 
 type ImpartState = 'files' | 'editTags'
 
@@ -27,8 +17,8 @@ export function Impart({}: ImpartProps) {
 
   const hasDirectories = directories && directories.length !== 0
 
-  const [showModal, setShowModal] = useState<'directories' | null>(null)
   const [state, setState] = useState<ImpartState>('files')
+  const [showSettings, setShowSettings] = useState(false)
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
@@ -41,11 +31,15 @@ export function Impart({}: ImpartProps) {
   }, [fetchAllTaggables, ready])
 
   const renderContent = () => {
+    if (showSettings) {
+      return <Settings onClose={() => setShowSettings(false)} />
+    }
+
     switch (state) {
       case 'files':
         return (
           <FileBrowser
-            onSettingsPressed={(b) => setShowModal(b)}
+            onSettingsPressed={() => setShowSettings(true)}
             onEditTags={(file) => {
               setSelection([file])
               setState('editTags')
@@ -66,16 +60,6 @@ export function Impart({}: ImpartProps) {
       <CssBaseline />
       {!startingUp && !hasDirectories && <IntroSetup reload={reloadDirectories} />}
       {!startingUp && hasDirectories && renderContent()}
-      <Dialog
-        open={showModal === 'directories'}
-        onClose={() => setShowModal(null)}
-        maxWidth={false}
-      >
-        <DialogTitle>Watched Folders</DialogTitle>
-        <DialogContent>
-          <IndexedDirectoriesSettings onChange={() => setShowModal(null)} />
-        </DialogContent>
-      </Dialog>
     </ThemeProvider>
   )
 }

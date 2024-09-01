@@ -1,9 +1,9 @@
-import { Card, CardActions, IconButton, Stack, TextField, Tooltip } from '@mui/material'
-import FolderIcon from '@mui/icons-material/Folder'
+import { Card, IconButton, Stack, Tooltip } from '@mui/material'
+
 import SettingsIcon from '@mui/icons-material/Settings'
 
 export interface SettingsPanelProps {
-  onClick?: (button: 'directories') => void
+  onClick?: () => void
 }
 
 export function SettingsPanel({ onClick }: SettingsPanelProps) {
@@ -11,8 +11,8 @@ export function SettingsPanel({ onClick }: SettingsPanelProps) {
     <Card>
       <Stack direction="row" p={0.25} alignItems={'center'}>
         <Tooltip title="Folders">
-          <IconButton onClick={() => onClick && onClick('directories')}>
-            <FolderIcon />
+          <IconButton onClick={() => onClick && onClick()}>
+            <SettingsIcon />
           </IconButton>
         </Tooltip>
       </Stack>
