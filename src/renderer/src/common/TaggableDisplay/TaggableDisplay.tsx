@@ -26,8 +26,8 @@ export function TaggableDisplay({
       }}
       alignItems="center"
       justifyContent="center"
-      height="100%"
       width={BOX_WIDTH + 20}
+      height={BOX_HEIGHT + 40}
       p={1}
       borderRadius={2}
       sx={{
