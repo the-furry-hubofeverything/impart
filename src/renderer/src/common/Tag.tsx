@@ -5,11 +5,6 @@ import EditIcon from '@mui/icons-material/Edit'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/Delete'
 
-const TinyTextField = styled(TextField)({
-  fontSize: 12,
-  height: '0.5em'
-})
-
 export interface TagProps {
   tag: Impart.Tag
   selected?: boolean
@@ -31,7 +26,8 @@ export function Tag({ tag, selected, onClick }: TagProps) {
     return (
       <Paper sx={{ bgcolor: tag.color ?? 'primary.main', borderRadius: 5 }}>
         <Box px={0.5} py={0.5}>
-          <TinyTextField
+          <TextField
+            size="small"
             placeholder="Tag Name"
             value={internalLabel}
             autoFocus
@@ -43,7 +39,14 @@ export function Tag({ tag, selected, onClick }: TagProps) {
               }
             }}
             sx={{ width: internalLabel == '' ? 90 : internalLabel.length * 5.5 + 38 }}
-            InputProps={{ sx: { borderRadius: 4, bgcolor: 'rgb(255 255 255 / 50%)' } }}
+            InputProps={{
+              sx: {
+                borderRadius: 4,
+                bgcolor: 'rgb(255 255 255 / 50%)',
+                fontSize: 12,
+                height: '2em'
+              }
+            }}
           />
         </Box>
       </Paper>
