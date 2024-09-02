@@ -54,15 +54,6 @@ export const theme = createTheme(
         }
       },
 
-      MuiOutlinedInput: {
-        styleOverrides: {
-          inputSizeSmall: {
-            fontSize: 12,
-            height: '0.5em'
-          }
-        }
-      },
-
       MuiButton: {
         styleOverrides: {
           sizeSmall: {

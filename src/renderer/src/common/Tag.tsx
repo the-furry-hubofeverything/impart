@@ -1,9 +1,14 @@
-import { Box, Chip, Paper, TextField } from '@mui/material'
+import { Box, Chip, Paper, TextField, styled } from '@mui/material'
 import { useState } from 'react'
 import { ContextMenu } from './ContextMenu'
 import EditIcon from '@mui/icons-material/Edit'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/Delete'
+
+const TinyTextField = styled(TextField)({
+  fontSize: 12,
+  height: '0.5em'
+})
 
 export interface TagProps {
   tag: Impart.Tag
@@ -26,8 +31,7 @@ export function Tag({ tag, selected, onClick }: TagProps) {
     return (
       <Paper sx={{ bgcolor: tag.color ?? 'primary.main', borderRadius: 5 }}>
         <Box px={0.5} py={0.5}>
-          <TextField
-            size="small"
+          <TinyTextField
             placeholder="Tag Name"
             value={internalLabel}
             autoFocus
