@@ -15,15 +15,23 @@ export interface TaggableProviderProps {
   children?: React.ReactNode
 }
 
+const DEFAULT_ORDER_KEY = 'defaultOrder'
+
 const taggableManager = new TaggableManager()
 
 export function TaggableProvider({ children }: TaggableProviderProps) {
   const [state, setState] = useState<TaggableState>(TaggableManager.getInitialState())
   const { executeRequest: reloadDirectories } = useDirectories()
 
-  const [fetchOptions, setFetchOptions] = usePartialState<Impart.FetchTaggablesOptions>({
-    order: 'alpha'
-  })
+  const [fetchOptions, setFetchOptions] = usePartialState<Impart.FetchTaggablesOptions>(() => ({
+    order: (localStorage.getItem(DEFAULT_ORDER_KEY) as 'alpha' | 'date' | null) ?? 'alpha'
+  }))
+
+  useEffect(() => {
+    if (fetchOptions.order) {
+      localStorage.setItem(DEFAULT_ORDER_KEY, fetchOptions.order)
+    }
+  }, [fetchOptions.order])
 
   useEffect(() => {
     taggableManager.setOnChange(setState)

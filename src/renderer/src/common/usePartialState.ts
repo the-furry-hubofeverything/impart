@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 
-export function usePartialState<T>(defaultValue: T): [T, (t: Partial<T>) => void] {
+export function usePartialState<T>(defaultValue: T | (() => T)): [T, (t: Partial<T>) => void] {
   const [state, setState] = useState(defaultValue)
 
   const setPartial = useCallback(
