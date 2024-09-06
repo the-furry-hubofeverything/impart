@@ -20,8 +20,6 @@ export const TaggableDisplay = React.memo(function ({
   onRightClick,
   isSelected
 }: TaggableDisplayProps) {
-  console.log('re-render :)')
-
   return (
     <Stack
       onContextMenu={(e) => {

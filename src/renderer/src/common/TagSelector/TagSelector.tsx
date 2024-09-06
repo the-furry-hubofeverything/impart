@@ -11,7 +11,7 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { useMultiSelection } from '../useMultiSelection'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Tag } from '../Tag'
 import SparkleIcon from '@mui/icons-material/AutoAwesome'
 import { TagGroup } from './TagGroup'
@@ -30,7 +30,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
     tags,
     selection ?? [],
     onChange,
-    (a, b) => a.id === b.id,
+    useCallback((a, b) => a.id === b.id, []),
     { toggleMode: true }
   )
 

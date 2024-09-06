@@ -61,7 +61,7 @@ export function EditTags({ item, onFinish }: EditTagsProps) {
         <Box flex={1} alignItems="center">
           <Card sx={{ height: '100%' }}>
             <CardContent>
-              <TagSelector selection={tagSelection} onChange={(s) => setTagSelection(s)} />
+              <TagSelector selection={tagSelection} onChange={setTagSelection} />
             </CardContent>
           </Card>
         </Box>

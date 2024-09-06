@@ -7,6 +7,11 @@ export function setupTagApi() {
   ipcMain.handle('tag/editFileTags', (e, fileId: number, tagIds: number[]) =>
     tagManager.setFileTags(fileId, tagIds)
   )
+  ipcMain.handle(
+    'tag/bulkTag',
+    (e, ...params: Parameters<InstanceType<typeof TagManager>['bulkTag']>) =>
+      tagManager.bulkTag(...params)
+  )
 
   ipcMain.handle('tag/createGroup', () => tagManager.createGroup())
   ipcMain.handle(

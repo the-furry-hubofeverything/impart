@@ -7,13 +7,8 @@ import { Taggable } from '../database/entities/Taggable'
 import { IsNull, Like } from 'typeorm'
 import { fileMessenger } from './indexMessenger'
 import { Directory } from '../database/entities/Directory'
-import { sleep } from '../common/sleep'
+import { delay, sleep } from '../common/sleep'
 import { imageSize } from 'image-size'
-
-async function delay(call: () => Promise<any>, delay: number) {
-  await sleep(delay)
-  return call()
-}
 
 class IndexingManager {
   public async indexFiles(directory: Directory) {

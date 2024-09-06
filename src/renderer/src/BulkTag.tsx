@@ -36,10 +36,10 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
   }
 
   const save = async () => {
-    // await window.tagApi.editFileTags(
-    //   item.id,
-    //   tagSelection.map((t) => t.id)
-    // )
+    await window.tagApi.bulkTag(
+      items.map((i) => i.id),
+      tagSelection.map((t) => t.id)
+    )
     onFinish && onFinish()
   }
 
@@ -75,7 +75,7 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
         <Box width={500} alignItems="center">
           <Card sx={{ height: '100%' }}>
             <CardContent>
-              <TagSelector selection={tagSelection} onChange={(s) => setTagSelection(s)} />
+              <TagSelector selection={tagSelection} onChange={setTagSelection} />
             </CardContent>
           </Card>
         </Box>

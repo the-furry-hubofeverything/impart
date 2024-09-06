@@ -1,5 +1,7 @@
+import { delay } from '../common/sleep'
 import { Tag } from '../database/entities/Tag'
 import { TagGroup } from '../database/entities/TagGroup'
+import { Taggable } from '../database/entities/Taggable'
 import { TaggableImage } from '../database/entities/TaggableImage'
 import { In } from 'typeorm'
 
@@ -18,18 +20,48 @@ export class TagManager {
     }))
   }
 
-  public async setFileTags(fileId: number, tagsIds: number[]) {
+  public async setFileTags(taggableId: number, tagIds: number[]) {
     const [file, tags] = await Promise.all([
-      TaggableImage.findOneBy({ id: fileId }),
-      Tag.findBy({ id: In(tagsIds) })
+      TaggableImage.findOneBy({ id: taggableId }),
+      Tag.findBy({ id: In(tagIds) })
     ])
 
     if (!file) {
-      throw new Error(`Could not find file with id ${fileId}`)
+      throw new Error(`Could not find taggable with id ${taggableId}`)
     }
 
     file.tags = tags
     await file.save()
+  }
+
+  public async bulkTag(taggableIds: number[], tagIds: number[]) {
+    await Promise.all(
+      taggableIds.map((t, index) => delay(() => this.addTags(t, tagIds), index * 10))
+    )
+  }
+
+  private async addTags(taggableId: number, tagIds: number[]) {
+    const [taggable, tags] = await Promise.all([
+      TaggableImage.findOne({ where: { id: taggableId }, relations: { tags: true } }),
+      Tag.findBy({ id: In(tagIds) })
+    ])
+
+    if (!taggable) {
+      throw new Error(`Could not find taggable with id ${taggableId}`)
+    }
+
+    let added = false
+
+    tags.forEach((addedTag) => {
+      if (!taggable.tags.some((existingTag) => existingTag.id === addedTag.id)) {
+        added = true
+        taggable.tags.push(addedTag)
+      }
+    })
+
+    if (added) {
+      await taggable.save()
+    }
   }
 
   public async createGroup() {
