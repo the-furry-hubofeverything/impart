@@ -32,6 +32,7 @@
     "image-size": "^1.1.1",
     "immer": "^10.1.1",
     "react-color": "^2.19.3",
+    "react-virtualized-auto-sizer": "^1.0.24",
     "reflect-metadata": "^0.2.2",
     "sqlite3": "^5.1.7",
     "typeorm": "^0.3.20"
