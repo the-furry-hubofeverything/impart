@@ -41,6 +41,10 @@ export function useMultiSelection<Item>(
       }
 
       if (itemIsSelected(item)) {
+        if (add) {
+          onChange && onChange(selection.filter((s) => !isEqual(s, item)))
+        }
+
         return
       }
 
