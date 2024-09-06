@@ -22,8 +22,6 @@ export const TaggableGrid = React.memo(function ({
     return null
   }
 
-  console.log("I'm rerendering")
-
   return (
     <SequentialDelayedMountGrid
       items={taggables}

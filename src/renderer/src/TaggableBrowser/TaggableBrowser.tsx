@@ -1,4 +1,4 @@
-import { Stack, Box, Collapse, Card, CardActions } from '@mui/material'
+import { Stack, Box, Collapse, Card, CardActions, Fade } from '@mui/material'
 import { useCallback, useEffect, useState } from 'react'
 import { TaggableGrid } from './TaggableGrid'
 import { SettingsPanel } from './SettingsPanel'
@@ -9,6 +9,7 @@ import { useMultiSelection } from '@renderer/common/useMultiSelection'
 import { ContextMenu } from '@renderer/common/ContextMenu'
 import { GridActions } from './GridActions'
 import { getTaggableContextMenuOptions } from './taggableContextMenuOptions'
+import { SelectionIndicator } from './SelectionIndicator'
 
 export interface TaggableBrowserProps {
   onSettingsPressed?: () => void
@@ -33,7 +34,7 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
-  const { selectItem, itemIsSelected } = useMultiSelection(
+  const { selectItem } = useMultiSelection(
     taggables,
     selection,
     setSelection,
@@ -51,52 +52,48 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
   const rightClickSelect = useCallback((item: Impart.Taggable) => selectItem(item), [selectItem])
 
   return (
-    <>
-      <Stack direction="row" gap={1} height="100vh">
-        <Stack
-          overflow="auto"
-          position={'relative'}
-          flex={1}
-          pr={1}
-          gap={2}
-          onScroll={handleScroll}
-        >
-          <Box position="sticky" top={8} pl={1}>
-            <Card
-              sx={{
-                opacity: isScrolledToTop ? 1 : 0.4,
-                transition: '0.2s',
-                '&:hover': { opacity: 1 }
-              }}
-            >
-              <CardActions>
-                <GridActions />
-              </CardActions>
-            </Card>
-          </Box>
-          <ContextMenu flex={1} options={getTaggableContextMenuOptions(selection, onEditTags)}>
-            <TaggableGrid
-              taggables={taggables}
-              selection={selection}
-              onSelect={selectItem}
-              onRightClick={rightClickSelect}
-            />
-          </ContextMenu>
-        </Stack>
-        <Box minWidth={300} flex={0.25} py={1} pr={1}>
-          <Stack width="100%" height="100%">
-            <TaggingPanel />
-            <Collapse in={showIndexingPanel}>
-              <Box pt={2}>
-                <IndexingPanel />
-              </Box>
-            </Collapse>
-            <Box pt={2}>
-              <SettingsPanel onClick={() => onSettingsPressed && onSettingsPressed()} />
-            </Box>
-          </Stack>
+    <Stack direction="row" gap={1} height="100vh">
+      <Stack overflow="auto" position={'relative'} flex={1} pr={1} gap={2} onScroll={handleScroll}>
+        <Box position="sticky" top={8} pl={1}>
+          <Card
+            sx={{
+              opacity: isScrolledToTop ? 1 : 0.4,
+              transition: '0.2s',
+              '&:hover': { opacity: 1 }
+            }}
+          >
+            <CardActions>
+              <GridActions />
+            </CardActions>
+          </Card>
         </Box>
+        <ContextMenu flex={1} options={getTaggableContextMenuOptions(selection, onEditTags)}>
+          <TaggableGrid
+            taggables={taggables}
+            selection={selection}
+            onSelect={selectItem}
+            onRightClick={rightClickSelect}
+          />
+        </ContextMenu>
+        <Fade in={selection.length > 0}>
+          <Box position="fixed" bottom={10} left={10}>
+            <SelectionIndicator count={selection.length} onClear={() => setSelection([])} />
+          </Box>
+        </Fade>
       </Stack>
-    </>
+      <Box minWidth={300} flex={0.25} py={1} pr={1}>
+        <Stack width="100%" height="100%">
+          <TaggingPanel />
+          <Collapse in={showIndexingPanel}>
+            <Box pt={2}>
+              <IndexingPanel />
+            </Box>
+          </Collapse>
+          <Box pt={2}>
+            <SettingsPanel onClick={() => onSettingsPressed && onSettingsPressed()} />
+          </Box>
+        </Stack>
+      </Box>
+    </Stack>
   )
 }

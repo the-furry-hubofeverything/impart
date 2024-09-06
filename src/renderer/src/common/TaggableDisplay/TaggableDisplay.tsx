@@ -37,7 +37,9 @@ export function TaggableDisplay({
           bgcolor: isSelected ? '#FFFFFF55' : '#FFFFFF33'
         }
       }}
-      onClick={(e) => onClick && onClick({ ctrl: e.ctrlKey, shift: e.shiftKey })}
+      onClick={(e) => {
+        onClick && onClick({ ctrl: e.ctrlKey, shift: e.shiftKey })
+      }}
       onDoubleClick={() => window.fileApi.openFile(taggable.id)}
     >
       {isTaggableImage(taggable) && <ImageDisplay image={taggable} />}

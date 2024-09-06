@@ -9,7 +9,8 @@ const seafoam: PaletteOptions = {
     primary: '#294541'
   },
   primary: {
-    main: '#4fbda1'
+    main: '#4fbda1',
+    contrastText: 'black'
   },
   secondary: {
     main: '#a7deda'
