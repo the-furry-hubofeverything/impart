@@ -1,5 +1,5 @@
 import { Stack, Box, Collapse, Card, CardActions } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { TaggableGrid } from './TaggableGrid'
 import { SettingsPanel } from './SettingsPanel'
 import { TaggingPanel } from './TaggingPanel'
@@ -16,12 +16,9 @@ export interface TaggableBrowserProps {
 }
 
 export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrowserProps) {
-  const {
-    taggables,
-    isIndexing,
-    fetchOptions: { order },
-    setFetchOptions
-  } = useTaggables()
+  const [isScrolledToTop, setScrolledToTop] = useState(true)
+
+  const { taggables, isIndexing } = useTaggables()
   const [showIndexingPanel, setShowIndexingPanel] = useState(false)
 
   useEffect(() => {
@@ -40,15 +37,38 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
     taggables,
     selection,
     setSelection,
-    (a, b) => a.id === b.id
+    useCallback((a, b) => a.id === b.id, [])
   )
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    if (isScrolledToTop && e.currentTarget.scrollTop !== 0) {
+      setScrolledToTop(false)
+    } else if (!isScrolledToTop && e.currentTarget.scrollTop === 0) {
+      setScrolledToTop(true)
+    }
+  }
+
+  const rightClickSelect = useCallback((item: Impart.Taggable) => selectItem(item), [selectItem])
 
   return (
     <>
       <Stack direction="row" gap={1} height="100vh">
-        <Stack overflow="auto" position={'relative'} flex={1} pr={1} gap={2}>
+        <Stack
+          overflow="auto"
+          position={'relative'}
+          flex={1}
+          pr={1}
+          gap={2}
+          onScroll={handleScroll}
+        >
           <Box position="sticky" top={8} pl={1}>
-            <Card sx={{ opacity: 0.4, transition: '0.2s', '&:hover': { opacity: 1 } }}>
+            <Card
+              sx={{
+                opacity: isScrolledToTop ? 1 : 0.4,
+                transition: '0.2s',
+                '&:hover': { opacity: 1 }
+              }}
+            >
               <CardActions>
                 <GridActions />
               </CardActions>
@@ -59,11 +79,7 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
               taggables={taggables}
               selection={selection}
               onSelect={selectItem}
-              onRightClick={(image, e) => {
-                if (!itemIsSelected(image)) {
-                  selectItem(image)
-                }
-              }}
+              onRightClick={rightClickSelect}
             />
           </ContextMenu>
         </Stack>

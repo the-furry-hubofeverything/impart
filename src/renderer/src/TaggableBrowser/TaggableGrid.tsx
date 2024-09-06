@@ -3,6 +3,7 @@ import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { SequentialDelayedMountGrid } from '@renderer/common/SequentialDelayedMountGrid'
 import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
 import { BOX_HEIGHT, BOX_WIDTH } from '@renderer/common/TaggableDisplay/TaggableDisplay'
+import React from 'react'
 
 export interface TaggableGridProps {
   taggables?: Impart.Taggable[]
@@ -11,10 +12,17 @@ export interface TaggableGridProps {
   onRightClick?: (item: Impart.Taggable, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
-export function TaggableGrid({ taggables, selection, onSelect, onRightClick }: TaggableGridProps) {
+export const TaggableGrid = React.memo(function ({
+  taggables,
+  selection,
+  onSelect,
+  onRightClick
+}: TaggableGridProps) {
   if (!taggables) {
     return null
   }
+
+  console.log("I'm rerendering")
 
   return (
     <SequentialDelayedMountGrid
@@ -22,6 +30,7 @@ export function TaggableGrid({ taggables, selection, onSelect, onRightClick }: T
       getKey={(t) => t.id}
       minItemWidth={BOX_WIDTH + 26}
       averageItemHeight={BOX_HEIGHT + 20}
+      initialCount={40}
       batchIncrement={10}
       renderItem={(f) => (
         <TaggableDisplay
@@ -33,4 +42,4 @@ export function TaggableGrid({ taggables, selection, onSelect, onRightClick }: T
       )}
     />
   )
-}
+})

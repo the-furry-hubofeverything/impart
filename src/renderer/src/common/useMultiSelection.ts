@@ -36,6 +36,10 @@ export function useMultiSelection<Item>(
         return
       }
 
+      if (itemIsSelected(item)) {
+        return
+      }
+
       let selectedItems: Item[] = []
 
       if (range && previousSelection) {
