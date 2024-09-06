@@ -27,9 +27,10 @@ export const TaggableGrid = React.memo(function ({
       items={taggables}
       getKey={(t) => t.id}
       minItemWidth={BOX_WIDTH + 26}
-      averageItemHeight={BOX_HEIGHT + 20}
+      averageItemHeight={BOX_HEIGHT + 24}
       initialCount={40}
       batchIncrement={10}
+      rowSpacing={1}
       renderItem={(f) => (
         <TaggableDisplay
           taggable={f}

@@ -76,7 +76,7 @@ export function GridActions({}: GridActionsProps) {
                 </Box>
               ),
               endAdornment: (
-                <IconButton size="small">
+                <IconButton size="small" onClick={() => setFetchOptions({ search: '' })}>
                   <ClearIcon fontSize="inherit" />
                 </IconButton>
               )
