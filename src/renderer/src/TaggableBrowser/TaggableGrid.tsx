@@ -1,8 +1,5 @@
 import { Grid } from '@mui/material'
-import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
-import { SequentialDelayedMountGrid } from '@renderer/common/SequentialDelayedMountGrid'
 import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
-import { BOX_HEIGHT, BOX_WIDTH } from '@renderer/common/TaggableDisplay/TaggableDisplay'
 import React from 'react'
 
 export interface TaggableGridProps {
@@ -23,22 +20,17 @@ export const TaggableGrid = React.memo(function ({
   }
 
   return (
-    <SequentialDelayedMountGrid
-      items={taggables}
-      getKey={(t) => t.id}
-      minItemWidth={BOX_WIDTH + 26}
-      averageItemHeight={BOX_HEIGHT + 24}
-      initialCount={40}
-      batchIncrement={10}
-      rowSpacing={1}
-      renderItem={(f) => (
-        <TaggableDisplay
-          taggable={f}
-          isSelected={selection?.some((s) => s.id === f.id)}
-          onClick={({ ctrl, shift }) => onSelect && onSelect(f, ctrl, shift)}
-          onRightClick={(e) => onRightClick && onRightClick(f, e)}
-        />
-      )}
-    />
+    <Grid container spacing={1}>
+      {taggables?.map((f) => (
+        <Grid item key={f.id} xs={true}>
+          <TaggableDisplay
+            taggable={f}
+            isSelected={selection?.some((s) => s.id === f.id)}
+            onClick={({ ctrl, shift }) => onSelect && onSelect(f, ctrl, shift)}
+            onRightClick={(e) => onRightClick && onRightClick(f, e)}
+          />
+        </Grid>
+      ))}
+    </Grid>
   )
 })

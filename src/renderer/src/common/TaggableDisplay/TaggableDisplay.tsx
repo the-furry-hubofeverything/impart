@@ -2,6 +2,7 @@ import { Box, Stack, Typography } from '@mui/material'
 import { isTaggableFile, isTaggableImage } from '../taggable'
 import { ImageDisplay } from './ImageDisplay'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
+import React from 'react'
 
 export const BOX_WIDTH = 220
 export const BOX_HEIGHT = 190
@@ -13,12 +14,14 @@ export interface TaggableDisplayProps {
   onRightClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
-export function TaggableDisplay({
+export const TaggableDisplay = React.memo(function ({
   taggable,
   onClick,
   onRightClick,
   isSelected
 }: TaggableDisplayProps) {
+  console.log('re-render :)')
+
   return (
     <Stack
       onContextMenu={(e) => {
@@ -55,4 +58,4 @@ export function TaggableDisplay({
       </Box>
     </Stack>
   )
-}
+})
