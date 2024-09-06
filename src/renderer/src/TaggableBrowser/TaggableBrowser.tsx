@@ -14,9 +14,14 @@ import { SelectionIndicator } from './SelectionIndicator'
 export interface TaggableBrowserProps {
   onSettingsPressed?: () => void
   onEditTags?: (file: Impart.Taggable) => void
+  onBulkTag?: (files: Impart.Taggable[]) => void
 }
 
-export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrowserProps) {
+export function TaggableBrowser({
+  onSettingsPressed,
+  onEditTags,
+  onBulkTag
+}: TaggableBrowserProps) {
   const [isScrolledToTop, setScrolledToTop] = useState(true)
 
   const { taggables, isIndexing } = useTaggables()
@@ -67,7 +72,10 @@ export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrows
             </CardActions>
           </Card>
         </Box>
-        <ContextMenu flex={1} options={getTaggableContextMenuOptions(selection, onEditTags)}>
+        <ContextMenu
+          flex={1}
+          options={getTaggableContextMenuOptions(selection, onEditTags, onBulkTag)}
+        >
           <TaggableGrid
             taggables={taggables}
             selection={selection}

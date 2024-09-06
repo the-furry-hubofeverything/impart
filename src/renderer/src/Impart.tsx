@@ -7,8 +7,9 @@ import { IntroSetup } from './IntroSetup'
 import { EditTags } from './EditTags'
 import { useDirectories } from './EntityProviders/DirectoryProvider'
 import { Settings } from './Settings'
+import { BulkTag } from './BulkTag'
 
-type ImpartState = 'files' | 'editTags'
+type ImpartState = 'files' | 'editTags' | 'bulkTag'
 
 export interface ImpartProps {}
 
@@ -42,6 +43,10 @@ export function Impart({}: ImpartProps) {
               setSelection([file])
               setState('editTags')
             }}
+            onBulkTag={(files) => {
+              setSelection(files)
+              setState('bulkTag')
+            }}
           />
         )
       case 'editTags':
@@ -50,6 +55,8 @@ export function Impart({}: ImpartProps) {
         }
 
         return <EditTags item={selection[0]} onFinish={() => setState('files')} />
+      case 'bulkTag':
+        return <BulkTag items={selection} onFinish={() => setState('files')} />
     }
   }
 

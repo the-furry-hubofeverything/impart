@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export function useMultiSelection<Item>(
   items: Item[],
@@ -10,6 +10,10 @@ export function useMultiSelection<Item>(
   }
 ) {
   const [previousSelection, setPreviousSelection] = useState<Item>()
+
+  useEffect(() => {
+    onChange && onChange([])
+  }, [items, onChange])
 
   const itemIsSelected = useCallback(
     (item: Item) => {

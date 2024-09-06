@@ -1,18 +1,30 @@
-import { Box, Button, Card, CardContent, Grid, IconButton, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography
+} from '@mui/material'
 import { useState } from 'react'
 import { TagSelector } from './common/TagSelector'
 import { Tag } from './common/Tag'
 import CheckIcon from '@mui/icons-material/Check'
 import BackIcon from '@mui/icons-material/ArrowBack'
 import { TaggableDisplay } from './common/TaggableDisplay'
+import { TaggableGrid } from './TaggableBrowser/TaggableGrid'
+import InfoIcon from '@mui/icons-material/Info'
 
-export interface EditTagsProps {
-  item: Impart.Taggable
+export interface BulkTagProps {
+  items: Impart.Taggable[]
   onFinish?: () => void
 }
 
-export function EditTags({ item, onFinish }: EditTagsProps) {
-  const [tagSelection, setTagSelection] = useState(item.tags ?? [])
+export function BulkTag({ items, onFinish }: BulkTagProps) {
+  const [tagSelection, setTagSelection] = useState<Impart.Tag[]>([])
 
   const removeFromSelection = (tag: Impart.Tag) => {
     const copy = tagSelection.slice()
@@ -24,10 +36,10 @@ export function EditTags({ item, onFinish }: EditTagsProps) {
   }
 
   const save = async () => {
-    await window.tagApi.editFileTags(
-      item.id,
-      tagSelection.map((t) => t.id)
-    )
+    // await window.tagApi.editFileTags(
+    //   item.id,
+    //   tagSelection.map((t) => t.id)
+    // )
     onFinish && onFinish()
   }
 
@@ -41,12 +53,14 @@ export function EditTags({ item, onFinish }: EditTagsProps) {
 
       <Stack direction="row" p={1} gap={1} height="100vh">
         <Stack flex={1} alignItems="center">
-          <Typography variant="h2">Edit Tags</Typography>
-          <Stack flex={1} justifyContent="center" alignItems="center" gap={4}>
-            <Box>
-              <TaggableDisplay taggable={item} />
+          <Typography variant="h2">Bulk Tags</Typography>
+          <Typography>Add tags to multiple items at once. Repeat tags will be ignored.</Typography>
+
+          <Stack flex={1} justifyContent="center" alignItems="center" gap={2}>
+            <Box flex="1 1 0" width="100%" overflow="auto">
+              <TaggableGrid taggables={items} />
             </Box>
-            <Grid container spacing={1}>
+            <Grid container spacing={1} width="unset">
               {tagSelection.map((t) => (
                 <Grid key={t.id} item>
                   <Tag tag={t} onClick={() => removeFromSelection(t)} />
@@ -58,7 +72,7 @@ export function EditTags({ item, onFinish }: EditTagsProps) {
             </Button>
           </Stack>
         </Stack>
-        <Box flex={1} alignItems="center">
+        <Box width={500} alignItems="center">
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <TagSelector selection={tagSelection} onChange={(s) => setTagSelection(s)} />
