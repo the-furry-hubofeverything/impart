@@ -22,7 +22,7 @@ export class TagManager {
 
   public async setFileTags(taggableId: number, tagIds: number[]) {
     const [file, tags] = await Promise.all([
-      TaggableImage.findOneBy({ id: taggableId }),
+      Taggable.findOneBy({ id: taggableId }),
       Tag.findBy({ id: In(tagIds) })
     ])
 
@@ -42,7 +42,7 @@ export class TagManager {
 
   private async addTags(taggableId: number, tagIds: number[]) {
     const [taggable, tags] = await Promise.all([
-      TaggableImage.findOne({ where: { id: taggableId }, relations: { tags: true } }),
+      Taggable.findOne({ where: { id: taggableId }, relations: { tags: true } }),
       Tag.findBy({ id: In(tagIds) })
     ])
 
