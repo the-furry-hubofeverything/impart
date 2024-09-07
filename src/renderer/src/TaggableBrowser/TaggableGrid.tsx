@@ -1,5 +1,6 @@
-import { Grid } from '@mui/material'
+import { Grid2 as Grid } from '@mui/material'
 import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
+import { BOX_WIDTH } from '@renderer/common/TaggableDisplay/TaggableDisplay'
 import React from 'react'
 
 export interface TaggableGridProps {
@@ -22,7 +23,7 @@ export const TaggableGrid = React.memo(function ({
   return (
     <Grid container spacing={1}>
       {taggables?.map((f) => (
-        <Grid item key={f.id} xs={true}>
+        <Grid key={f.id} minWidth={BOX_WIDTH + 26} size={{ xs: 'grow' }}>
           <TaggableDisplay
             taggable={f}
             isSelected={selection?.some((s) => s.id === f.id)}

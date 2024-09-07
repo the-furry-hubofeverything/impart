@@ -10,7 +10,7 @@ const seafoam: PaletteOptions = {
   },
   primary: {
     main: '#4fbda1',
-    contrastText: 'black'
+    contrastText: '#000'
   },
   secondary: {
     main: '#a7deda'
@@ -33,6 +33,7 @@ const paletteTheme = createTheme({ palette: seafoam })
 
 export const theme = createTheme(
   {
+    cssVariables: true,
     palette: seafoam,
     components: {
       MuiList: {

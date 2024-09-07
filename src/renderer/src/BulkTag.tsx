@@ -3,7 +3,7 @@ import {
   Button,
   Card,
   CardContent,
-  Grid,
+  Grid2 as Grid,
   IconButton,
   Stack,
   Tooltip,
@@ -62,7 +62,7 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
             </Box>
             <Grid container spacing={1} width="unset">
               {tagSelection.map((t) => (
-                <Grid key={t.id} item>
+                <Grid key={t.id}>
                   <Tag tag={t} onClick={() => removeFromSelection(t)} />
                 </Grid>
               ))}

@@ -1,18 +1,7 @@
-import {
-  Stack,
-  Box,
-  Typography,
-  Divider,
-  Grid,
-  IconButton,
-  Button,
-  Chip,
-  TextField
-} from '@mui/material'
+import { Stack, Typography, Button } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { useMultiSelection } from '../useMultiSelection'
 import { useCallback, useMemo } from 'react'
-import { Tag } from '../Tag'
 import SparkleIcon from '@mui/icons-material/AutoAwesome'
 import { TagGroup } from './TagGroup'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'

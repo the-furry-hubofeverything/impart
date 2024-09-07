@@ -1,4 +1,13 @@
-import { Box, Button, Card, CardContent, Grid, IconButton, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Grid2 as Grid,
+  IconButton,
+  Stack,
+  Typography
+} from '@mui/material'
 import { useState } from 'react'
 import { TagSelector } from './common/TagSelector'
 import { Tag } from './common/Tag'
@@ -48,7 +57,7 @@ export function EditTags({ item, onFinish }: EditTagsProps) {
             </Box>
             <Grid container spacing={1}>
               {tagSelection.map((t) => (
-                <Grid key={t.id} item>
+                <Grid key={t.id}>
                   <Tag tag={t} onClick={() => removeFromSelection(t)} />
                 </Grid>
               ))}

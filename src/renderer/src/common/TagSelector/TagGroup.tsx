@@ -2,7 +2,7 @@ import {
   Box,
   Typography,
   Divider,
-  Grid,
+  Grid2 as Grid,
   IconButton,
   Stack,
   TextField,
@@ -93,7 +93,7 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
 
       <Grid container py={1} spacing={2}>
         {group.tags?.map((t) => (
-          <Grid key={t.id} item>
+          <Grid key={t.id}>
             <Tag
               tag={t}
               onClick={() => onSelect && onSelect(t)}
@@ -101,7 +101,7 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
             />
           </Grid>
         ))}
-        <Grid item>
+        <Grid>
           <IconButton size="small" onClick={() => createTag(group.id)}>
             <AddIcon />
           </IconButton>
