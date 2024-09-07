@@ -10,6 +10,7 @@ import { ContextMenu } from '@renderer/common/ContextMenu'
 import { GridActions } from './GridActions'
 import { getTaggableContextMenuOptions } from './taggableContextMenuOptions'
 import { SelectionIndicator } from './SelectionIndicator'
+import { HexColorPicker } from 'react-colorful'
 
 export interface TaggableBrowserProps {
   onSettingsPressed?: () => void

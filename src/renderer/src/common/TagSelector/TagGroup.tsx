@@ -12,10 +12,9 @@ import {
   DialogActions,
   Button
 } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Tag } from '../Tag'
 import AddIcon from '@mui/icons-material/Add'
-import EditIcon from '@mui/icons-material/Edit'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/Delete'
 
@@ -50,11 +49,11 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
     <Box
       key={group.id}
       sx={{
-        '& .MuiIconButton-root': {
+        '& .fade-in-button': {
           opacity: 0,
           transition: '0.2s'
         },
-        '&:hover .MuiIconButton-root': {
+        '&:hover .fade-in-button': {
           opacity: 1
         }
       }}
@@ -83,7 +82,7 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
             <Typography variant="h5" onClick={() => setEditMode(true)}>
               {group.label ?? 'Unnamed Group'}
             </Typography>
-            <IconButton color="error" onClick={remove}>
+            <IconButton className="fade-in-button" color="error" onClick={remove}>
               <DeleteIcon />
             </IconButton>
           </Stack>
@@ -102,7 +101,7 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
           </Grid>
         ))}
         <Grid>
-          <IconButton size="small" onClick={() => createTag(group.id)}>
+          <IconButton size="small" onClick={() => createTag(group.id)} className="fade-in-button">
             <AddIcon />
           </IconButton>
         </Grid>
