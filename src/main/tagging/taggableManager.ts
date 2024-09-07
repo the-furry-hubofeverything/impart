@@ -5,6 +5,7 @@ export interface FetchTaggablesOptions {
   tagIds?: number[]
   order?: 'alpha' | 'date'
   search?: string
+  year?: number
 }
 
 export class TaggableManager {
@@ -14,7 +15,7 @@ export class TaggableManager {
     })
 
     if (options) {
-      const { tagIds, order, search } = options
+      const { tagIds, order, search, year } = options
       if (tagIds && tagIds.length > 0) {
         this.applyTags(query, tagIds)
       }
@@ -25,6 +26,10 @@ export class TaggableManager {
 
       if (search && search != '') {
         this.applySearch(query, search)
+      }
+
+      if (year) {
+        this.applyYear(query, year)
       }
     }
 
@@ -60,6 +65,20 @@ export class TaggableManager {
     terms.forEach((t, index) => {
       query.andWhere(`files.fileIndex.fileName LIKE :term${index}`, { [`term${index}`]: `%${t}%` })
     })
+  }
+
+  private applyYear(query: SelectQueryBuilder<Taggable>, year: number) {
+    query.andWhere("strftime('%Y', files.dateModified) = :year", { year: year.toString() })
+  }
+
+  public async getAllTaggableYears() {
+    const query = Taggable.createQueryBuilder()
+      .select("strftime('%Y', dateModified) AS taggableYear")
+      .groupBy('taggableYear')
+
+    const result = await query.getRawMany<{ taggableYear: string }>()
+
+    return result.map((r) => Number(r.taggableYear)).reverse()
   }
 }
 

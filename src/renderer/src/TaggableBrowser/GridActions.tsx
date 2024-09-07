@@ -2,24 +2,24 @@ import {
   ToggleButtonGroup,
   Tooltip,
   ToggleButton,
-  Typography,
   Stack,
-  Button,
-  ButtonGroup,
   IconButton,
   styled,
   toggleButtonGroupClasses,
-  Divider,
-  Popover,
   Box,
-  TextField
+  TextField,
+  MenuItem,
+  Select,
+  Divider,
+  SelectChangeEvent
 } from '@mui/material'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha'
 import ClockIcon from '@mui/icons-material/AccessTime'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import SearchIcon from '@mui/icons-material/Search'
 import ClearIcon from '@mui/icons-material/Clear'
+import { useAsyncData } from '@renderer/common/useAsyncData'
 
 const ToolbarIconButton = styled(IconButton)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -46,9 +46,11 @@ export interface GridActionsProps {}
 
 export function GridActions({}: GridActionsProps) {
   const {
-    fetchOptions: { order, search },
+    fetchOptions: { order, search, year },
     setFetchOptions
   } = useTaggables()
+
+  const { data } = useAsyncData(() => window.taggableApi.getAllTaggableYears(), [])
 
   const toolbarRef = useRef<HTMLDivElement | null>(null)
 
@@ -69,22 +71,44 @@ export function GridActions({}: GridActionsProps) {
             fullWidth
             value={search}
             onChange={(e) => setFetchOptions({ search: e.currentTarget.value })}
-            InputProps={{
-              startAdornment: (
-                <Box mr={0.5} mt={1} ml={-0.5}>
-                  <SearchIcon color="secondary" />
-                </Box>
-              ),
-              endAdornment: (
-                <IconButton size="small" onClick={() => setFetchOptions({ search: '' })}>
-                  <ClearIcon fontSize="inherit" />
-                </IconButton>
-              )
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <Box mr={0.5} mt={1} ml={-0.5}>
+                    <SearchIcon color="secondary" />
+                  </Box>
+                ),
+                endAdornment: (
+                  <IconButton size="small" onClick={() => setFetchOptions({ search: '' })}>
+                    <ClearIcon fontSize="inherit" />
+                  </IconButton>
+                )
+              }
             }}
           />
         </Box>
-
-        {/* <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} /> */}
+        <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+        <TextField
+          select
+          value={year ?? 'All'}
+          label="Year"
+          size="small"
+          onChange={(e) =>
+            setFetchOptions({ year: e.target.value === 'All' ? undefined : Number(e.target.value) })
+          }
+          slotProps={{
+            select: { MenuProps: { slotProps: { paper: { sx: { maxHeight: 260 } } } } }
+          }}
+          sx={{ minWidth: 100 }}
+        >
+          <MenuItem value={'All'}>All</MenuItem>
+          {data?.map((y) => (
+            <MenuItem key={y} value={y}>
+              {y}
+            </MenuItem>
+          ))}
+        </TextField>
+        <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
         <StyledToggleButtonGroup
           value={order}
           size="small"

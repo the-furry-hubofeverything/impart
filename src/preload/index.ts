@@ -31,7 +31,8 @@ contextBridge.exposeInMainWorld('fileApi', {
 })
 
 contextBridge.exposeInMainWorld('taggableApi', {
-  getTaggables: generateEndpoint('taggable/getTaggables')
+  getTaggables: generateEndpoint('taggable/getTaggables'),
+  getAllTaggableYears: generateEndpoint('taggable/getAllTaggableYears')
 })
 
 contextBridge.exposeInMainWorld('tagApi', {

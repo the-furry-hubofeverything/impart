@@ -48,6 +48,7 @@ declare global {
       tagIds?: number[]
       order?: 'alpha' | 'date'
       search?: string
+      year?: number
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
@@ -94,6 +95,7 @@ declare global {
 
     taggableApi: {
       getTaggables: (options?: Impart.FetchTaggablesOptions) => Promise<Impart.Taggable[]>
+      getAllTaggableYears: () => Promise<number[]>
     }
 
     tagApi: {
