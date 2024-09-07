@@ -85,7 +85,15 @@ export function TaggableBrowser({
         </ContextMenu>
         <Fade in={selection.length > 0}>
           <Box position="fixed" bottom={10} left={10}>
-            <SelectionIndicator count={selection.length} onClear={() => setSelection([])} />
+            <SelectionIndicator
+              count={selection.length}
+              onTag={() =>
+                selection.length == 1
+                  ? onEditTags && onEditTags(selection[0])
+                  : onBulkTag && onBulkTag(selection)
+              }
+              onClear={() => setSelection([])}
+            />
           </Box>
         </Fade>
       </Stack>
