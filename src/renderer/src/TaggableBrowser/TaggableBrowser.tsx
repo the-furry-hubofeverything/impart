@@ -28,6 +28,8 @@ export function TaggableBrowser({
   const { taggables, isIndexing } = useTaggables()
   const [showIndexingPanel, setShowIndexingPanel] = useState(false)
 
+  const [groupByDirectory, setGroupByDirectory] = useState(false)
+
   useEffect(() => {
     if (isIndexing) {
       setShowIndexingPanel(true)
@@ -60,16 +62,10 @@ export function TaggableBrowser({
   return (
     <Stack direction="row" gap={1} height="100vh">
       <Stack overflow="auto" position={'relative'} flex={1} pr={1} gap={2} onScroll={handleScroll}>
-        <Box position="sticky" top={8} pl={1}>
-          <Card
-            sx={{
-              opacity: isScrolledToTop ? 1 : 0.4,
-              transition: '0.2s',
-              '&:hover': { opacity: 1 }
-            }}
-          >
+        <Box position="sticky" top={8} pl={1} zIndex={1}>
+          <Card>
             <CardActions>
-              <GridActions />
+              <GridActions groupByDirectory={groupByDirectory} onChange={setGroupByDirectory} />
             </CardActions>
           </Card>
         </Box>
@@ -80,6 +76,7 @@ export function TaggableBrowser({
           <TaggableGrid
             taggables={taggables}
             selection={selection}
+            groupByDirectory={groupByDirectory}
             onSelect={selectItem}
             onRightClick={rightClickSelect}
           />

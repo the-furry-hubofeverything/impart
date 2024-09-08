@@ -10,9 +10,11 @@ export interface FetchTaggablesOptions {
 
 export class TaggableManager {
   public async getTaggables(options?: FetchTaggablesOptions) {
-    let query = Taggable.createQueryBuilder('files').setFindOptions({
-      loadEagerRelations: true
-    })
+    let query = Taggable.createQueryBuilder('files')
+      .setFindOptions({
+        loadEagerRelations: true
+      })
+      .loadRelationIdAndMap('files.directory', 'files.directory')
 
     if (options) {
       const { tagIds, order, search, year } = options

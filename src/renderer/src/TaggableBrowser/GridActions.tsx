@@ -20,6 +20,7 @@ import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import SearchIcon from '@mui/icons-material/Search'
 import ClearIcon from '@mui/icons-material/Clear'
 import { useAsyncData } from '@renderer/common/useAsyncData'
+import FolderIcon from '@mui/icons-material/Folder'
 
 const ToolbarIconButton = styled(IconButton)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -42,9 +43,12 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   }
 }))
 
-export interface GridActionsProps {}
+export interface GridActionsProps {
+  groupByDirectory: boolean
+  onChange: (groupByDirectory: boolean) => void
+}
 
-export function GridActions({}: GridActionsProps) {
+export function GridActions({ groupByDirectory, onChange }: GridActionsProps) {
   const {
     fetchOptions: { order, search, year },
     setFetchOptions
@@ -108,6 +112,21 @@ export function GridActions({}: GridActionsProps) {
             </MenuItem>
           ))}
         </TextField>
+        <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+        <StyledToggleButtonGroup
+          value={groupByDirectory ? 'group' : null}
+          size="small"
+          exclusive
+          onChange={(e, value) => {
+            onChange(value === 'group')
+          }}
+        >
+          <Tooltip title="Group by Directory">
+            <ToggleButton value={'group'}>
+              <FolderIcon />
+            </ToggleButton>
+          </Tooltip>
+        </StyledToggleButtonGroup>
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
         <StyledToggleButtonGroup
           value={order}

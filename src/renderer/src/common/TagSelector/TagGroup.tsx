@@ -5,22 +5,18 @@ import {
   Grid2 as Grid,
   IconButton,
   Stack,
-  TextField,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
-  Paper,
-  useTheme
+  Button
 } from '@mui/material'
 import { useState } from 'react'
 import { Tag } from '../Tag'
 import AddIcon from '@mui/icons-material/Add'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { HexColorPicker } from 'react-colorful'
-import CheckIcon from '@mui/icons-material/Check'
+import { EditTagGroup } from './EditTagGroup'
 
 export interface TagGroupProps {
   group: Impart.TagGroup
@@ -29,22 +25,11 @@ export interface TagGroupProps {
 }
 
 export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
-  const theme = useTheme()
-  const [internalLabel, setInternalLabel] = useState(group.label)
-  const [internalColor, setInternalColor] = useState(
-    group.defaultTagColor ?? theme.palette.primary.main
-  )
-
   const [editMode, setEditMode] = useState(false)
 
-  const { editGroup, createTag, deleteGroup } = useTagGroups()
+  const { createTag, deleteGroup } = useTagGroups()
 
   const [showRemoveWarning, setShowRemoveWarning] = useState(false)
-
-  const update = async () => {
-    await editGroup(group.id, internalLabel, internalColor)
-    setEditMode(false)
-  }
 
   const remove = () => {
     if ((group.tags?.length ?? 0) > 0) {
@@ -67,52 +52,7 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
         }
       }}
     >
-      {editMode && (
-        <Box position="relative">
-          <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-            <Box flex={1}>
-              <TextField
-                variant="standard"
-                placeholder="Group Name"
-                autoFocus
-                fullWidth
-                value={internalLabel}
-                onChange={(e) => setInternalLabel(e.currentTarget.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    update()
-                  }
-                }}
-              />
-            </Box>
-            <Box sx={{ width: 28, height: 28, borderRadius: 50, bgcolor: internalColor }}></Box>
-            <IconButton onClick={update}>
-              <CheckIcon />
-            </IconButton>
-          </Stack>
-          <Box
-            position="absolute"
-            mt={1}
-            zIndex={1}
-            right={0}
-            sx={{
-              '& .react-colorful': {
-                width: 150,
-                height: 160
-              }
-            }}
-          >
-            <Paper sx={{ bgcolor: '#fff', borderRadius: 2 }}>
-              <Stack p={1} gap={0.5}>
-                <Typography variant="caption" textAlign="center">
-                  Default Tag Color
-                </Typography>
-                <HexColorPicker color={internalColor} onChange={setInternalColor} />
-              </Stack>
-            </Paper>
-          </Box>
-        </Box>
-      )}
+      <EditTagGroup group={group} show={editMode} onClose={() => setEditMode(false)} />
       {!editMode && (
         <>
           <Stack direction="row" alignItems="center" justifyContent="space-between">
