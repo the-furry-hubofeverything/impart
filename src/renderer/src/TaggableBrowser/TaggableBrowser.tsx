@@ -1,6 +1,6 @@
 import { Stack, Box, Collapse, Card, CardActions, Fade } from '@mui/material'
-import { useCallback, useEffect, useState } from 'react'
-import { TaggableGrid } from './TaggableGrid'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { TaggableGrid } from '../common/TaggableGrid/TaggableGrid'
 import { SettingsPanel } from './SettingsPanel'
 import { TaggingPanel } from './TaggingPanel'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
@@ -11,6 +11,7 @@ import { GridActions } from './GridActions'
 import { getTaggableContextMenuOptions } from './taggableContextMenuOptions'
 import { SelectionIndicator } from './SelectionIndicator'
 import { HexColorPicker } from 'react-colorful'
+import { GroupedTaggableGrid, buildTaggableGroups } from '@renderer/common/TaggableGrid'
 
 export interface TaggableBrowserProps {
   onSettingsPressed?: () => void
@@ -23,9 +24,13 @@ export function TaggableBrowser({
   onEditTags,
   onBulkTag
 }: TaggableBrowserProps) {
-  const [isScrolledToTop, setScrolledToTop] = useState(true)
-
   const { taggables, isIndexing } = useTaggables()
+  const taggableGroups = useMemo(() => buildTaggableGroups(taggables), [taggables])
+  const taggableFlatMap = useMemo(
+    () => taggableGroups.flatMap((g) => g.taggables),
+    [taggableGroups]
+  )
+
   const [showIndexingPanel, setShowIndexingPanel] = useState(false)
 
   const [groupByDirectory, setGroupByDirectory] = useState(false)
@@ -43,25 +48,17 @@ export function TaggableBrowser({
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
   const { selectItem } = useMultiSelection(
-    taggables,
+    groupByDirectory ? taggableFlatMap : taggables,
     selection,
     setSelection,
     useCallback((a, b) => a.id === b.id, [])
   )
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    if (isScrolledToTop && e.currentTarget.scrollTop !== 0) {
-      setScrolledToTop(false)
-    } else if (!isScrolledToTop && e.currentTarget.scrollTop === 0) {
-      setScrolledToTop(true)
-    }
-  }
-
   const rightClickSelect = useCallback((item: Impart.Taggable) => selectItem(item), [selectItem])
 
   return (
     <Stack direction="row" gap={1} height="100vh">
-      <Stack overflow="auto" position={'relative'} flex={1} pr={1} gap={2} onScroll={handleScroll}>
+      <Stack overflow="auto" position={'relative'} flex={1} pr={1} gap={2}>
         <Box position="sticky" top={8} pl={1} zIndex={1}>
           <Card>
             <CardActions>
@@ -73,13 +70,22 @@ export function TaggableBrowser({
           flex={1}
           options={getTaggableContextMenuOptions(selection, onEditTags, onBulkTag)}
         >
-          <TaggableGrid
-            taggables={taggables}
-            selection={selection}
-            groupByDirectory={groupByDirectory}
-            onSelect={selectItem}
-            onRightClick={rightClickSelect}
-          />
+          {!groupByDirectory && (
+            <TaggableGrid
+              taggables={taggables}
+              selection={selection}
+              onSelect={selectItem}
+              onRightClick={rightClickSelect}
+            />
+          )}
+          {groupByDirectory && (
+            <GroupedTaggableGrid
+              groups={taggableGroups}
+              selection={selection}
+              onSelect={selectItem}
+              onRightClick={rightClickSelect}
+            />
+          )}
         </ContextMenu>
         <Fade in={selection.length > 0}>
           <Box position="fixed" bottom={10} left={10}>

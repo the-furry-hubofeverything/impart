@@ -15,7 +15,7 @@ import { Tag } from './common/Tag'
 import CheckIcon from '@mui/icons-material/Check'
 import BackIcon from '@mui/icons-material/ArrowBack'
 import { TaggableDisplay } from './common/TaggableDisplay'
-import { TaggableGrid } from './TaggableBrowser/TaggableGrid'
+import { TaggableGrid } from './common/TaggableGrid/TaggableGrid'
 import InfoIcon from '@mui/icons-material/Info'
 
 export interface BulkTagProps {
