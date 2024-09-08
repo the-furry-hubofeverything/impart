@@ -13,11 +13,7 @@ export class TagManager {
       }
     })
 
-    return groups.map((g) => ({
-      id: g.id,
-      label: g.label,
-      tags: g.tags.map((t) => ({ id: t.id, label: t.label, color: t.color }))
-    }))
+    return groups
   }
 
   public async setFileTags(taggableId: number, tagIds: number[]) {
@@ -92,11 +88,19 @@ export class TagManager {
   }
 
   public async createTag(groupId: number) {
-    const maxOrder = await Tag.maximum('tagOrder', { group: { id: groupId } })
+    const [maxOrder, tagGroup] = await Promise.all([
+      Tag.maximum('tagOrder', { group: { id: groupId } }),
+      TagGroup.findOneBy({ id: groupId })
+    ])
+
+    if (!tagGroup) {
+      throw new Error(`Could not find tag group with id ${groupId}`)
+    }
 
     const tag = Tag.create({
       tagOrder: (maxOrder ?? 0) + 1,
-      group: { id: groupId }
+      color: tagGroup.defaultTagColor,
+      group: tagGroup
     })
 
     await tag.save()
