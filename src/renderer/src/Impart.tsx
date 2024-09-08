@@ -26,6 +26,10 @@ export function Impart({}: ImpartProps) {
   const { fetchTaggables } = useTaggables()
 
   useEffect(() => {
+    window.indexApi.indexAll()
+  }, [])
+
+  useEffect(() => {
     fetchTaggables()
   }, [fetchTaggables])
 

@@ -114,6 +114,7 @@ declare global {
     }
 
     indexApi: {
+      indexAll: () => Promise<void>
       selectAndIndexDirectory: () => Promise<void>
       getDirectories: () => Promise<Impart.CountedDirectory[]>
       deleteDirectory: (path: string) => Promise<void>

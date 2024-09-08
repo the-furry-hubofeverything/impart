@@ -90,6 +90,7 @@ export class TaggableManager {
     this.listeners.push(
       window.fileApi.onStepProgress(() => {
         this.filesIndexed++
+        this.sync()
       })
     )
 
