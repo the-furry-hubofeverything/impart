@@ -25,13 +25,16 @@ export const TaggableGrid = React.memo(function ({
   return (
     <Grid container spacing={1}>
       {taggables?.map((f) => (
-        <Grid key={f.id} minWidth={BOX_WIDTH + 26} size={{ xs: 'grow' }}>
-          <TaggableDisplay
-            taggable={f}
-            isSelected={selection?.some((s) => s.id === f.id)}
-            onClick={({ ctrl, shift }) => onSelect && onSelect(f, ctrl, shift)}
-            onRightClick={(e) => onRightClick && onRightClick(f, e)}
-          />
+        <Grid
+          key={f.id}
+          minWidth={BOX_WIDTH + 26}
+          size={{ xs: 'grow' }}
+          onContextMenu={(e) => {
+            onRightClick && onRightClick(f, e)
+          }}
+          onClick={(e) => onSelect && onSelect(f, e.ctrlKey, e.shiftKey)}
+        >
+          <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />
         </Grid>
       ))}
     </Grid>

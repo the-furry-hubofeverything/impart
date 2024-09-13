@@ -92,6 +92,7 @@ class IndexingManager {
   }
 
   private async indexImage(filePath: string, directory: Directory) {
+    console.log('Indexing Image: ', filePath)
     const indexedImage = TaggableImage.create({
       fileIndex: {
         path: filePath,

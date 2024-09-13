@@ -10,21 +10,14 @@ export const BOX_HEIGHT = 190
 export interface TaggableDisplayProps {
   taggable: Impart.Taggable
   isSelected?: boolean
-  onClick?: (mods: { ctrl: boolean; shift: boolean }) => void
-  onRightClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
 export const TaggableDisplay = React.memo(function ({
   taggable,
-  onClick,
-  onRightClick,
   isSelected
 }: TaggableDisplayProps) {
   return (
     <Stack
-      onContextMenu={(e) => {
-        onRightClick && onRightClick(e)
-      }}
       alignItems="center"
       justifyContent="center"
       height="100%"
@@ -37,9 +30,6 @@ export const TaggableDisplay = React.memo(function ({
         '&:hover': {
           bgcolor: isSelected ? '#FFFFFF55' : '#FFFFFF33'
         }
-      }}
-      onClick={(e) => {
-        onClick && onClick({ ctrl: e.ctrlKey, shift: e.shiftKey })
       }}
       onDoubleClick={() => window.fileApi.openFile(taggable.id)}
     >
