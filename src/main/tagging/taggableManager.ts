@@ -1,5 +1,7 @@
-import { SelectQueryBuilder } from 'typeorm'
+import { In, SelectQueryBuilder } from 'typeorm'
 import { Taggable } from '../database/entities/Taggable'
+import { TaggableStack } from '../database/entities/TaggableStack'
+import { isTaggableImage } from '../database/entities/TaggableImage'
 
 export interface FetchTaggablesOptions {
   tagIds?: number[]
@@ -81,6 +83,28 @@ export class TaggableManager {
     const result = await query.getRawMany<{ taggableYear: string }>()
 
     return result.map((r) => Number(r.taggableYear)).reverse()
+  }
+
+  public async createStack(name: string, taggableIds: number[], coverId: number) {
+    const childTaggables = await Taggable.find({
+      where: { id: In(taggableIds) },
+      relations: { directory: true }
+    })
+    const cover = childTaggables.find((t) => t.id === coverId)
+
+    if (!cover) {
+      throw new Error('Cover taggable must be one of the items in the stack')
+    }
+
+    const stack = TaggableStack.create({
+      name,
+      coverPath: isTaggableImage(cover) ? cover.fileIndex.path : undefined,
+      taggables: childTaggables,
+      directory: cover.directory,
+      dateModified: cover.dateModified
+    })
+
+    await stack.save()
   }
 }
 

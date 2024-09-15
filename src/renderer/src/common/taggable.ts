@@ -3,5 +3,9 @@ export function isTaggableImage(t: Impart.Taggable): t is Impart.TaggableImage {
 }
 
 export function isTaggableFile(t: Impart.Taggable): t is Impart.TaggableFile {
-  return !isTaggableImage(t)
+  return !isTaggableImage(t) && (t as Impart.TaggableFile).fileIndex != null
+}
+
+export function isTaggableStack(t: Impart.Taggable): t is Impart.TaggableStack {
+  return !isTaggableImage(t) && !isTaggableFile(t)
 }

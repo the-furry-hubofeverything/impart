@@ -43,7 +43,13 @@ declare global {
       fileIndex: FileIndex
     }
 
-    type Taggable = TaggableImage | TaggableFile
+    interface TaggableStack extends BaseTaggable {
+      taggables: Taggable[]
+      name: string
+      cover: Taggable
+    }
+
+    type Taggable = TaggableImage | TaggableFile | TaggableStack
 
     interface FetchTaggablesOptions {
       tagIds?: number[]
@@ -97,6 +103,7 @@ declare global {
     taggableApi: {
       getTaggables: (options?: Impart.FetchTaggablesOptions) => Promise<Impart.Taggable[]>
       getAllTaggableYears: () => Promise<number[]>
+      createStack: (name: string, taggableIds: number[], coverId: number) => Promise<void>
     }
 
     tagApi: {

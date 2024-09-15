@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material'
-import { isTaggableFile, isTaggableImage } from '../taggable'
+import { isTaggableFile, isTaggableImage, isTaggableStack } from '../taggable'
 import { ImageDisplay } from './ImageDisplay'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import React from 'react'
@@ -41,7 +41,7 @@ export const TaggableDisplay = React.memo(function ({
       )}
       <Box maxWidth={BOX_WIDTH} pt={0.25}>
         <Typography textAlign="center" variant="caption" sx={{ wordBreak: 'break-all' }}>
-          {taggable.fileIndex.fileName}
+          {!isTaggableStack(taggable) && taggable.fileIndex.fileName}
         </Typography>
       </Box>
     </Stack>
