@@ -26,7 +26,7 @@ export function Settings({ onClose }: SettingsProps) {
   console.log(selectedTab)
 
   return (
-    <Stack p={3} height="100vh" justifyContent="center">
+    <Stack p={3} height="100%" justifyContent="center">
       <Card sx={{ maxHeight: '100%', position: 'relative' }}>
         <Box position="absolute" top={5} right={5}>
           <IconButton size="large" onClick={onClose}>

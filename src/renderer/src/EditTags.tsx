@@ -8,7 +8,7 @@ import {
   Stack,
   Typography
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TagSelector } from './common/TagSelector'
 import { Tag } from './common/Tag'
 import CheckIcon from '@mui/icons-material/Check'
@@ -21,7 +21,13 @@ export interface EditTagsProps {
 }
 
 export function EditTags({ item, onFinish }: EditTagsProps) {
+  console.log(item)
+
   const [tagSelection, setTagSelection] = useState(item.tags ?? [])
+
+  useEffect(() => {
+    setTagSelection(item.tags)
+  }, [item.tags])
 
   const removeFromSelection = (tag: Impart.Tag) => {
     const copy = tagSelection.slice()
@@ -41,14 +47,14 @@ export function EditTags({ item, onFinish }: EditTagsProps) {
   }
 
   return (
-    <Box position="relative">
+    <Box position="relative" height="100%">
       <Box position="absolute" top={20} left={20}>
         <IconButton onClick={onFinish} size="large">
           <BackIcon fontSize="inherit" />
         </IconButton>
       </Box>
 
-      <Stack direction="row" p={1} gap={1} height="100vh">
+      <Stack direction="row" p={1} gap={1} height="100%">
         <Stack flex={1} alignItems="center">
           <Typography variant="h2">Edit Tags</Typography>
           <Stack flex={1} justifyContent="center" alignItems="center" gap={4}>
@@ -67,9 +73,9 @@ export function EditTags({ item, onFinish }: EditTagsProps) {
             </Button>
           </Stack>
         </Stack>
-        <Box flex={1} alignItems="center">
+        <Box width={500}>
           <Card sx={{ height: '100%' }}>
-            <CardContent>
+            <CardContent sx={{ height: '100%', overflowY: 'auto' }}>
               <TagSelector selection={tagSelection} onChange={setTagSelection} />
             </CardContent>
           </Card>

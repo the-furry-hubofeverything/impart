@@ -56,6 +56,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
       {groups?.map((g) => (
         <TagGroup key={g.id} group={g} selectedTags={selection} onSelect={selectItem} />
       ))}
+
       <Button onClick={createGroup}>
         <AddIcon />
       </Button>

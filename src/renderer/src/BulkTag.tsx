@@ -44,14 +44,14 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
   }
 
   return (
-    <Box position="relative">
+    <Box position="relative" height="100%">
       <Box position="absolute" top={20} left={20}>
         <IconButton onClick={onFinish} size="large">
           <BackIcon fontSize="inherit" />
         </IconButton>
       </Box>
 
-      <Stack direction="row" p={1} gap={1} height="100vh">
+      <Stack direction="row" p={1} gap={1} height="100%">
         <Stack flex={1} alignItems="center">
           <Typography variant="h2">Bulk Tags</Typography>
           <Typography>Add tags to multiple items at once. Repeat tags will be ignored.</Typography>
@@ -72,9 +72,9 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
             </Button>
           </Stack>
         </Stack>
-        <Box width={500} alignItems="center">
+        <Box width={500}>
           <Card sx={{ height: '100%' }}>
-            <CardContent>
+            <CardContent sx={{ height: '100%', overflowY: 'auto' }}>
               <TagSelector selection={tagSelection} onChange={setTagSelection} />
             </CardContent>
           </Card>
