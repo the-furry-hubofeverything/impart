@@ -28,12 +28,6 @@ export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSetti
   const [targetForDeletion, setTargetForDeletion] = useState<Impart.CountedDirectory>()
   const [showDeleteWarning, setShowDeleteWarning] = useState(false)
 
-  const remove = async (path: string) => {
-    await window.indexApi.deleteDirectory(path)
-    fetchTaggables()
-    reloadDirectories()
-  }
-
   return (
     <Box minWidth={600}>
       <List dense>
@@ -83,7 +77,6 @@ export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSetti
             startIcon={<DeleteIcon />}
             onClick={() => {
               if (targetForDeletion) {
-                remove(targetForDeletion.path)
                 setTargetForDeletion(undefined)
                 setShowDeleteWarning(false)
               }
