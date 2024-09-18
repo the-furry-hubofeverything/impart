@@ -55,7 +55,7 @@ export class TaggableManager {
   private applyOrder(query: SelectQueryBuilder<Taggable>, order: 'alpha' | 'date') {
     switch (order) {
       case 'alpha':
-        query.orderBy('files.fileIndex.fileName')
+        query.orderBy('files.fileIndex.fileName COLLATE NOCASE')
         break
       case 'date':
         query.orderBy('files.dateModified', 'DESC')
