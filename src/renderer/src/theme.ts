@@ -69,6 +69,16 @@ export const theme = createTheme(
             paddingRight: 24
           }
         }
+      },
+
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            '&.Mui-selected': {
+              backgroundColor: '#e0f5f1'
+            }
+          }
+        }
       }
     }
   },
