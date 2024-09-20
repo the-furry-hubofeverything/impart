@@ -100,7 +100,7 @@ declare global {
     taskApi: {
       onSequenceStarted: CallbackFunc<void>
       onItemAddedToSequence: CallbackFunc<void>
-      onTaskStarted: CallbackFunc<{ type: Impart.TaskType; steps?: number }>
+      onTaskStarted: CallbackFunc<{ type: Impart.TaskType; steps: number }>
       onStepTaken: CallbackFunc<void>
       onTaskFinished: CallbackFunc<void>
       onSequenceFinished: CallbackFunc<void>

@@ -54,7 +54,7 @@ class IndexingManager {
         return unsourcedImages.map((i) => () => this.findAndAssociateSourceFile(i, directory))
       },
       delayPerItem: 10,
-      type: 'indexing'
+      type: 'sourceAssociation'
     })
   }
 

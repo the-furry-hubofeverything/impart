@@ -1,28 +1,46 @@
-import { Card, CardContent, LinearProgress, Typography } from '@mui/material'
-import { useTaggables } from '../EntityProviders/TaggableProvider/TaggableProvider'
-import { useEffect, useState } from 'react'
+import { Box, Card, CardContent, LinearProgress, Stack, Typography } from '@mui/material'
+import { useTaskStatus } from '@renderer/TaskStatusProvider'
 
 export interface IndexingPanelProps {}
 
 export function IndexingPanel({}: IndexingPanelProps) {
-  return <div>blah</div>
+  const { currentStep, stepCount, taskType, currentTask, taskCount } = useTaskStatus()
 
-  // const { filesIndexed, total, indexingStep, isIndexing } = useTaggables()
+  const getTaskLabel = () => {
+    if (!taskType) {
+      return 'Finished!'
+    }
 
-  // return (
-  //   <Card>
-  //     <CardContent>
-  //       <Typography variant="body2">
-  //         {isIndexing && indexingStep === 'indexing' && 'Indexing...'}
-  //         {isIndexing &&
-  //           indexingStep === 'sourceAssociation' &&
-  //           'Associating images with source files...'}
-  //         {!isIndexing && 'Finished indexing'}
-  //       </Typography>
-  //       {total != 0 && (
-  //         <LinearProgress value={(filesIndexed / total) * 100} variant="determinate" />
-  //       )}
-  //     </CardContent>
-  //   </Card>
-  // )
+    switch (taskType) {
+      case 'bulkTag':
+        return 'Bulk Tagging...'
+      case 'indexing':
+        return 'Indexing...'
+      case 'sourceAssociation':
+        return 'Associating images with source files...'
+    }
+  }
+
+  return (
+    <Card>
+      <CardContent>
+        <Stack gap={2}>
+          <Box>
+            <Typography variant="body2">
+              Step {Math.min(currentTask + 1, taskCount)}/{taskCount}
+            </Typography>
+            {taskCount != 0 && (
+              <LinearProgress value={(currentTask / taskCount) * 100} variant="determinate" />
+            )}
+          </Box>
+          <Box>
+            <Typography variant="body2">{getTaskLabel()}</Typography>
+            {stepCount != 0 && (
+              <LinearProgress value={(currentStep / stepCount) * 100} variant="determinate" />
+            )}
+          </Box>
+        </Stack>
+      </CardContent>
+    </Card>
+  )
 }

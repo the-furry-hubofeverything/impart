@@ -10,7 +10,7 @@ class TaskMessenger {
     impartApp.mainWindow?.webContents.send('task/itemAddedToSequence')
   }
 
-  public taskStarted(type: TaskType, steps?: number) {
+  public taskStarted(type: TaskType, steps: number) {
     impartApp.mainWindow?.webContents.send('task/taskStarted', {
       type,
       steps

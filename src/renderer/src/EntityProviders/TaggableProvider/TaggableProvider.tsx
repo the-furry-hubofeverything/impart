@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect } from 'react'
 import { usePartialState } from '@renderer/common/usePartialState'
 import { useAsyncData } from '@renderer/common/useAsyncData'
+import { useTaskStatus } from '@renderer/TaskStatusProvider'
 
 interface TaggableData {
   taggables: Impart.Taggable[]
@@ -18,6 +19,8 @@ export interface TaggableProviderProps {
 const DEFAULT_ORDER_KEY = 'defaultOrder'
 
 export function TaggableProvider({ children }: TaggableProviderProps) {
+  const { isTaskRunning } = useTaskStatus()
+
   const [fetchOptions, setFetchOptions] = usePartialState<Impart.FetchTaggablesOptions>(() => ({
     order: (localStorage.getItem(DEFAULT_ORDER_KEY) as 'alpha' | 'date' | null) ?? 'alpha'
   }))
@@ -33,13 +36,13 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
     }
   }, [fetchOptions.order])
 
-  // useEffect(() => {
-  //   if (state.isIndexing) {
-  //     let interval = setInterval(() => fetchTaggables(), 1000)
+  useEffect(() => {
+    if (isTaskRunning) {
+      let interval = setInterval(() => fetchTaggables(), 1000)
 
-  //     return () => clearInterval(interval)
-  //   }
-  // }, [state.isIndexing])
+      return () => clearInterval(interval)
+    }
+  }, [isTaskRunning])
 
   return (
     <TaggableContext.Provider

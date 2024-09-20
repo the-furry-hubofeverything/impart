@@ -17,22 +17,22 @@ class TaskQueue {
 
   public add(task: QueuedTask) {
     this.queue.push(task)
-    taskMessenger.itemAddedToSequence()
 
     if (!this.isProcessing) {
       this.isProcessing = true
       taskMessenger.sequenceStarted()
       this.performNextTask()
     }
+
+    taskMessenger.itemAddedToSequence()
   }
 
   private async performNextTask() {
     const task = this.queue.shift()
 
     if (task) {
-      taskMessenger.taskStarted(task.type, task.steps.length)
-
       const steps = typeof task.steps === 'function' ? await task.steps() : task.steps
+      taskMessenger.taskStarted(task.type, steps.length)
 
       await Promise.all(
         steps.map((func, index) =>

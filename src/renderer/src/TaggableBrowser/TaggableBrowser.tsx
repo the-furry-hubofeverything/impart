@@ -26,7 +26,7 @@ export function TaggableBrowser({
   onBulkTag
 }: TaggableBrowserProps) {
   const { taggables } = useTaggables()
-  const { isIndexing } = useTaskStatus()
+  const { isTaskRunning } = useTaskStatus()
   const taggableGroups = useMemo(() => buildTaggableGroups(taggables), [taggables])
   const taggableFlatMap = useMemo(
     () => taggableGroups.flatMap((g) => g.taggables),
@@ -38,14 +38,14 @@ export function TaggableBrowser({
   const [groupByDirectory, setGroupByDirectory] = useState(false)
 
   useEffect(() => {
-    if (isIndexing) {
+    if (isTaskRunning) {
       setShowIndexingPanel(true)
     } else {
       const timer = setTimeout(() => setShowIndexingPanel(false), 3000)
 
       return () => clearTimeout(timer)
     }
-  }, [isIndexing])
+  }, [isTaskRunning])
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
