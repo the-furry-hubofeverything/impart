@@ -13,7 +13,7 @@ import {
 import React, { useState } from 'react'
 import FolderIcon from '@mui/icons-material/Folder'
 import CloseIcon from '@mui/icons-material/Close'
-import { IndexedDirectoriesSettings } from './IndexedDirectoriesSettings'
+import { IndexedDirectoriesSettings } from './IndexedDirectorySettings'
 
 type SettingsType = 'directories' | 'TODO'
 

@@ -5,32 +5,26 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
   Stack
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
-import { useDirectories } from '../EntityProviders/DirectoryProvider'
-import { useTaggables } from '../EntityProviders/TaggableProvider'
+import { useDirectories } from '../../EntityProviders/DirectoryProvider'
 import { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { DirectoryEditor } from './DirectoryEditor'
+import { DirectoryList } from './DirectoryList'
 
 export interface IndexedDirectoriesSettingsProps {
   onChange?: () => void
 }
 
 export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSettingsProps) {
-  const { data: directories, executeRequest: reloadDirectories } = useDirectories()
+  const { data: originalDirectories } = useDirectories()
 
-  const [directoryState, setDirectoryState] = useState<Impart.Directory[]>()
+  const [directoryState, setDirectoryState] = useState<Impart.Directory[]>([])
 
   useEffect(() => {
-    setDirectoryState(directories)
-  }, [directories])
+    setDirectoryState(originalDirectories ?? [])
+  }, [originalDirectories])
 
   const [targetForDeletion, setTargetForDeletion] = useState<Impart.CountedDirectory>()
   const [showDeleteWarning, setShowDeleteWarning] = useState(false)
@@ -38,20 +32,22 @@ export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSetti
   return (
     <Box>
       <Stack gap={1}>
-        {directoryState?.map((d) => <DirectoryEditor key={d.path} directory={d} />)}
-        <Box>
-          <Button
-            startIcon={<CreateNewFolderIcon />}
-            variant="contained"
-            size="small"
-            onClick={async () => {
-              await window.indexApi.selectAndIndexDirectory()
-              onChange && onChange()
-            }}
-          >
-            Add Folder
-          </Button>
-        </Box>
+        <DirectoryList
+          directoryState={directoryState}
+          originalDirectories={originalDirectories}
+          onChange={(s) => setDirectoryState(s)}
+        />
+        <Button
+          startIcon={<CreateNewFolderIcon />}
+          variant="outlined"
+          size="large"
+          onClick={async () => {
+            await window.indexApi.selectAndIndexDirectory()
+            onChange && onChange()
+          }}
+        >
+          Add Directory
+        </Button>
       </Stack>
       <Dialog open={showDeleteWarning} onClose={() => setShowDeleteWarning(false)}>
         <DialogTitle>Remove Directory</DialogTitle>
