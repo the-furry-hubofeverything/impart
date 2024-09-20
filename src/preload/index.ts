@@ -20,14 +20,16 @@ function generateCallback(channel: string) {
 }
 
 contextBridge.exposeInMainWorld('fileApi', {
-  getThumbnail: generateEndpoint('file/getThumbnail'),
-  openFile: generateCommand('file/openFile'),
+  openFile: generateCommand('file/openFile')
+})
 
-  onIndexingStepStarted: generateCallback('file/indexingStarted'),
-  onFileIndexed: generateCallback('file/fileIndexed'),
-  onSourceFileAssociated: generateCallback('file/sourceFileAssociated'),
-  onStepProgress: generateCallback('file/madeStepProgress'),
-  onIndexingEnded: generateCallback('file/indexingEnded')
+contextBridge.exposeInMainWorld('taskApi', {
+  onSequenceStarted: generateCallback('task/sequenceStarted'),
+  onItemAddedToSequence: generateCallback('task/itemAddedToSequence'),
+  onTaskStarted: generateCallback('task/taskStarted'),
+  onStepTaken: generateCallback('task/stepTaken'),
+  onTaskFinished: generateCallback('task/taskFinished'),
+  onSequenceFinished: generateCallback('task/sequenceFinished')
 })
 
 contextBridge.exposeInMainWorld('taggableApi', {

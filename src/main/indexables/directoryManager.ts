@@ -7,8 +7,6 @@ interface DirectoryPayload {
   path: string
 }
 
-type Queueable = () => Promise<any>
-
 export class DirectoryManager {
   public async getIndexedDirectories() {
     const query = Directory.createQueryBuilder('directories')
@@ -33,7 +31,6 @@ export class DirectoryManager {
   }
 
   public async updateDirectories(directoryPayloads: DirectoryPayload[]) {
-    let tasks: Queueable[] = []
     const directories = await Directory.find()
 
     const unaddedDirectories = directoryPayloads.filter(
@@ -47,45 +44,26 @@ export class DirectoryManager {
     )
 
     for (const d of unaddedDirectories) {
-      const dirTasks = await this.createDirectory(d)
-      tasks = tasks.concat(dirTasks)
+      await this.createDirectory(d)
     }
 
     for (const d of updatedDirectories) {
-      const dirTasks = await this.updateDirectory(d.directory, d.payload!)
-      tasks = tasks.concat(dirTasks)
+      await this.updateDirectory(d.directory, d.payload!)
     }
 
     for (const d of removedDirectories) {
       await d.remove()
     }
-
-    //This can happen asynchronously, so we just fire it off without an await
-    this.performTasks(tasks)
   }
 
-  private async createDirectory(payload: DirectoryPayload): Promise<Queueable[]> {
-    const tasks: Queueable[] = []
-
+  private async createDirectory(payload: DirectoryPayload) {
     const directory = Directory.create({ path: payload.path })
     await directory.save()
-    tasks.push(() => indexingManager.indexFiles(directory))
-
-    return tasks
+    await indexingManager.indexFiles(directory)
   }
 
-  private async updateDirectory(
-    directory: Directory,
-    payload: DirectoryPayload
-  ): Promise<Queueable[]> {
-    //Placeholder
-    return []
-  }
-
-  private async performTasks(queue: Queueable[]) {
-    for (const task of queue) {
-      await task()
-    }
+  private async updateDirectory(directory: Directory, payload: DirectoryPayload) {
+    //Placeholder (nothing to update yet)
   }
 }
 

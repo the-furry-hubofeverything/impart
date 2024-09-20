@@ -1,10 +1,11 @@
-import { Box, Button, Stack } from '@mui/material'
+import { Box, Button, CircularProgress, Stack } from '@mui/material'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import { useDirectories } from '../../EntityProviders/DirectoryProvider'
 import { useEffect, useState } from 'react'
 import { DirectoryList } from './DirectoryList'
 import { produce } from 'immer'
 import SaveIcon from '@mui/icons-material/Save'
+import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 
 export interface IndexedDirectoriesSettingsProps {
   onChange?: () => void
@@ -12,6 +13,7 @@ export interface IndexedDirectoriesSettingsProps {
 
 export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSettingsProps) {
   const { data: originalDirectories, executeRequest: reloadDirectories } = useDirectories()
+  const { fetchTaggables } = useTaggables()
   const [isSaving, setSaving] = useState(false)
 
   const [directoryState, setDirectoryState] = useState<Impart.Directory[]>([])
@@ -37,6 +39,7 @@ export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSetti
     await window.indexApi.updateDirectories(directoryState)
     setSaving(false)
     reloadDirectories()
+    fetchTaggables()
   }
 
   return (
@@ -57,9 +60,12 @@ export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSetti
         </Button>
       </Stack>
       <Box pt={2} textAlign="right">
-        <Button startIcon={<SaveIcon />} variant="contained" size="large" onClick={saveChanges}>
-          Save
-        </Button>
+        {isSaving && <CircularProgress />}
+        {!isSaving && (
+          <Button startIcon={<SaveIcon />} variant="contained" size="large" onClick={saveChanges}>
+            Save
+          </Button>
+        )}
       </Box>
     </Box>
   )

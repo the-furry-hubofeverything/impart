@@ -81,7 +81,7 @@ declare global {
     //MISC
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
-    type IndexingStep = 'indexing' | 'sourceAssociation'
+    type TaskType = 'indexing' | 'sourceAssociation' | 'bulkTag'
   }
 
   interface Window {
@@ -89,21 +89,21 @@ declare global {
 
     fileApi: {
       openFile: (indexableId: number) => void
-
-      onIndexingStepStarted: CallbackFunc<{ filesFound: number; step: Impart.IndexingStep }>
-      onFileIndexed: CallbackFunc<Impart.Taggable>
-      onSourceFileAssociated: CallbackFunc<{
-        image: Impart.TaggableImage
-        file: Impart.TaggableFile
-      }>
-      onStepProgress: CallbackFunc<void>
-      onIndexingEnded: CallbackFunc<void>
     }
 
     taggableApi: {
       getTaggables: (options?: Impart.FetchTaggablesOptions) => Promise<Impart.Taggable[]>
       getAllTaggableYears: () => Promise<number[]>
       createStack: (name: string, taggableIds: number[], coverId: number) => Promise<void>
+    }
+
+    taskApi: {
+      onSequenceStarted: CallbackFunc<void>
+      onItemAddedToSequence: CallbackFunc<void>
+      onTaskStarted: CallbackFunc<{ type: Impart.TaskType; steps?: number }>
+      onStepTaken: CallbackFunc<void>
+      onTaskFinished: CallbackFunc<void>
+      onSequenceFinished: CallbackFunc<void>
     }
 
     tagApi: {

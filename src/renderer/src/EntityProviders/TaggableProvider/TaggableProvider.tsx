@@ -1,9 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { TaggableManager, TaggableState } from './taggableManager'
-import { useDirectories } from '../DirectoryProvider'
+import { createContext, useContext, useEffect } from 'react'
 import { usePartialState } from '@renderer/common/usePartialState'
+import { useAsyncData } from '@renderer/common/useAsyncData'
 
-interface TaggableData extends TaggableState {
+interface TaggableData {
+  taggables: Impart.Taggable[]
   fetchTaggables: () => Promise<void>
   fetchOptions: Impart.FetchTaggablesOptions
   setFetchOptions: (options: Partial<Impart.FetchTaggablesOptions>) => void
@@ -17,15 +17,15 @@ export interface TaggableProviderProps {
 
 const DEFAULT_ORDER_KEY = 'defaultOrder'
 
-const taggableManager = new TaggableManager()
-
 export function TaggableProvider({ children }: TaggableProviderProps) {
-  const [state, setState] = useState<TaggableState>(TaggableManager.getInitialState())
-  const { executeRequest: reloadDirectories } = useDirectories()
-
   const [fetchOptions, setFetchOptions] = usePartialState<Impart.FetchTaggablesOptions>(() => ({
     order: (localStorage.getItem(DEFAULT_ORDER_KEY) as 'alpha' | 'date' | null) ?? 'alpha'
   }))
+
+  const { data: taggables, executeRequest: fetchTaggables } = useAsyncData(
+    () => window.taggableApi.getTaggables(fetchOptions),
+    [fetchOptions]
+  )
 
   useEffect(() => {
     if (fetchOptions.order) {
@@ -33,36 +33,18 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
     }
   }, [fetchOptions.order])
 
-  useEffect(() => {
-    taggableManager.setOnChange(setState)
-    taggableManager.setOnFinishIndexing(() => {
-      console.log('Finished indexing, reloading directories')
-      reloadDirectories()
-    })
-  }, [])
+  // useEffect(() => {
+  //   if (state.isIndexing) {
+  //     let interval = setInterval(() => fetchTaggables(), 1000)
 
-  const fetchTaggables = useCallback(
-    () => taggableManager.fetchTaggables(fetchOptions),
-    [fetchOptions]
-  )
-
-  //The function changes every time the fetch options change
-  // which means this will be called every time the fetch
-  // options change
-  useEffect(() => {
-    fetchTaggables()
-  }, [fetchTaggables])
-
-  useEffect(() => {
-    if (state.isIndexing) {
-      let interval = setInterval(() => fetchTaggables(), 1000)
-
-      return () => clearInterval(interval)
-    }
-  }, [state.isIndexing])
+  //     return () => clearInterval(interval)
+  //   }
+  // }, [state.isIndexing])
 
   return (
-    <TaggableContext.Provider value={{ ...state, fetchTaggables, fetchOptions, setFetchOptions }}>
+    <TaggableContext.Provider
+      value={{ taggables: taggables ?? [], fetchTaggables, fetchOptions, setFetchOptions }}
+    >
       {children}
     </TaggableContext.Provider>
   )

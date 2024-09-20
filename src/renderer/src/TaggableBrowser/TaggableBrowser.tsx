@@ -12,6 +12,7 @@ import { getTaggableContextMenuOptions } from './taggableContextMenuOptions'
 import { SelectionIndicator } from './SelectionIndicator'
 import { HexColorPicker } from 'react-colorful'
 import { GroupedTaggableGrid, buildTaggableGroups } from '@renderer/common/TaggableGrid'
+import { useTaskStatus } from '@renderer/TaskStatusProvider'
 
 export interface TaggableBrowserProps {
   onSettingsPressed?: () => void
@@ -24,7 +25,8 @@ export function TaggableBrowser({
   onEditTags,
   onBulkTag
 }: TaggableBrowserProps) {
-  const { taggables, isIndexing } = useTaggables()
+  const { taggables } = useTaggables()
+  const { isIndexing } = useTaskStatus()
   const taggableGroups = useMemo(() => buildTaggableGroups(taggables), [taggables])
   const taggableFlatMap = useMemo(
     () => taggableGroups.flatMap((g) => g.taggables),

@@ -5,10 +5,9 @@ import { TaggableImage, isTaggableImage } from '../database/entities/TaggableIma
 import { TaggableFile, isTaggableFile } from '../database/entities/TaggableFile'
 import { Taggable } from '../database/entities/Taggable'
 import { IsNull, Like } from 'typeorm'
-import { fileMessenger } from './indexMessenger'
 import { Directory } from '../database/entities/Directory'
-import { delay, sleep } from '../common/sleep'
 import { imageSize } from 'image-size'
+import { taskQueue } from '../task/taskQueue'
 
 class IndexingManager {
   private isIndexing = false
@@ -43,23 +42,20 @@ class IndexingManager {
       return
     }
 
-    fileMessenger.indexingStepStarted(unindexedFiles.length, 'indexing')
+    taskQueue.add({
+      steps: unindexedFiles.map((fileName) => () => this.index(directory, fileName)),
+      delayPerItem: 18,
+      type: 'indexing'
+    })
 
-    await Promise.all(
-      unindexedFiles.map((fileName, index) =>
-        delay(() => this.index(directory, fileName), index * 18)
-      )
-    )
-
-    const unsourcedImages = await TaggableImage.findBy({ source: IsNull(), directory })
-    fileMessenger.indexingStepStarted(unsourcedImages.length, 'sourceAssociation')
-    await Promise.all(
-      unsourcedImages.map((i, index) =>
-        delay(() => this.findAndAssociateSourceFile(i, directory), index * 10)
-      )
-    )
-
-    fileMessenger.indexingEnded()
+    taskQueue.add({
+      steps: async () => {
+        const unsourcedImages = await TaggableImage.findBy({ source: IsNull(), directory })
+        return unsourcedImages.map((i) => () => this.findAndAssociateSourceFile(i, directory))
+      },
+      delayPerItem: 10,
+      type: 'indexing'
+    })
   }
 
   private async getAllIndexedFilesInDirectory(directory: Directory) {
@@ -87,8 +83,6 @@ class IndexingManager {
     } else {
       await this.indexFile(fullPath, directory)
     }
-
-    fileMessenger.madeStepProgress()
   }
 
   private async indexImage(filePath: string, directory: Directory) {
@@ -104,7 +98,6 @@ class IndexingManager {
     })
 
     await indexedImage.save()
-    fileMessenger.fileIndexed(indexedImage)
   }
 
   private async indexFile(filePath: string, directory: Directory) {
@@ -117,7 +110,6 @@ class IndexingManager {
     })
 
     await indexedFile.save()
-    fileMessenger.fileIndexed(indexedFile)
   }
 
   private async findAndAssociateSourceFile(image: TaggableImage, directory: Directory) {
@@ -129,12 +121,9 @@ class IndexingManager {
     if (possibleSourceFile) {
       console.log('Associating indexed image with: ', possibleSourceFile.fileIndex.path)
       image.source = possibleSourceFile
-      fileMessenger.sourceFileAssociated(image, possibleSourceFile)
 
       await image.save()
     }
-
-    fileMessenger.madeStepProgress()
   }
 
   public async openFile(taggableId: number) {
