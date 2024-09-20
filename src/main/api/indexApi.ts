@@ -4,7 +4,7 @@ import { DirectoryManager, directoryManager } from '../indexables/directoryManag
 
 export function setupIndexApi() {
   ipcMain.handle('index/indexAll', () => indexingManager.indexAll())
-  ipcMain.handle('index/selectAndIndexDirectory', () => directoryManager.selectAndIndexDirectory())
+  ipcMain.handle('index/selectDirectory', () => directoryManager.selectDirectory())
   ipcMain.handle('index/getDirectories', () => directoryManager.getIndexedDirectories())
   ipcMain.handle(
     'index/updateDirectories',

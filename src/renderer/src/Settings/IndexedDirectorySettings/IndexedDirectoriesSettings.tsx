@@ -1,24 +1,18 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Stack
-} from '@mui/material'
+import { Box, Button, Stack } from '@mui/material'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import { useDirectories } from '../../EntityProviders/DirectoryProvider'
 import { useEffect, useState } from 'react'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { DirectoryList } from './DirectoryList'
+import { produce } from 'immer'
+import SaveIcon from '@mui/icons-material/Save'
 
 export interface IndexedDirectoriesSettingsProps {
   onChange?: () => void
 }
 
 export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSettingsProps) {
-  const { data: originalDirectories } = useDirectories()
+  const { data: originalDirectories, executeRequest: reloadDirectories } = useDirectories()
+  const [isSaving, setSaving] = useState(false)
 
   const [directoryState, setDirectoryState] = useState<Impart.Directory[]>([])
 
@@ -26,8 +20,24 @@ export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSetti
     setDirectoryState(originalDirectories ?? [])
   }, [originalDirectories])
 
-  const [targetForDeletion, setTargetForDeletion] = useState<Impart.CountedDirectory>()
-  const [showDeleteWarning, setShowDeleteWarning] = useState(false)
+  const addDirectory = async () => {
+    const folder = await window.indexApi.selectDirectory()
+
+    if (folder != null) {
+      setDirectoryState(
+        produce(directoryState, (next) => {
+          next.push({ path: folder })
+        })
+      )
+    }
+  }
+
+  const saveChanges = async () => {
+    setSaving(true)
+    await window.indexApi.updateDirectories(directoryState)
+    setSaving(false)
+    reloadDirectories()
+  }
 
   return (
     <Box>
@@ -41,37 +51,16 @@ export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSetti
           startIcon={<CreateNewFolderIcon />}
           variant="outlined"
           size="large"
-          onClick={async () => {
-            await window.indexApi.selectAndIndexDirectory()
-            onChange && onChange()
-          }}
+          onClick={addDirectory}
         >
           Add Directory
         </Button>
       </Stack>
-      <Dialog open={showDeleteWarning} onClose={() => setShowDeleteWarning(false)}>
-        <DialogTitle>Remove Directory</DialogTitle>
-        <DialogContent>
-          All {targetForDeletion?.taggableCount} files in this directory will be untagged and
-          removed from Impart
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowDeleteWarning(false)}>Cancel</Button>
-          <Button
-            variant="contained"
-            color="error"
-            startIcon={<DeleteIcon />}
-            onClick={() => {
-              if (targetForDeletion) {
-                setTargetForDeletion(undefined)
-                setShowDeleteWarning(false)
-              }
-            }}
-          >
-            Remove
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Box pt={2} textAlign="right">
+        <Button startIcon={<SaveIcon />} variant="contained" size="large" onClick={saveChanges}>
+          Save
+        </Button>
+      </Box>
     </Box>
   )
 }

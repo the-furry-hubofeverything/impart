@@ -53,6 +53,14 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
     fetchTaggables()
   }, [fetchTaggables])
 
+  useEffect(() => {
+    if (state.isIndexing) {
+      let interval = setInterval(() => fetchTaggables(), 1000)
+
+      return () => clearInterval(interval)
+    }
+  }, [state.isIndexing])
+
   return (
     <TaggableContext.Provider value={{ ...state, fetchTaggables, fetchOptions, setFetchOptions }}>
       {children}

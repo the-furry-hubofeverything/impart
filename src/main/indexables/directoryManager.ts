@@ -20,23 +20,16 @@ export class DirectoryManager {
     return result
   }
 
-  public async selectAndIndexDirectory() {
+  public async selectDirectory() {
     if (!impartApp.mainWindow) {
       throw new Error('Tried to open a file dialog without access to the window')
     }
 
-    const result = dialog.showOpenDialogSync(impartApp.mainWindow, {
+    const result = await dialog.showOpenDialog(impartApp.mainWindow, {
       properties: ['openDirectory']
     })
 
-    if (!result) {
-      return
-    }
-
-    const directory = Directory.create({ path: result[0] })
-    await directory.save()
-
-    indexingManager.indexFiles(directory)
+    return result.canceled ? undefined : result.filePaths[0]
   }
 
   public async updateDirectories(directoryPayloads: DirectoryPayload[]) {

@@ -1,5 +1,5 @@
 import { Stack, Typography, Button } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 
 export interface IntroSetupProps {
@@ -16,8 +16,12 @@ export function IntroSetup({ reload }: IntroSetupProps) {
         startIcon={<CreateNewFolderIcon />}
         variant="contained"
         onClick={async () => {
-          await window.indexApi.selectAndIndexDirectory()
-          reload()
+          const path = await window.indexApi.selectDirectory()
+
+          if (path) {
+            await window.indexApi.updateDirectories([{ path }])
+            reload()
+          }
         }}
       >
         Add Folder

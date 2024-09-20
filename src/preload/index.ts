@@ -52,7 +52,7 @@ contextBridge.exposeInMainWorld('tagApi', {
 
 contextBridge.exposeInMainWorld('indexApi', {
   indexAll: generateEndpoint('index/indexAll'),
-  selectAndIndexDirectory: generateEndpoint('index/selectAndIndexDirectory'),
+  selectDirectory: generateEndpoint('index/selectDirectory'),
   updateDirectories: generateEndpoint('index/updateDirectories'),
   getDirectories: generateEndpoint('index/getDirectories')
 })

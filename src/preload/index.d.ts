@@ -122,7 +122,7 @@ declare global {
 
     indexApi: {
       indexAll: () => Promise<void>
-      selectAndIndexDirectory: () => Promise<void>
+      selectDirectory: () => Promise<string | undefined>
       updateDirectories: (payload: Impart.Directory[]) => Promise<void>
       getDirectories: () => Promise<Impart.CountedDirectory[]>
     }
