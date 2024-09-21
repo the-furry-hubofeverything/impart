@@ -12,7 +12,7 @@ export interface IndexedDirectoriesSettingsProps {
 }
 
 export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSettingsProps) {
-  const { data: originalDirectories, executeRequest: reloadDirectories } = useDirectories()
+  const { data: originalDirectories, reload: reloadDirectories } = useDirectories()
   const { fetchTaggables } = useTaggables()
   const [isSaving, setSaving] = useState(false)
 

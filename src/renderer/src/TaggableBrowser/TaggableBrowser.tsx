@@ -1,4 +1,13 @@
-import { Stack, Box, Collapse, Card, CardActions, Fade } from '@mui/material'
+import {
+  Stack,
+  Box,
+  Collapse,
+  Card,
+  CardActions,
+  Fade,
+  CardContent,
+  CircularProgress
+} from '@mui/material'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { TaggableGrid } from '../common/TaggableGrid/TaggableGrid'
 import { SettingsPanel } from './SettingsPanel'
@@ -25,7 +34,7 @@ export function TaggableBrowser({
   onEditTags,
   onBulkTag
 }: TaggableBrowserProps) {
-  const { taggables } = useTaggables()
+  const { taggables, isLoading } = useTaggables()
   const { isTaskRunning } = useTaskStatus()
   const taggableGroups = useMemo(() => buildTaggableGroups(taggables), [taggables])
   const taggableFlatMap = useMemo(
@@ -60,6 +69,16 @@ export function TaggableBrowser({
 
   return (
     <Stack direction="row" gap={1} height="100vh">
+      {isLoading && (
+        <Box position="fixed" bottom={32} left={32} zIndex={1}>
+          <Card elevation={12} sx={{ opacity: 0.8 }}>
+            <Box p={2} pb={1}>
+              <CircularProgress size={64} />
+            </Box>
+          </Card>
+        </Box>
+      )}
+
       <Stack overflow="auto" position={'relative'} flex={1} pr={1} gap={2}>
         <Box position="sticky" top={8} pl={1} zIndex={1}>
           <Card>

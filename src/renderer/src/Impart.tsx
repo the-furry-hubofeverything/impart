@@ -25,7 +25,7 @@ type ImpartModal = 'editTags' | 'bulkTag' | 'settings'
 export interface ImpartProps {}
 
 export function Impart({}: ImpartProps) {
-  const { data: directories, startingUp, executeRequest: reloadDirectories } = useDirectories()
+  const { data: directories, startingUp, reload: reloadDirectories } = useDirectories()
 
   const hasDirectories = directories && directories.length !== 0
 

@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect } from 'react'
 import { usePartialState } from '@renderer/common/usePartialState'
-import { useAsyncData } from '@renderer/common/useAsyncData'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
+import { useImpartIpcData } from '@renderer/common/useImpartIpc'
 
 interface TaggableData {
   taggables: Impart.Taggable[]
+  isLoading: boolean
   fetchTaggables: () => Promise<void>
   fetchOptions: Impart.FetchTaggablesOptions
   setFetchOptions: (options: Partial<Impart.FetchTaggablesOptions>) => void
@@ -25,10 +26,11 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
     order: (localStorage.getItem(DEFAULT_ORDER_KEY) as 'alpha' | 'date' | null) ?? 'alpha'
   }))
 
-  const { data: taggables, executeRequest: fetchTaggables } = useAsyncData(
-    () => window.taggableApi.getTaggables(fetchOptions),
-    [fetchOptions]
-  )
+  const {
+    data: taggables,
+    isLoading,
+    reload: fetchTaggables
+  } = useImpartIpcData(() => window.taggableApi.getTaggables(fetchOptions), [fetchOptions])
 
   useEffect(() => {
     if (fetchOptions.order) {
@@ -42,11 +44,17 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
 
       return () => clearInterval(interval)
     }
-  }, [isTaskRunning])
+  }, [isTaskRunning, fetchTaggables])
 
   return (
     <TaggableContext.Provider
-      value={{ taggables: taggables ?? [], fetchTaggables, fetchOptions, setFetchOptions }}
+      value={{
+        taggables: taggables ?? [],
+        isLoading,
+        fetchTaggables,
+        fetchOptions,
+        setFetchOptions
+      }}
     >
       {children}
     </TaggableContext.Provider>

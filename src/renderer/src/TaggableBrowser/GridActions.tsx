@@ -19,8 +19,9 @@ import ClockIcon from '@mui/icons-material/AccessTime'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import SearchIcon from '@mui/icons-material/Search'
 import ClearIcon from '@mui/icons-material/Clear'
-import { useAsyncData } from '@renderer/common/useAsyncData'
 import FolderIcon from '@mui/icons-material/Folder'
+import { useImpartIpcData } from '@renderer/common/useImpartIpc'
+import { useDebounceEffect } from '@renderer/common/useDebounce'
 
 const ToolbarIconButton = styled(IconButton)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -49,12 +50,22 @@ export interface GridActionsProps {
 }
 
 export function GridActions({ groupByDirectory, onChange }: GridActionsProps) {
+  const [internalSearch, setInternalSearch] = useState('')
+
   const {
-    fetchOptions: { order, search, year },
+    fetchOptions: { order, year },
     setFetchOptions
   } = useTaggables()
 
-  const { data } = useAsyncData(() => window.taggableApi.getAllTaggableYears(), [])
+  useDebounceEffect(
+    () => {
+      setFetchOptions({ search: internalSearch != '' ? internalSearch : undefined })
+    },
+    250,
+    [internalSearch]
+  )
+
+  const { data } = useImpartIpcData(() => window.taggableApi.getAllTaggableYears(), [])
 
   const toolbarRef = useRef<HTMLDivElement | null>(null)
 
@@ -73,8 +84,8 @@ export function GridActions({ groupByDirectory, onChange }: GridActionsProps) {
             placeholder="Search"
             size="small"
             fullWidth
-            value={search}
-            onChange={(e) => setFetchOptions({ search: e.currentTarget.value })}
+            value={internalSearch}
+            onChange={(e) => setInternalSearch(e.currentTarget.value)}
             slotProps={{
               input: {
                 startAdornment: (
@@ -83,7 +94,7 @@ export function GridActions({ groupByDirectory, onChange }: GridActionsProps) {
                   </Box>
                 ),
                 endAdornment: (
-                  <IconButton size="small" onClick={() => setFetchOptions({ search: '' })}>
+                  <IconButton size="small" onClick={() => setInternalSearch('')}>
                     <ClearIcon fontSize="inherit" />
                   </IconButton>
                 )
