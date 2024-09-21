@@ -29,7 +29,7 @@ export function SelectionIndicator({ count, onTag, onClear }: SelectionIndicator
       }}
     >
       <Stack direction="row" py={0.5} pl={1} alignItems="center" gap={1}>
-        <Typography color="primary.contrastText" variant="body2">
+        <Typography variant="body2">
           {displayCount} item{displayCount != 1 ? 's' : ''} selected
         </Typography>
         <Tooltip

@@ -4,6 +4,7 @@ import { TagGroup } from '../database/entities/TagGroup'
 import { Taggable } from '../database/entities/Taggable'
 import { TaggableImage } from '../database/entities/TaggableImage'
 import { In } from 'typeorm'
+import { taskQueue } from '../task/taskQueue'
 
 export class TagManager {
   public async getTagGroups() {
@@ -31,9 +32,11 @@ export class TagManager {
   }
 
   public async bulkTag(taggableIds: number[], tagIds: number[]) {
-    await Promise.all(
-      taggableIds.map((t, index) => delay(() => this.addTags(t, tagIds), index * 10))
-    )
+    taskQueue.add({
+      steps: taggableIds.map((t) => () => this.addTags(t, tagIds)),
+      delayPerItem: 10,
+      type: 'bulkTag'
+    })
   }
 
   private async addTags(taggableId: number, tagIds: number[]) {
