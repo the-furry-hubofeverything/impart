@@ -13,7 +13,7 @@ import { TaggableGrid } from '../common/TaggableGrid/TaggableGrid'
 import { SettingsPanel } from './SettingsPanel'
 import { TaggingPanel } from './TaggingPanel'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
-import { IndexingPanel } from './IndexingPanel'
+import { TaskStatus } from '../common/TaskStatus'
 import { useMultiSelection } from '@renderer/common/useMultiSelection'
 import { ContextMenu } from '@renderer/common/ContextMenu'
 import { GridActions } from './GridActions'
@@ -127,7 +127,11 @@ export function TaggableBrowser({
           <TaggingPanel />
           <Collapse in={showIndexingPanel}>
             <Box pt={2}>
-              <IndexingPanel />
+              <Card>
+                <CardContent>
+                  <TaskStatus />
+                </CardContent>
+              </Card>
             </Box>
           </Collapse>
           <Box pt={2}>

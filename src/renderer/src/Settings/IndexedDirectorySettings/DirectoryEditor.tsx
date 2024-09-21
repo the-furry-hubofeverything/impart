@@ -1,7 +1,9 @@
-import { Box, Card, CardHeader, IconButton, Typography } from '@mui/material'
+import { Box, Card, CardHeader, IconButton, Tooltip, Typography } from '@mui/material'
 import React from 'react'
 import DeleteIcon from '@mui/icons-material/Delete'
 import UndoIcon from '@mui/icons-material/Undo'
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
+import EmergencyIcon from '@mui/icons-material/Emergency'
 
 function isDifferent(first?: Impart.Directory, second?: Impart.Directory) {
   return (first == null) != (second == null)
@@ -51,7 +53,16 @@ export function DirectoryEditor({
   return (
     <Card sx={{ bgcolor: '#fff' }}>
       <CardHeader
-        title={directoryState.path}
+        title={
+          <>
+            {directoryState.path}{' '}
+            {!originalDirectory && (
+              <Tooltip title="Newly added directory">
+                <AutoAwesomeIcon color="info" />
+              </Tooltip>
+            )}
+          </>
+        }
         action={
           <IconButton color="error" onClick={onDelete}>
             <DeleteIcon />

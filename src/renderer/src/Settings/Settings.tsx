@@ -3,7 +3,9 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Collapse,
   Divider,
+  Fade,
   IconButton,
   Paper,
   Stack,
@@ -14,6 +16,8 @@ import React, { useState } from 'react'
 import FolderIcon from '@mui/icons-material/Folder'
 import CloseIcon from '@mui/icons-material/Close'
 import { IndexedDirectoriesSettings } from './IndexedDirectorySettings'
+import { TaskStatus } from '@renderer/common/TaskStatus'
+import { useTaskStatus } from '@renderer/TaskStatusProvider'
 
 type SettingsType = 'directories' | 'TODO'
 
@@ -24,10 +28,14 @@ export interface SettingsProps {
 export function Settings({ onClose }: SettingsProps) {
   const [selectedTab, setSelectedTab] = useState<SettingsType>('directories')
 
+  const { isTaskRunning } = useTaskStatus()
+
+  const test = false
+
   return (
     <Stack height="100%" justifyContent="center">
       <Card sx={{ height: '100%', position: 'relative' }}>
-        <Box position="absolute" top={5} right={5}>
+        <Box position="absolute" top={5} right={20} zIndex={1}>
           <IconButton size="large" onClick={onClose}>
             <CloseIcon fontSize="inherit" />
           </IconButton>
@@ -36,6 +44,7 @@ export function Settings({ onClose }: SettingsProps) {
           <Stack direction="row" gap={2} height={'100%'}>
             <Stack
               alignItems="flex-end"
+              height={'100%'}
               sx={(theme) => ({
                 bgcolor: '#cae6e0',
                 borderRight: `2px solid ${theme.palette.primary.main}`
@@ -53,7 +62,7 @@ export function Settings({ onClose }: SettingsProps) {
                 <Tab label="Directories" value="directories" icon={<FolderIcon />} />
               </Tabs>
             </Stack>
-            <Box flex={1} p={1} pr={8}>
+            <Box flex={1} p={1} pr={8} height="100%" sx={{ overflowY: 'scroll' }}>
               {selectedTab === 'directories' && <IndexedDirectoriesSettings />}
             </Box>
           </Stack>
