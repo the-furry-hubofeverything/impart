@@ -4,10 +4,12 @@ import path from 'path'
 import { TaggableImage, isTaggableImage } from '../database/entities/TaggableImage'
 import { TaggableFile, isTaggableFile } from '../database/entities/TaggableFile'
 import { Taggable } from '../database/entities/Taggable'
-import { IsNull, Like } from 'typeorm'
+import { In, IsNull, Like } from 'typeorm'
 import { Directory } from '../database/entities/Directory'
 import { imageSize } from 'image-size'
 import { taskQueue } from '../task/taskQueue'
+import { Tag } from '../database/entities/Tag'
+import { tagManager } from '../tagging/tagManager'
 
 class IndexingManager {
   private isIndexing = false
@@ -56,6 +58,17 @@ class IndexingManager {
       delayPerItem: 10,
       type: 'sourceAssociation'
     })
+
+    if (directory.autoTags.length > 0) {
+      tagManager.bulkTagTaggables(async () => {
+        const [addedImages, addedFiles] = await Promise.all([
+          TaggableImage.findBy({ directory, fileIndex: { fileName: In(unindexedFiles) } }),
+          TaggableFile.findBy({ directory, fileIndex: { fileName: In(unindexedFiles) } })
+        ])
+
+        return [...addedImages, ...addedFiles]
+      }, directory.autoTags)
+    }
   }
 
   private async getAllIndexedFilesInDirectory(directory: Directory) {

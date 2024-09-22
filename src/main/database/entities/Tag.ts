@@ -2,6 +2,7 @@ import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColu
 import { TagGroup } from './TagGroup'
 import { TaggableImage } from './TaggableImage'
 import { Taggable } from './Taggable'
+import { Directory } from './Directory'
 
 @Entity()
 export class Tag extends BaseEntity {
@@ -22,4 +23,7 @@ export class Tag extends BaseEntity {
 
   @ManyToMany(() => Taggable, (i) => i.tags)
   images: Taggable[]
+
+  @ManyToMany(() => Directory, (d) => d.autoTags)
+  autoTagDirectories: Directory[]
 }

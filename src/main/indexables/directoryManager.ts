@@ -2,9 +2,14 @@ import { dialog } from 'electron'
 import { impartApp } from '..'
 import { Directory } from '../database/entities/Directory'
 import { indexingManager } from './indexingManager'
+import { Taggable } from '../database/entities/Taggable'
+import { tagManager } from '../tagging/tagManager'
+import { In } from 'typeorm'
+import { Tag } from '../database/entities/Tag'
 
 interface DirectoryPayload {
   path: string
+  autoTags?: number[]
 }
 
 export class DirectoryManager {
@@ -63,7 +68,32 @@ export class DirectoryManager {
   }
 
   private async updateDirectory(directory: Directory, payload: DirectoryPayload) {
-    //Placeholder (nothing to update yet)
+    const currentTagIds = directory.autoTags.map((t) => t.id)
+    let changed = false
+
+    if (currentTagIds.sort().join(',') !== payload.autoTags?.sort().join(',')) {
+      const nextTags =
+        payload.autoTags == null || payload.autoTags.length == 0
+          ? []
+          : await Tag.findBy({ id: In(payload.autoTags) })
+
+      const addedTags = nextTags?.filter((t) => !currentTagIds.includes(t.id)) ?? []
+
+      if (addedTags.length > 0) {
+        const directoryTaggables = await Taggable.findBy({ directory })
+
+        if (directoryTaggables.length > 0) {
+          tagManager.bulkTagTaggables(directoryTaggables, addedTags)
+        }
+      }
+
+      directory.autoTags = nextTags
+      changed = true
+    }
+
+    if (changed) {
+      await directory.save()
+    }
   }
 }
 

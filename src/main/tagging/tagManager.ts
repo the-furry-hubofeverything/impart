@@ -33,22 +33,31 @@ export class TagManager {
 
   public async bulkTag(taggableIds: number[], tagIds: number[]) {
     taskQueue.add({
-      steps: taggableIds.map((t) => () => this.addTags(t, tagIds)),
+      steps: async () => {
+        const [taggables, tags] = await Promise.all([
+          Taggable.find({ where: { id: In(taggableIds) }, relations: { tags: true } }),
+          Tag.findBy({ id: In(tagIds) })
+        ])
+
+        return taggables.map((t) => () => this.addTags(t, tags))
+      },
       delayPerItem: 10,
       type: 'bulkTag'
     })
   }
 
-  private async addTags(taggableId: number, tagIds: number[]) {
-    const [taggable, tags] = await Promise.all([
-      Taggable.findOne({ where: { id: taggableId }, relations: { tags: true } }),
-      Tag.findBy({ id: In(tagIds) })
-    ])
+  public async bulkTagTaggables(taggables: Taggable[] | (() => Promise<Taggable[]>), tags: Tag[]) {
+    taskQueue.add({
+      steps: async () => {
+        const actualTaggables = typeof taggables === 'function' ? await taggables() : taggables
+        return actualTaggables.map((t) => () => this.addTags(t, tags))
+      },
+      delayPerItem: 10,
+      type: 'bulkTag'
+    })
+  }
 
-    if (!taggable) {
-      throw new Error(`Could not find taggable with id ${taggableId}`)
-    }
-
+  private async addTags(taggable: Taggable, tags: Tag[]) {
     let added = false
 
     tags.forEach((addedTag) => {
