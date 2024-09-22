@@ -1,7 +1,10 @@
+import { delay } from '../common/sleep'
 import { Tag } from '../database/entities/Tag'
 import { TagGroup } from '../database/entities/TagGroup'
+import { Taggable } from '../database/entities/Taggable'
 import { TaggableImage } from '../database/entities/TaggableImage'
 import { In } from 'typeorm'
+import { taskQueue } from '../task/taskQueue'
 
 export class TagManager {
   public async getTagGroups() {
@@ -11,25 +14,62 @@ export class TagManager {
       }
     })
 
-    return groups.map((g) => ({
-      id: g.id,
-      label: g.label,
-      tags: g.tags.map((t) => ({ id: t.id, label: t.label, color: t.color }))
-    }))
+    return groups
   }
 
-  public async setFileTags(fileId: number, tagsIds: number[]) {
+  public async setFileTags(taggableId: number, tagIds: number[]) {
     const [file, tags] = await Promise.all([
-      TaggableImage.findOneBy({ id: fileId }),
-      Tag.findBy({ id: In(tagsIds) })
+      Taggable.findOneBy({ id: taggableId }),
+      Tag.findBy({ id: In(tagIds) })
     ])
 
     if (!file) {
-      throw new Error(`Could not find file with id ${fileId}`)
+      throw new Error(`Could not find taggable with id ${taggableId}`)
     }
 
     file.tags = tags
     await file.save()
+  }
+
+  public async bulkTag(taggableIds: number[], tagIds: number[]) {
+    taskQueue.add({
+      steps: async () => {
+        const [taggables, tags] = await Promise.all([
+          Taggable.find({ where: { id: In(taggableIds) }, relations: { tags: true } }),
+          Tag.findBy({ id: In(tagIds) })
+        ])
+
+        return taggables.map((t) => () => this.addTags(t, tags))
+      },
+      delayPerItem: 10,
+      type: 'bulkTag'
+    })
+  }
+
+  public async bulkTagTaggables(taggables: Taggable[] | (() => Promise<Taggable[]>), tags: Tag[]) {
+    taskQueue.add({
+      steps: async () => {
+        const actualTaggables = typeof taggables === 'function' ? await taggables() : taggables
+        return actualTaggables.map((t) => () => this.addTags(t, tags))
+      },
+      delayPerItem: 10,
+      type: 'bulkTag'
+    })
+  }
+
+  private async addTags(taggable: Taggable, tags: Tag[]) {
+    let added = false
+
+    tags.forEach((addedTag) => {
+      if (!taggable.tags.some((existingTag) => existingTag.id === addedTag.id)) {
+        added = true
+        taggable.tags.push(addedTag)
+      }
+    })
+
+    if (added) {
+      await taggable.save()
+    }
   }
 
   public async createGroup() {
@@ -60,11 +100,19 @@ export class TagManager {
   }
 
   public async createTag(groupId: number) {
-    const maxOrder = await Tag.maximum('tagOrder', { group: { id: groupId } })
+    const [maxOrder, tagGroup] = await Promise.all([
+      Tag.maximum('tagOrder', { group: { id: groupId } }),
+      TagGroup.findOneBy({ id: groupId })
+    ])
+
+    if (!tagGroup) {
+      throw new Error(`Could not find tag group with id ${groupId}`)
+    }
 
     const tag = Tag.create({
       tagOrder: (maxOrder ?? 0) + 1,
-      group: { id: groupId }
+      color: tagGroup.defaultTagColor,
+      group: tagGroup
     })
 
     await tag.save()

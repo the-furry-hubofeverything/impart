@@ -1,18 +1,7 @@
-import {
-  Stack,
-  Box,
-  Typography,
-  Divider,
-  Grid,
-  IconButton,
-  Button,
-  Chip,
-  TextField
-} from '@mui/material'
+import { Stack, Typography, Button } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { useMultiSelection } from '../useMultiSelection'
-import { useMemo } from 'react'
-import { Tag } from '../Tag'
+import { useCallback, useMemo } from 'react'
 import SparkleIcon from '@mui/icons-material/AutoAwesome'
 import { TagGroup } from './TagGroup'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
@@ -30,7 +19,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
     tags,
     selection ?? [],
     onChange,
-    (a, b) => a.id === b.id,
+    useCallback((a, b) => a.id === b.id, []),
     { toggleMode: true }
   )
 
@@ -67,6 +56,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
       {groups?.map((g) => (
         <TagGroup key={g.id} group={g} selectedTags={selection} onSelect={selectItem} />
       ))}
+
       <Button onClick={createGroup}>
         <AddIcon />
       </Button>

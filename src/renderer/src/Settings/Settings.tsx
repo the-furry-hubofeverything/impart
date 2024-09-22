@@ -3,6 +3,9 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Collapse,
+  Divider,
+  Fade,
   IconButton,
   Paper,
   Stack,
@@ -12,7 +15,9 @@ import {
 import React, { useState } from 'react'
 import FolderIcon from '@mui/icons-material/Folder'
 import CloseIcon from '@mui/icons-material/Close'
-import { IndexedDirectoriesSettings } from './IndexedDirectoriesSettings'
+import { IndexedDirectoriesSettings } from './IndexedDirectorySettings'
+import { TaskStatus } from '@renderer/common/TaskStatus'
+import { useTaskStatus } from '@renderer/TaskStatusProvider'
 
 type SettingsType = 'directories' | 'TODO'
 
@@ -23,30 +28,45 @@ export interface SettingsProps {
 export function Settings({ onClose }: SettingsProps) {
   const [selectedTab, setSelectedTab] = useState<SettingsType>('directories')
 
-  console.log(selectedTab)
+  const { isTaskRunning } = useTaskStatus()
+
+  const test = false
 
   return (
-    <Stack p={3} height="100vh" justifyContent="center">
-      <Card sx={{ maxHeight: '100%', position: 'relative' }}>
-        <Box position="absolute" top={5} right={5}>
+    <Stack height="100%" justifyContent="center">
+      <Card sx={{ height: '100%', position: 'relative' }}>
+        <Box position="absolute" top={5} right={20} zIndex={1}>
           <IconButton size="large" onClick={onClose}>
             <CloseIcon fontSize="inherit" />
           </IconButton>
         </Box>
-        <CardContent>
-          <Stack direction="row" gap={2}>
-            <Stack minWidth={200} alignItems="flex-end">
+        <Box sx={{ height: '100%' }}>
+          <Stack direction="row" gap={2} height={'100%'}>
+            <Stack
+              alignItems="flex-end"
+              height={'100%'}
+              sx={(theme) => ({
+                bgcolor: '#cae6e0',
+                borderRight: `2px solid ${theme.palette.primary.main}`
+              })}
+            >
               <Tabs
                 orientation="vertical"
                 value={selectedTab}
                 onChange={(e, value) => setSelectedTab(value)}
+                sx={{
+                  marginRight: '-2px'
+                }}
+                TabIndicatorProps={{ sx: (theme) => ({ bgcolor: theme.palette.background.paper }) }}
               >
                 <Tab label="Directories" value="directories" icon={<FolderIcon />} />
               </Tabs>
             </Stack>
-            {selectedTab === 'directories' && <IndexedDirectoriesSettings />}
+            <Box flex={1} p={1} pr={8} height="100%" sx={{ overflowY: 'scroll' }}>
+              {selectedTab === 'directories' && <IndexedDirectoriesSettings />}
+            </Box>
           </Stack>
-        </CardContent>
+        </Box>
       </Card>
     </Stack>
   )

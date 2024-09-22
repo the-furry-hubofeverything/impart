@@ -1,7 +1,7 @@
 import { ChildEntity, Column, OneToMany } from 'typeorm'
 import { Taggable } from './Taggable'
 import { FileIndex } from './FileIndex'
-import { TaggableImage } from './TaggableImage'
+import { TaggableImage, isTaggableImage } from './TaggableImage'
 
 @ChildEntity()
 export class TaggableFile extends Taggable {
@@ -13,5 +13,5 @@ export class TaggableFile extends Taggable {
 }
 
 export function isTaggableFile(t: Taggable): t is TaggableFile {
-  return (t as TaggableImage).dimensions == null
+  return !isTaggableImage(t) && (t as TaggableFile).fileIndex != null
 }

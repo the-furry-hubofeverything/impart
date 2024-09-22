@@ -2,22 +2,21 @@ import {
   Box,
   Typography,
   Divider,
-  Grid,
+  Grid2 as Grid,
   IconButton,
   Stack,
-  TextField,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Button
 } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Tag } from '../Tag'
 import AddIcon from '@mui/icons-material/Add'
-import EditIcon from '@mui/icons-material/Edit'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { EditTagGroup } from './EditTagGroup'
 
 export interface TagGroupProps {
   group: Impart.TagGroup
@@ -26,17 +25,11 @@ export interface TagGroupProps {
 }
 
 export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
-  const [internalLabel, setInternalLabel] = useState(group.label)
   const [editMode, setEditMode] = useState(false)
 
-  const { editGroup, createTag, deleteGroup } = useTagGroups()
+  const { createTag, deleteGroup } = useTagGroups()
 
   const [showRemoveWarning, setShowRemoveWarning] = useState(false)
-
-  const update = async () => {
-    await editGroup(group.id, internalLabel)
-    setEditMode(false)
-  }
 
   const remove = () => {
     if ((group.tags?.length ?? 0) > 0) {
@@ -50,40 +43,23 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
     <Box
       key={group.id}
       sx={{
-        '& .MuiIconButton-root': {
+        '& .fade-in-button': {
           opacity: 0,
           transition: '0.2s'
         },
-        '&:hover .MuiIconButton-root': {
+        '&:hover .fade-in-button': {
           opacity: 1
         }
       }}
     >
-      {editMode && (
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <TextField
-            variant="standard"
-            placeholder="Group Name"
-            autoFocus
-            fullWidth
-            value={internalLabel}
-            onChange={(e) => setInternalLabel(e.currentTarget.value)}
-            onBlur={update}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                update()
-              }
-            }}
-          />
-        </Stack>
-      )}
+      <EditTagGroup group={group} show={editMode} onClose={() => setEditMode(false)} />
       {!editMode && (
         <>
           <Stack direction="row" alignItems="center" justifyContent="space-between">
             <Typography variant="h5" onClick={() => setEditMode(true)}>
               {group.label ?? 'Unnamed Group'}
             </Typography>
-            <IconButton color="error" onClick={remove}>
+            <IconButton className="fade-in-button" color="error" onClick={remove}>
               <DeleteIcon />
             </IconButton>
           </Stack>
@@ -93,7 +69,7 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
 
       <Grid container py={1} spacing={2}>
         {group.tags?.map((t) => (
-          <Grid key={t.id} item>
+          <Grid key={t.id}>
             <Tag
               tag={t}
               onClick={() => onSelect && onSelect(t)}
@@ -101,8 +77,8 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
             />
           </Grid>
         ))}
-        <Grid item>
-          <IconButton size="small" onClick={() => createTag(group.id)}>
+        <Grid>
+          <IconButton size="small" onClick={() => createTag(group.id)} className="fade-in-button">
             <AddIcon />
           </IconButton>
         </Grid>

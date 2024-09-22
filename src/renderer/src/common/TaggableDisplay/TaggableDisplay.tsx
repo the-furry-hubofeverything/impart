@@ -1,7 +1,8 @@
 import { Box, Stack, Typography } from '@mui/material'
-import { isTaggableFile, isTaggableImage } from '../taggable'
+import { isTaggableFile, isTaggableImage, isTaggableStack } from '../taggable'
 import { ImageDisplay } from './ImageDisplay'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
+import React from 'react'
 
 export const BOX_WIDTH = 220
 export const BOX_HEIGHT = 190
@@ -9,21 +10,14 @@ export const BOX_HEIGHT = 190
 export interface TaggableDisplayProps {
   taggable: Impart.Taggable
   isSelected?: boolean
-  onClick?: (mods: { ctrl: boolean; shift: boolean }) => void
-  onRightClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
-export function TaggableDisplay({
+export const TaggableDisplay = React.memo(function ({
   taggable,
-  onClick,
-  onRightClick,
   isSelected
 }: TaggableDisplayProps) {
   return (
     <Stack
-      onContextMenu={(e) => {
-        onRightClick && onRightClick(e)
-      }}
       alignItems="center"
       justifyContent="center"
       width={BOX_WIDTH + 20}
@@ -37,7 +31,6 @@ export function TaggableDisplay({
           bgcolor: isSelected ? '#FFFFFF55' : '#FFFFFF33'
         }
       }}
-      onClick={(e) => onClick && onClick({ ctrl: e.ctrlKey, shift: e.shiftKey })}
       onDoubleClick={() => window.fileApi.openFile(taggable.id)}
     >
       {isTaggableImage(taggable) && <ImageDisplay image={taggable} />}
@@ -48,9 +41,9 @@ export function TaggableDisplay({
       )}
       <Box maxWidth={BOX_WIDTH} pt={0.25}>
         <Typography textAlign="center" variant="caption" sx={{ wordBreak: 'break-all' }}>
-          {taggable.fileIndex.fileName}
+          {!isTaggableStack(taggable) && taggable.fileIndex.fileName}
         </Typography>
       </Box>
     </Stack>
   )
-}
+})

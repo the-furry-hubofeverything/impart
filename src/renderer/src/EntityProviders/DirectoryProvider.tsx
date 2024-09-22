@@ -1,8 +1,8 @@
-import { useAsyncData } from '@renderer/common/useAsyncData'
+import { useImpartIpcData } from '@renderer/common/useImpartIpc'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 export interface DirectoryData {
-  directories: ReturnType<typeof useAsyncData<Impart.CountedDirectory[]>>
+  directories: ReturnType<typeof useImpartIpcData<Impart.CountedDirectory[]>>
   startingUp: boolean
 }
 
@@ -14,7 +14,7 @@ export interface DirectoryProviderProps {
 
 export function DirectoryProvider({ children }: DirectoryProviderProps) {
   const [startingUp, setStartingUp] = useState(true)
-  const directories = useAsyncData(() => window.indexApi.getDirectories(), [])
+  const directories = useImpartIpcData(() => window.indexApi.getDirectories(), [])
 
   useEffect(() => {
     if (!directories.isLoading && startingUp) {

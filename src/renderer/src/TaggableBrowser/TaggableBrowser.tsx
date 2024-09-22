@@ -1,86 +1,144 @@
-import { Stack, Box, Collapse, Card, CardActions } from '@mui/material'
-import { useEffect, useState } from 'react'
-import { TaggableGrid } from './TaggableGrid'
+import {
+  Stack,
+  Box,
+  Collapse,
+  Card,
+  CardActions,
+  Fade,
+  CardContent,
+  CircularProgress
+} from '@mui/material'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { TaggableGrid } from '../common/TaggableGrid/TaggableGrid'
 import { SettingsPanel } from './SettingsPanel'
 import { TaggingPanel } from './TaggingPanel'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
-import { IndexingPanel } from './IndexingPanel'
+import { TaskStatus } from '../common/TaskStatus'
 import { useMultiSelection } from '@renderer/common/useMultiSelection'
 import { ContextMenu } from '@renderer/common/ContextMenu'
 import { GridActions } from './GridActions'
 import { getTaggableContextMenuOptions } from './taggableContextMenuOptions'
+import { SelectionIndicator } from './SelectionIndicator'
+import { HexColorPicker } from 'react-colorful'
+import { GroupedTaggableGrid, buildTaggableGroups } from '@renderer/common/TaggableGrid'
+import { useTaskStatus } from '@renderer/TaskStatusProvider'
 
 export interface TaggableBrowserProps {
   onSettingsPressed?: () => void
   onEditTags?: (file: Impart.Taggable) => void
+  onBulkTag?: (files: Impart.Taggable[]) => void
 }
 
-export function TaggableBrowser({ onSettingsPressed, onEditTags }: TaggableBrowserProps) {
-  const {
-    taggables,
-    isIndexing,
-    fetchOptions: { order },
-    setFetchOptions
-  } = useTaggables()
+export function TaggableBrowser({
+  onSettingsPressed,
+  onEditTags,
+  onBulkTag
+}: TaggableBrowserProps) {
+  const { taggables, isLoading } = useTaggables()
+  const { isTaskRunning } = useTaskStatus()
+  const taggableGroups = useMemo(() => buildTaggableGroups(taggables), [taggables])
+  const taggableFlatMap = useMemo(
+    () => taggableGroups.flatMap((g) => g.taggables),
+    [taggableGroups]
+  )
+
   const [showIndexingPanel, setShowIndexingPanel] = useState(false)
 
+  const [groupByDirectory, setGroupByDirectory] = useState(false)
+
   useEffect(() => {
-    if (isIndexing) {
+    if (isTaskRunning) {
       setShowIndexingPanel(true)
     } else {
       const timer = setTimeout(() => setShowIndexingPanel(false), 3000)
 
       return () => clearTimeout(timer)
     }
-  }, [isIndexing])
+  }, [isTaskRunning])
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
-  const { selectItem, itemIsSelected } = useMultiSelection(
-    taggables,
+  const { selectItem } = useMultiSelection(
+    groupByDirectory ? taggableFlatMap : taggables,
     selection,
     setSelection,
-    (a, b) => a.id === b.id
+    useCallback((a, b) => a.id === b.id, [])
   )
 
+  const rightClickSelect = useCallback((item: Impart.Taggable) => selectItem(item), [selectItem])
+
   return (
-    <>
-      <Stack direction="row" gap={1} height="100vh">
-        <Stack overflow="auto" position={'relative'} flex={1} pr={1} gap={2}>
-          <Box position="sticky" top={8} pl={1}>
-            <Card sx={{ opacity: 0.4, transition: '0.2s', '&:hover': { opacity: 1 } }}>
-              <CardActions>
-                <GridActions />
-              </CardActions>
-            </Card>
-          </Box>
-          <ContextMenu flex={1} options={getTaggableContextMenuOptions(selection, onEditTags)}>
+    <Stack direction="row" gap={1} height="100vh">
+      {isLoading && (
+        <Box position="fixed" bottom={32} left={32} zIndex={1}>
+          <Card elevation={12} sx={{ opacity: 0.8 }}>
+            <Box p={2} pb={1}>
+              <CircularProgress size={64} />
+            </Box>
+          </Card>
+        </Box>
+      )}
+
+      <Stack overflow="auto" position={'relative'} flex={1} pr={1} gap={2}>
+        <Box position="sticky" top={8} pl={1} zIndex={1}>
+          <Card>
+            <CardActions>
+              <GridActions groupByDirectory={groupByDirectory} onChange={setGroupByDirectory} />
+            </CardActions>
+          </Card>
+        </Box>
+        <ContextMenu
+          flex={1}
+          options={getTaggableContextMenuOptions(selection, onEditTags, onBulkTag)}
+        >
+          {!groupByDirectory && (
             <TaggableGrid
               taggables={taggables}
               selection={selection}
               onSelect={selectItem}
-              onRightClick={(image, e) => {
-                if (!itemIsSelected(image)) {
-                  selectItem(image)
-                }
-              }}
+              onRightClick={rightClickSelect}
             />
-          </ContextMenu>
-        </Stack>
-        <Box minWidth={300} flex={0.25} py={1} pr={1}>
-          <Stack width="100%" height="100%">
-            <TaggingPanel />
-            <Collapse in={showIndexingPanel}>
-              <Box pt={2}>
-                <IndexingPanel />
-              </Box>
-            </Collapse>
-            <Box pt={2}>
-              <SettingsPanel onClick={() => onSettingsPressed && onSettingsPressed()} />
-            </Box>
-          </Stack>
-        </Box>
+          )}
+          {groupByDirectory && (
+            <GroupedTaggableGrid
+              groups={taggableGroups}
+              selection={selection}
+              onSelect={selectItem}
+              onRightClick={rightClickSelect}
+            />
+          )}
+        </ContextMenu>
+        <Fade in={selection.length > 0}>
+          <Box position="fixed" bottom={10} left={10}>
+            <SelectionIndicator
+              count={selection.length}
+              onTag={() =>
+                selection.length == 1
+                  ? onEditTags && onEditTags(selection[0])
+                  : onBulkTag && onBulkTag(selection)
+              }
+              onClear={() => setSelection([])}
+            />
+          </Box>
+        </Fade>
       </Stack>
-    </>
+      <Box minWidth={300} flex={0.25} py={1} pr={1}>
+        <Stack width="100%" height="100%">
+          <TaggingPanel />
+          <Collapse in={showIndexingPanel}>
+            <Box pt={2}>
+              <Card>
+                <CardContent>
+                  <TaskStatus />
+                </CardContent>
+              </Card>
+            </Box>
+          </Collapse>
+          <Box pt={2}>
+            <SettingsPanel onClick={() => onSettingsPressed && onSettingsPressed()} />
+          </Box>
+        </Stack>
+      </Box>
+    </Stack>
   )
 }

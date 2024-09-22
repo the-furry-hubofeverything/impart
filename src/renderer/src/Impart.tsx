@@ -1,4 +1,14 @@
-import { CssBaseline, ThemeProvider } from '@mui/material'
+import {
+  Box,
+  CssBaseline,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+  ThemeProvider,
+  Typography
+} from '@mui/material'
 import { theme } from './theme'
 import { useEffect, useState } from 'react'
 import { useTaggables } from './EntityProviders/TaggableProvider/TaggableProvider'
@@ -7,49 +17,44 @@ import { IntroSetup } from './IntroSetup'
 import { EditTags } from './EditTags'
 import { useDirectories } from './EntityProviders/DirectoryProvider'
 import { Settings } from './Settings'
+import { BulkTag } from './BulkTag'
+import BackIcon from '@mui/icons-material/ArrowBack'
 
-type ImpartState = 'files' | 'editTags'
+type ImpartModal = 'editTags' | 'bulkTag' | 'settings'
 
 export interface ImpartProps {}
 
 export function Impart({}: ImpartProps) {
-  const { data: directories, startingUp, executeRequest: reloadDirectories } = useDirectories()
+  const { data: directories, startingUp, reload: reloadDirectories } = useDirectories()
 
   const hasDirectories = directories && directories.length !== 0
 
-  const [state, setState] = useState<ImpartState>('files')
-  const [showSettings, setShowSettings] = useState(false)
+  const [currentModal, setCurrentModal] = useState<ImpartModal | null>(null)
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
   const { fetchTaggables } = useTaggables()
 
   useEffect(() => {
+    window.indexApi.indexAll()
+  }, [])
+
+  useEffect(() => {
     fetchTaggables()
   }, [fetchTaggables])
 
   const renderContent = () => {
-    if (showSettings) {
-      return <Settings onClose={() => setShowSettings(false)} />
-    }
-
-    switch (state) {
-      case 'files':
-        return (
-          <FileBrowser
-            onSettingsPressed={() => setShowSettings(true)}
-            onEditTags={(file) => {
-              setSelection([file])
-              setState('editTags')
-            }}
-          />
-        )
+    switch (currentModal) {
+      case 'settings':
+        return <Settings onClose={() => setCurrentModal(null)} />
       case 'editTags':
         if (selection.length !== 1) {
           throw new Error('Tried to edit tags while zero or multiple images were selected')
         }
 
-        return <EditTags item={selection[0]} onFinish={() => setState('files')} />
+        return <EditTags item={selection[0]} onFinish={() => setCurrentModal(null)} />
+      case 'bulkTag':
+        return <BulkTag items={selection} onFinish={() => setCurrentModal(null)} />
     }
   }
 
@@ -57,7 +62,26 @@ export function Impart({}: ImpartProps) {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {!startingUp && !hasDirectories && <IntroSetup reload={reloadDirectories} />}
-      {!startingUp && hasDirectories && renderContent()}
+      {!startingUp && hasDirectories && (
+        <Box>
+          <FileBrowser
+            onSettingsPressed={() => setCurrentModal('settings')}
+            onEditTags={(file) => {
+              setSelection([file])
+              setCurrentModal('editTags')
+            }}
+            onBulkTag={(files) => {
+              setSelection(files)
+              setCurrentModal('bulkTag')
+            }}
+          />
+          <Dialog open={currentModal != null} onClose={() => setCurrentModal(null)} fullScreen>
+            <DialogContent sx={(theme) => ({ bgcolor: theme.palette.background.default })}>
+              {renderContent()}
+            </DialogContent>
+          </Dialog>
+        </Box>
+      )}
     </ThemeProvider>
   )
 }

@@ -29,6 +29,7 @@ declare global {
     interface BaseTaggable {
       id: number
       tags: Impart.Tag[]
+      directory: string
       dateModified: Date
     }
 
@@ -42,12 +43,19 @@ declare global {
       fileIndex: FileIndex
     }
 
-    type Taggable = TaggableImage | TaggableFile
+    interface TaggableStack extends BaseTaggable {
+      taggables: Taggable[]
+      name: string
+      cover: Taggable
+    }
+
+    type Taggable = TaggableImage | TaggableFile | TaggableStack
 
     interface FetchTaggablesOptions {
       tagIds?: number[]
       order?: 'alpha' | 'date'
       search?: string
+      year?: number
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
@@ -73,7 +81,7 @@ declare global {
     //MISC
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
-    type IndexingStep = 'indexing' | 'sourceAssociation'
+    type TaskType = 'indexing' | 'sourceAssociation' | 'bulkTag'
   }
 
   interface Window {
@@ -81,24 +89,27 @@ declare global {
 
     fileApi: {
       openFile: (indexableId: number) => void
-
-      onIndexingStepStarted: CallbackFunc<{ filesFound: number; step: Impart.IndexingStep }>
-      onFileIndexed: CallbackFunc<Impart.Taggable>
-      onSourceFileAssociated: CallbackFunc<{
-        image: Impart.TaggableImage
-        file: Impart.TaggableFile
-      }>
-      onStepProgress: CallbackFunc<void>
-      onIndexingEnded: CallbackFunc<void>
     }
 
     taggableApi: {
       getTaggables: (options?: Impart.FetchTaggablesOptions) => Promise<Impart.Taggable[]>
+      getAllTaggableYears: () => Promise<number[]>
+      createStack: (name: string, taggableIds: number[], coverId: number) => Promise<void>
+    }
+
+    taskApi: {
+      onSequenceStarted: CallbackFunc<void>
+      onItemAddedToSequence: CallbackFunc<void>
+      onTaskStarted: CallbackFunc<{ type: Impart.TaskType; steps: number }>
+      onStepTaken: CallbackFunc<void>
+      onTaskFinished: CallbackFunc<void>
+      onSequenceFinished: CallbackFunc<void>
     }
 
     tagApi: {
       getGroups: () => Promise<Impart.TagGroup[]>
-      editFileTags: (fileId: number, tagIds: number[]) => Promise<void>
+      editFileTags: (taggableId: number, tagIds: number[]) => Promise<void>
+      bulkTag: (taggableIds: number[], tagIds: number[]) => Promise<void>
 
       createGroup: () => Promise<Impart.TagGroup>
       editGroup: (id: number, label?: string, defaultTagColor?: string) => Promise<Impart.TagGroup>
@@ -110,9 +121,10 @@ declare global {
     }
 
     indexApi: {
-      selectAndIndexDirectory: () => Promise<void>
+      indexAll: () => Promise<void>
+      selectDirectory: () => Promise<string | undefined>
+      updateDirectories: (payload: Impart.Directory[]) => Promise<void>
       getDirectories: () => Promise<Impart.CountedDirectory[]>
-      deleteDirectory: (path: string) => Promise<void>
     }
   }
 }

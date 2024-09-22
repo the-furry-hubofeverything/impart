@@ -6,10 +6,11 @@ const seafoam: PaletteOptions = {
     paper: '#e0f5f1'
   },
   text: {
-    primary: '#294541'
+    primary: '#294541',
+    secondary: '#5c7e79'
   },
   primary: {
-    main: '#4fbda1'
+    main: '#30947b'
   },
   secondary: {
     main: '#a7deda'
@@ -32,6 +33,7 @@ const paletteTheme = createTheme({ palette: seafoam })
 
 export const theme = createTheme(
   {
+    cssVariables: true,
     palette: seafoam,
     components: {
       MuiList: {
@@ -65,6 +67,21 @@ export const theme = createTheme(
             borderRadius: 16,
             paddingLeft: 24,
             paddingRight: 24
+          },
+          sizeLarge: {
+            borderRadius: 20,
+            paddingLeft: 30,
+            paddingRight: 30
+          }
+        }
+      },
+
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            '&.Mui-selected': {
+              backgroundColor: '#e0f5f1'
+            }
           }
         }
       }

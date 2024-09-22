@@ -1,20 +1,25 @@
-import { SelectQueryBuilder } from 'typeorm'
+import { In, SelectQueryBuilder } from 'typeorm'
 import { Taggable } from '../database/entities/Taggable'
+import { TaggableStack } from '../database/entities/TaggableStack'
+import { isTaggableImage } from '../database/entities/TaggableImage'
 
 export interface FetchTaggablesOptions {
   tagIds?: number[]
   order?: 'alpha' | 'date'
   search?: string
+  year?: number
 }
 
 export class TaggableManager {
   public async getTaggables(options?: FetchTaggablesOptions) {
-    let query = Taggable.createQueryBuilder('files').setFindOptions({
-      loadEagerRelations: true
-    })
+    let query = Taggable.createQueryBuilder('files')
+      .setFindOptions({
+        loadEagerRelations: true
+      })
+      .loadRelationIdAndMap('files.directory', 'files.directory')
 
     if (options) {
-      const { tagIds, order, search } = options
+      const { tagIds, order, search, year } = options
       if (tagIds && tagIds.length > 0) {
         this.applyTags(query, tagIds)
       }
@@ -25,6 +30,10 @@ export class TaggableManager {
 
       if (search && search != '') {
         this.applySearch(query, search)
+      }
+
+      if (year) {
+        this.applyYear(query, year)
       }
     }
 
@@ -46,7 +55,7 @@ export class TaggableManager {
   private applyOrder(query: SelectQueryBuilder<Taggable>, order: 'alpha' | 'date') {
     switch (order) {
       case 'alpha':
-        query.orderBy('files.fileIndex.fileName')
+        query.orderBy('files.fileIndex.fileName COLLATE NOCASE')
         break
       case 'date':
         query.orderBy('files.dateModified', 'DESC')
@@ -60,6 +69,42 @@ export class TaggableManager {
     terms.forEach((t, index) => {
       query.andWhere(`files.fileIndex.fileName LIKE :term${index}`, { [`term${index}`]: `%${t}%` })
     })
+  }
+
+  private applyYear(query: SelectQueryBuilder<Taggable>, year: number) {
+    query.andWhere("strftime('%Y', files.dateModified) = :year", { year: year.toString() })
+  }
+
+  public async getAllTaggableYears() {
+    const query = Taggable.createQueryBuilder()
+      .select("strftime('%Y', dateModified) AS taggableYear")
+      .groupBy('taggableYear')
+
+    const result = await query.getRawMany<{ taggableYear: string }>()
+
+    return result.map((r) => Number(r.taggableYear)).reverse()
+  }
+
+  public async createStack(name: string, taggableIds: number[], coverId: number) {
+    const childTaggables = await Taggable.find({
+      where: { id: In(taggableIds) },
+      relations: { directory: true }
+    })
+    const cover = childTaggables.find((t) => t.id === coverId)
+
+    if (!cover) {
+      throw new Error('Cover taggable must be one of the items in the stack')
+    }
+
+    const stack = TaggableStack.create({
+      name,
+      coverPath: isTaggableImage(cover) ? cover.fileIndex.path : undefined,
+      taggables: childTaggables,
+      directory: cover.directory,
+      dateModified: cover.dateModified
+    })
+
+    await stack.save()
   }
 }
 

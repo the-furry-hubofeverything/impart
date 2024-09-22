@@ -25,6 +25,9 @@ export class Taggable extends BaseEntity {
   @ManyToOne(() => Directory, { nullable: false, onDelete: 'CASCADE' })
   directory: Directory
 
+  @ManyToOne(() => Directory, { nullable: true })
+  parent?: Directory
+
   @Column({ nullable: false })
   dateModified: Date
 }

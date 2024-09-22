@@ -20,23 +20,28 @@ function generateCallback(channel: string) {
 }
 
 contextBridge.exposeInMainWorld('fileApi', {
-  getThumbnail: generateEndpoint('file/getThumbnail'),
-  openFile: generateCommand('file/openFile'),
+  openFile: generateCommand('file/openFile')
+})
 
-  onIndexingStepStarted: generateCallback('file/indexingStarted'),
-  onFileIndexed: generateCallback('file/fileIndexed'),
-  onSourceFileAssociated: generateCallback('file/sourceFileAssociated'),
-  onStepProgress: generateCallback('file/madeStepProgress'),
-  onIndexingEnded: generateCallback('file/indexingEnded')
+contextBridge.exposeInMainWorld('taskApi', {
+  onSequenceStarted: generateCallback('task/sequenceStarted'),
+  onItemAddedToSequence: generateCallback('task/itemAddedToSequence'),
+  onTaskStarted: generateCallback('task/taskStarted'),
+  onStepTaken: generateCallback('task/stepTaken'),
+  onTaskFinished: generateCallback('task/taskFinished'),
+  onSequenceFinished: generateCallback('task/sequenceFinished')
 })
 
 contextBridge.exposeInMainWorld('taggableApi', {
-  getTaggables: generateEndpoint('taggable/getTaggables')
+  getTaggables: generateEndpoint('taggable/getTaggables'),
+  getAllTaggableYears: generateEndpoint('taggable/getAllTaggableYears'),
+  createStack: generateEndpoint('taggable/createStack')
 })
 
 contextBridge.exposeInMainWorld('tagApi', {
   getGroups: generateEndpoint('tag/getGroups'),
   editFileTags: generateEndpoint('tag/editFileTags'),
+  bulkTag: generateEndpoint('tag/bulkTag'),
 
   createGroup: generateEndpoint('tag/createGroup'),
   editGroup: generateEndpoint('tag/editGroup'),
@@ -48,7 +53,8 @@ contextBridge.exposeInMainWorld('tagApi', {
 })
 
 contextBridge.exposeInMainWorld('indexApi', {
-  selectAndIndexDirectory: generateEndpoint('index/selectAndIndexDirectory'),
-  getDirectories: generateEndpoint('index/getDirectories'),
-  deleteDirectory: generateEndpoint('index/deleteDirectory')
+  indexAll: generateEndpoint('index/indexAll'),
+  selectDirectory: generateEndpoint('index/selectDirectory'),
+  updateDirectories: generateEndpoint('index/updateDirectories'),
+  getDirectories: generateEndpoint('index/getDirectories')
 })

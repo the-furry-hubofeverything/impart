@@ -7,4 +7,15 @@ export function setupTaggableApi() {
     (e, ...params: Parameters<InstanceType<typeof TaggableManager>['getTaggables']>) =>
       taggableManager.getTaggables(...params)
   )
+
+  ipcMain.handle(
+    'taggable/getAllTaggableYears',
+    (e, ...params: Parameters<InstanceType<typeof TaggableManager>['getAllTaggableYears']>) =>
+      taggableManager.getAllTaggableYears(...params)
+  )
+  ipcMain.handle(
+    'taggable/createStack',
+    (e, ...params: Parameters<InstanceType<typeof TaggableManager>['createStack']>) =>
+      taggableManager.createStack(...params)
+  )
 }

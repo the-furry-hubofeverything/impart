@@ -9,6 +9,7 @@ import { AppDataSource } from './database/database'
 import { setupTagApi } from './api/tagApi'
 import { seedGroups } from './database/seed'
 import { setupIndexApi } from './api/indexApi'
+import { indexingManager } from './indexables/indexingManager'
 
 interface ImpartApp {
   mainWindow?: BrowserWindow

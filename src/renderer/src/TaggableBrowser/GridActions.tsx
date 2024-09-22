@@ -2,24 +2,26 @@ import {
   ToggleButtonGroup,
   Tooltip,
   ToggleButton,
-  Typography,
   Stack,
-  Button,
-  ButtonGroup,
   IconButton,
   styled,
   toggleButtonGroupClasses,
-  Divider,
-  Popover,
   Box,
-  TextField
+  TextField,
+  MenuItem,
+  Select,
+  Divider,
+  SelectChangeEvent
 } from '@mui/material'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha'
 import ClockIcon from '@mui/icons-material/AccessTime'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import SearchIcon from '@mui/icons-material/Search'
 import ClearIcon from '@mui/icons-material/Clear'
+import FolderIcon from '@mui/icons-material/Folder'
+import { useImpartIpcData } from '@renderer/common/useImpartIpc'
+import { useDebounceEffect } from '@renderer/common/useDebounce'
 
 const ToolbarIconButton = styled(IconButton)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -42,13 +44,28 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   }
 }))
 
-export interface GridActionsProps {}
+export interface GridActionsProps {
+  groupByDirectory: boolean
+  onChange: (groupByDirectory: boolean) => void
+}
 
-export function GridActions({}: GridActionsProps) {
+export function GridActions({ groupByDirectory, onChange }: GridActionsProps) {
+  const [internalSearch, setInternalSearch] = useState('')
+
   const {
-    fetchOptions: { order, search },
+    fetchOptions: { order, year },
     setFetchOptions
   } = useTaggables()
+
+  useDebounceEffect(
+    () => {
+      setFetchOptions({ search: internalSearch != '' ? internalSearch : undefined })
+    },
+    250,
+    [internalSearch]
+  )
+
+  const { data } = useImpartIpcData(() => window.taggableApi.getAllTaggableYears(), [])
 
   const toolbarRef = useRef<HTMLDivElement | null>(null)
 
@@ -67,24 +84,61 @@ export function GridActions({}: GridActionsProps) {
             placeholder="Search"
             size="small"
             fullWidth
-            value={search}
-            onChange={(e) => setFetchOptions({ search: e.currentTarget.value })}
-            InputProps={{
-              startAdornment: (
-                <Box mr={0.5} mt={1} ml={-0.5}>
-                  <SearchIcon color="secondary" />
-                </Box>
-              ),
-              endAdornment: (
-                <IconButton size="small">
-                  <ClearIcon fontSize="inherit" />
-                </IconButton>
-              )
+            value={internalSearch}
+            onChange={(e) => setInternalSearch(e.currentTarget.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <Box mr={0.5} mt={1} ml={-0.5}>
+                    <SearchIcon color="secondary" />
+                  </Box>
+                ),
+                endAdornment: (
+                  <IconButton size="small" onClick={() => setInternalSearch('')}>
+                    <ClearIcon fontSize="inherit" />
+                  </IconButton>
+                )
+              }
             }}
           />
         </Box>
-
-        {/* <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} /> */}
+        <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+        <TextField
+          select
+          value={year ?? 'All'}
+          label="Year"
+          size="small"
+          onChange={(e) =>
+            setFetchOptions({ year: e.target.value === 'All' ? undefined : Number(e.target.value) })
+          }
+          slotProps={{
+            select: { MenuProps: { slotProps: { paper: { sx: { maxHeight: 260 } } } } }
+          }}
+          sx={{ minWidth: 100 }}
+        >
+          <MenuItem value={'All'}>All</MenuItem>
+          {data?.map((y) => (
+            <MenuItem key={y} value={y}>
+              {y}
+            </MenuItem>
+          ))}
+        </TextField>
+        <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
+        <StyledToggleButtonGroup
+          value={groupByDirectory ? 'group' : null}
+          size="small"
+          exclusive
+          onChange={(e, value) => {
+            onChange(value === 'group')
+          }}
+        >
+          <Tooltip title="Group by Directory">
+            <ToggleButton value={'group'}>
+              <FolderIcon />
+            </ToggleButton>
+          </Tooltip>
+        </StyledToggleButtonGroup>
+        <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
         <StyledToggleButtonGroup
           value={order}
           size="small"

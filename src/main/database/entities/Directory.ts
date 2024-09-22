@@ -1,5 +1,6 @@
-import { BaseEntity, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import { BaseEntity, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn } from 'typeorm'
 import { Taggable } from './Taggable'
+import { Tag } from './Tag'
 
 @Entity()
 export class Directory extends BaseEntity {
@@ -8,4 +9,8 @@ export class Directory extends BaseEntity {
 
   @OneToMany(() => Taggable, (t) => t.directory, { onDelete: 'CASCADE' })
   taggables: Taggable[]
+
+  @ManyToMany(() => Tag, (t) => t.autoTagDirectories, { eager: true })
+  @JoinTable()
+  autoTags: Tag[]
 }
