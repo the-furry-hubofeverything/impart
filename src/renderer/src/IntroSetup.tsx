@@ -19,7 +19,7 @@ export function IntroSetup({ reload }: IntroSetupProps) {
           const path = await window.indexApi.selectDirectory()
 
           if (path) {
-            await window.indexApi.updateDirectories([{ path }])
+            await window.indexApi.updateDirectories([{ path, autoTags: [] }])
             reload()
           }
         }}

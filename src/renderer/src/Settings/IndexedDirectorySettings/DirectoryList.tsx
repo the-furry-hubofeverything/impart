@@ -42,6 +42,18 @@ export function DirectoryList({
     })
   }
 
+  const updateDirectory = (path: string, state: Partial<Impart.Directory>) => {
+    onChange(
+      produce(directoryState, (next) => {
+        const index = next.findIndex((d) => d.path === path)
+
+        if (index != -1) {
+          next[index] = { ...next[index], ...state }
+        }
+      })
+    )
+  }
+
   return (
     <>
       {originalDirectories?.map((od) => (
@@ -49,6 +61,7 @@ export function DirectoryList({
           key={od.path}
           directoryState={directoryState.find((ds) => ds.path === od.path)}
           originalDirectory={od}
+          onChange={(state) => updateDirectory(od.path, state)}
           onDelete={() => onChange(removeDir(od))}
           onRestore={() => onChange(restoreDir(od))}
         />
@@ -59,6 +72,7 @@ export function DirectoryList({
           <DirectoryEditor
             key={ds.path}
             directoryState={ds}
+            onChange={(state) => updateDirectory(ds.path, state)}
             onDelete={() => onChange(removeDir(ds))}
           />
         ))}

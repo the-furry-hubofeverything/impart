@@ -18,6 +18,7 @@ export class DirectoryManager {
 
     const result = await query
       .loadRelationCountAndMap('directories.taggableCount', 'directories.taggables', 'taggables')
+      .loadRelationIdAndMap('directories.autoTags', 'directories.autoTags')
       .getMany()
 
     return result
@@ -36,7 +37,7 @@ export class DirectoryManager {
   }
 
   public async updateDirectories(directoryPayloads: DirectoryPayload[]) {
-    const directories = await Directory.find()
+    const directories = await Directory.find({ relations: { autoTags: true } })
 
     const unaddedDirectories = directoryPayloads.filter(
       (p) => !directories.some((d) => d.path === p.path)

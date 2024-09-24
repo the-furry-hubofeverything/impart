@@ -84,6 +84,22 @@ export const theme = createTheme(
             }
           }
         }
+      },
+
+      MuiListSubheader: {
+        styleOverrides: {
+          root: {
+            paddingLeft: 4,
+            paddingRight: 4,
+            borderRadius: 8,
+            backgroundColor: paletteTheme.palette.primary.light,
+            color: paletteTheme.palette.primary.contrastText,
+            marginLeft: 6,
+            marginRight: 6,
+            height: 24,
+            lineHeight: '26px'
+          }
+        }
       }
     }
   },

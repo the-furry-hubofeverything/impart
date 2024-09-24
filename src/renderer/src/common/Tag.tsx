@@ -20,11 +20,12 @@ import CheckIcon from '@mui/icons-material/Check'
 
 export interface TagProps {
   tag: Impart.Tag
+  editable?: boolean
   selected?: boolean
   onClick?: () => void
 }
 
-export function Tag({ tag, selected, onClick }: TagProps) {
+export function Tag({ tag, selected, editable, onClick }: TagProps) {
   const [editMode, setEditMode] = useState(false)
   const theme = useTheme()
   const [internalLabel, setInternalLabel] = useState(tag.label ?? '')
@@ -77,6 +78,7 @@ export function Tag({ tag, selected, onClick }: TagProps) {
       )}
       {!editMode && (
         <ContextMenu
+          disabled={!editable}
           options={[
             {
               icon: <EditIcon />,

@@ -72,6 +72,7 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
           <Grid key={t.id}>
             <Tag
               tag={t}
+              editable
               onClick={() => onSelect && onSelect(t)}
               selected={selectedTags?.some((s) => s.id === t.id)}
             />
