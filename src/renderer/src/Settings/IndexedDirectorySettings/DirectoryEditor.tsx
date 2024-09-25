@@ -21,6 +21,7 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import { Tag } from '@renderer/common/Tag'
 import { DeletedDirectory } from './DeletedDirectory'
+import EmergencyIcon from '@mui/icons-material/Emergency'
 
 function flattenSelectOptions(groups?: Impart.TagGroup[]) {
   const items: React.ReactNode[] = []
@@ -54,8 +55,8 @@ function findTag(tagId: number, groups?: Impart.TagGroup[]) {
   }
 }
 
-function isDifferent(first?: Impart.Directory, second?: Impart.Directory) {
-  return (first == null) != (second == null)
+function isDifferent(first: Impart.Directory, second: Impart.Directory) {
+  return first.autoTags.slice().sort().join(',') !== second.autoTags.slice().sort().join(',')
 }
 
 export interface DirectoryEditorProps {
@@ -88,6 +89,11 @@ export function DirectoryEditor({
             {!originalDirectory && (
               <Tooltip title="Newly added directory">
                 <AutoAwesomeIcon color="info" />
+              </Tooltip>
+            )}
+            {originalDirectory && isDifferent(directoryState, originalDirectory) && (
+              <Tooltip title="Modified">
+                <EmergencyIcon color="info" />
               </Tooltip>
             )}
           </>
@@ -125,20 +131,6 @@ export function DirectoryEditor({
         >
           {flattenSelectOptions(groups)}
         </TextField>
-        {/* <FormControl>
-          <InputLabel>Auto Tags</InputLabel>
-          <Select
-            multiple
-            value={directoryState.autoTags}
-            onChange={(e) =>
-              onChange &&
-              onChange({ autoTags: typeof e.target.value === 'string' ? [] : e.target.value })
-            }
-            sx={{ minWidth: 200 }}
-          >
-            {flattenSelectOptions(groups)}
-          </Select>
-        </FormControl> */}
       </CardContent>
     </Card>
   )

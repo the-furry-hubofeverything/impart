@@ -10,7 +10,7 @@ export class Directory extends BaseEntity {
   @OneToMany(() => Taggable, (t) => t.directory, { onDelete: 'CASCADE' })
   taggables: Taggable[]
 
-  @ManyToMany(() => Tag, (t) => t.autoTagDirectories)
+  @ManyToMany(() => Tag, (t) => t.autoTagDirectories, { cascade: true })
   @JoinTable()
   autoTags: Tag[]
 }

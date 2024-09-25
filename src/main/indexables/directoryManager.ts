@@ -44,7 +44,7 @@ export class DirectoryManager {
     )
     const updatedDirectories = directories
       .map((d) => ({ directory: d, payload: directoryPayloads.find((p) => p.path === d.path) }))
-      .filter((d) => d.payload == null)
+      .filter((d) => d.payload != null)
     const removedDirectories = directories.filter(
       (d) => !directoryPayloads.some((p) => p.path === d.path)
     )
