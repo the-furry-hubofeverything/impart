@@ -46,6 +46,7 @@ import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
 import { forwardRef } from 'react'
 import { GridComponents, VirtuosoGrid } from 'react-virtuoso'
+import { BOX_WIDTH } from '../TaggableDisplay/TaggableDisplay'
 
 const gridComponents: GridComponents = {
   List: forwardRef(({ children, ...props }, ref) => (
@@ -54,7 +55,7 @@ const gridComponents: GridComponents = {
     </Grid>
   )),
   Item: forwardRef(({ children, ...props }, ref) => (
-    <Grid {...props} ref={ref} size={{ xs: 'grow' }}>
+    <Grid minWidth={BOX_WIDTH} {...props} ref={ref} size={{ xs: 'grow' }}>
       {children}
     </Grid>
   ))
@@ -82,7 +83,6 @@ export function TaggableGrid({
       data={taggables}
       totalCount={taggables.length}
       components={gridComponents}
-      overscan={{ main: 1000, reverse: 1000 }}
       itemContent={(index, f) => (
         <Box
           onContextMenu={(e) => {
