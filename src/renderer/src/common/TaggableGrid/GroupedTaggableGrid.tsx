@@ -4,7 +4,7 @@ import { BOX_WIDTH } from '@renderer/common/TaggableDisplay/TaggableDisplay'
 import React, { useMemo } from 'react'
 import { DirectoryGroup } from './DirectoryGroup'
 import { GroupedTaggables } from './buildTaggableGroups'
-import { CommonTaggableGridProps } from './TaggableGrid'
+import { CommonTaggableGridProps } from './VirtualTaggableGrid'
 
 export interface TaggableGridProps extends Omit<CommonTaggableGridProps, 'taggables'> {
   groups?: GroupedTaggables

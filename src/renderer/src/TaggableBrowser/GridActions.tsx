@@ -9,11 +9,9 @@ import {
   Box,
   TextField,
   MenuItem,
-  Select,
-  Divider,
-  SelectChangeEvent
+  Divider
 } from '@mui/material'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha'
 import ClockIcon from '@mui/icons-material/AccessTime'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
@@ -21,7 +19,6 @@ import SearchIcon from '@mui/icons-material/Search'
 import ClearIcon from '@mui/icons-material/Clear'
 import FolderIcon from '@mui/icons-material/Folder'
 import { useImpartIpcData } from '@renderer/common/useImpartIpc'
-import { useDebounceEffect } from '@renderer/common/useDebounce'
 
 const ToolbarIconButton = styled(IconButton)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -46,24 +43,15 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 
 export interface GridActionsProps {
   groupByDirectory: boolean
+  disableGrouping?: boolean
   onChange: (groupByDirectory: boolean) => void
 }
 
-export function GridActions({ groupByDirectory, onChange }: GridActionsProps) {
-  // const [internalSearch, setInternalSearch] = useState('')
-
+export function GridActions({ groupByDirectory, onChange, disableGrouping }: GridActionsProps) {
   const {
     fetchOptions: { order, year, search },
     setFetchOptions
   } = useTaggables()
-
-  // useDebounceEffect(
-  //   () => {
-  //     setFetchOptions({ search: internalSearch != '' ? internalSearch : undefined })
-  //   },
-  //   250,
-  //   [internalSearch]
-  // )
 
   const { data } = useImpartIpcData(() => window.taggableApi.getAllTaggableYears(), [])
 
@@ -94,7 +82,7 @@ export function GridActions({ groupByDirectory, onChange }: GridActionsProps) {
                   </Box>
                 ),
                 endAdornment: (
-                  <IconButton size="small" onClick={() => setFetchOptions({ search: undefined })}>
+                  <IconButton size="small" onClick={() => setFetchOptions({ search: '' })}>
                     <ClearIcon fontSize="inherit" />
                   </IconButton>
                 )
@@ -124,20 +112,28 @@ export function GridActions({ groupByDirectory, onChange }: GridActionsProps) {
           ))}
         </TextField>
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
-        <StyledToggleButtonGroup
-          value={groupByDirectory ? 'group' : null}
-          size="small"
-          exclusive
-          onChange={(e, value) => {
-            onChange(value === 'group')
-          }}
+        <Tooltip
+          title={
+            disableGrouping
+              ? 'Grouping is disabled when there are over 1000 items'
+              : 'Group by Directory'
+          }
         >
-          <Tooltip title="Group by Directory">
+          <StyledToggleButtonGroup
+            value={groupByDirectory ? 'group' : null}
+            size="small"
+            exclusive
+            onChange={(e, value) => {
+              onChange(value === 'group')
+            }}
+            disabled={disableGrouping}
+            sx={{ opacity: disableGrouping ? 0.6 : 1 }}
+          >
             <ToggleButton value={'group'}>
               <FolderIcon />
             </ToggleButton>
-          </Tooltip>
-        </StyledToggleButtonGroup>
+          </StyledToggleButtonGroup>
+        </Tooltip>
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
         <StyledToggleButtonGroup
           value={order}

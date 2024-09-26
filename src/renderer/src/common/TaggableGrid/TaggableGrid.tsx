@@ -1,66 +1,7 @@
-// import { Box, Grid2 as Grid } from '@mui/material'
-// import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
-// import { BOX_WIDTH } from '@renderer/common/TaggableDisplay/TaggableDisplay'
-// import React from 'react'
-
-// export interface CommonTaggableGridProps {
-//   taggables?: Impart.Taggable[]
-//   selection?: Impart.Taggable[]
-//   onSelect?: (item: Impart.Taggable, add: boolean, range: boolean) => void
-//   onRightClick?: (item: Impart.Taggable, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
-// }
-
-// export interface TaggableGridProps extends CommonTaggableGridProps {}
-
-// export const TaggableGrid = React.memo(function ({
-//   taggables,
-//   selection,
-//   onSelect,
-//   onRightClick
-// }: TaggableGridProps) {
-//   if (!taggables) {
-//     return null
-//   }
-
-//   return (
-//     <Grid container spacing={1}>
-//       {taggables?.map((f) => (
-//         <Grid
-//           key={f.id}
-//           minWidth={BOX_WIDTH + 26}
-//           size={{ xs: 'grow' }}
-//           onContextMenu={(e) => {
-//             onRightClick && onRightClick(f, e)
-//           }}
-//           onClick={(e) => onSelect && onSelect(f, e.ctrlKey, e.shiftKey)}
-//         >
-//           <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />
-//         </Grid>
-//       ))}
-//     </Grid>
-//   )
-// })
-
 import { Box, Grid2 as Grid } from '@mui/material'
-import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
-import { forwardRef } from 'react'
-import { GridComponents, VirtuosoGrid } from 'react-virtuoso'
-import { BOX_WIDTH } from '../TaggableDisplay/TaggableDisplay'
-import { useDirectories } from '@renderer/EntityProviders/DirectoryProvider'
-
-const gridComponents: GridComponents = {
-  List: forwardRef(({ children, ...props }, ref) => (
-    <Grid container {...props} ref={ref}>
-      {children}
-    </Grid>
-  )),
-  Item: forwardRef(({ children, ...props }, ref) => (
-    <Grid minWidth={BOX_WIDTH + 28} {...props} ref={ref} size={{ xs: 'grow' }}>
-      {children}
-    </Grid>
-  ))
-}
+import { BOX_WIDTH } from '@renderer/common/TaggableDisplay/TaggableDisplay'
+import React from 'react'
 
 export interface CommonTaggableGridProps {
   taggables?: Impart.Taggable[]
@@ -69,43 +10,33 @@ export interface CommonTaggableGridProps {
   onRightClick?: (item: Impart.Taggable, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
-export function TaggableGrid({
+export interface TaggableGridProps extends CommonTaggableGridProps {}
+
+export const TaggableGrid = React.memo(function ({
   taggables,
   selection,
   onSelect,
   onRightClick
-}: CommonTaggableGridProps) {
+}: TaggableGridProps) {
   if (!taggables) {
     return null
   }
 
   return (
-    <VirtuosoGrid
-      data={taggables}
-      totalCount={taggables.length}
-      components={gridComponents}
-      itemContent={(index, f) => (
-        <Box
+    <Grid container spacing={1}>
+      {taggables?.map((f) => (
+        <Grid
+          key={f.id}
+          minWidth={BOX_WIDTH + 26}
+          size={{ xs: 'grow' }}
           onContextMenu={(e) => {
             onRightClick && onRightClick(f, e)
           }}
           onClick={(e) => onSelect && onSelect(f, e.ctrlKey, e.shiftKey)}
         >
           <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />
-        </Box>
-      )}
-    />
-    // <Grid container spacing={1}>
-    //   {taggables?.map((f) => (
-    //     <Grid item key={f.id} xs={true}>
-    //       <TaggableDisplay
-    //         taggable={f}
-    //         isSelected={selection?.some((s) => s.id === f.id)}
-    //         onClick={({ ctrl, shift }) => onSelect && onSelect(f, ctrl, shift)}
-    //         onRightClick={(e) => onRightClick && onRightClick(f, e)}
-    //       />
-    //     </Grid>
-    //   ))}
-    // </Grid>
+        </Grid>
+      ))}
+    </Grid>
   )
-}
+})

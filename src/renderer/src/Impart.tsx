@@ -1,14 +1,4 @@
-import {
-  Box,
-  CssBaseline,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
-  ThemeProvider,
-  Typography
-} from '@mui/material'
+import { Box, CssBaseline, Dialog, DialogContent, ThemeProvider } from '@mui/material'
 import { theme } from './theme'
 import { useEffect, useState } from 'react'
 import { useTaggables } from './EntityProviders/TaggableProvider/TaggableProvider'
@@ -18,7 +8,6 @@ import { EditTags } from './EditTags'
 import { useDirectories } from './EntityProviders/DirectoryProvider'
 import { Settings } from './Settings'
 import { BulkTag } from './BulkTag'
-import BackIcon from '@mui/icons-material/ArrowBack'
 
 type ImpartModal = 'editTags' | 'bulkTag' | 'settings'
 
@@ -27,12 +16,9 @@ export interface ImpartProps {}
 export function Impart({}: ImpartProps) {
   const { data: directories, startingUp, reload: reloadDirectories } = useDirectories()
 
-  console.log(directories)
-
   const hasDirectories = directories && directories.length !== 0
 
   const [currentModal, setCurrentModal] = useState<ImpartModal | null>(null)
-
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
   const { fetchTaggables } = useTaggables()

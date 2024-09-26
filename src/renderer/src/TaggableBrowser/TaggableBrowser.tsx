@@ -1,15 +1,5 @@
-import {
-  Stack,
-  Box,
-  Collapse,
-  Card,
-  CardActions,
-  Fade,
-  CardContent,
-  CircularProgress
-} from '@mui/material'
+import { Stack, Box, Collapse, Card, CardActions, Fade, CardContent } from '@mui/material'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { TaggableGrid } from '../common/TaggableGrid/TaggableGrid'
 import { SettingsPanel } from './SettingsPanel'
 import { TaggingPanel } from './TaggingPanel'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
@@ -19,8 +9,11 @@ import { ContextMenu } from '@renderer/common/ContextMenu'
 import { GridActions } from './GridActions'
 import { getTaggableContextMenuOptions } from './taggableContextMenuOptions'
 import { SelectionIndicator } from './SelectionIndicator'
-import { HexColorPicker } from 'react-colorful'
-import { GroupedTaggableGrid, buildTaggableGroups } from '@renderer/common/TaggableGrid'
+import {
+  GroupedTaggableGrid,
+  buildTaggableGroups,
+  VirtualTaggableGrid
+} from '@renderer/common/TaggableGrid'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
 
 export interface TaggableBrowserProps {
@@ -34,7 +27,7 @@ export function TaggableBrowser({
   onEditTags,
   onBulkTag
 }: TaggableBrowserProps) {
-  const { taggables, isLoading } = useTaggables()
+  const { taggables } = useTaggables()
   const { isTaskRunning } = useTaskStatus()
   const taggableGroups = useMemo(() => buildTaggableGroups(taggables), [taggables])
   const taggableFlatMap = useMemo(
@@ -42,8 +35,9 @@ export function TaggableBrowser({
     [taggableGroups]
   )
 
-  const [showIndexingPanel, setShowIndexingPanel] = useState(false)
+  const groupLimitExceeded = taggables.length > 1000
 
+  const [showIndexingPanel, setShowIndexingPanel] = useState(false)
   const [groupByDirectory, setGroupByDirectory] = useState(false)
 
   useEffect(() => {
@@ -69,21 +63,15 @@ export function TaggableBrowser({
 
   return (
     <Stack direction="row" gap={1} height="100vh">
-      {isLoading && (
-        <Box position="fixed" bottom={32} left={32} zIndex={1}>
-          <Card elevation={12} sx={{ opacity: 0.8 }}>
-            <Box p={2} pb={1}>
-              <CircularProgress size={64} />
-            </Box>
-          </Card>
-        </Box>
-      )}
-
       <Stack overflow="auto" position={'relative'} flex={1} pr={1} gap={2}>
         <Box position="sticky" top={8} pl={1} zIndex={1}>
           <Card>
             <CardActions>
-              <GridActions groupByDirectory={groupByDirectory} onChange={setGroupByDirectory} />
+              <GridActions
+                groupByDirectory={groupByDirectory}
+                disableGrouping={groupLimitExceeded}
+                onChange={setGroupByDirectory}
+              />
             </CardActions>
           </Card>
         </Box>
@@ -91,15 +79,15 @@ export function TaggableBrowser({
           flex={1}
           options={getTaggableContextMenuOptions(selection, onEditTags, onBulkTag)}
         >
-          {!groupByDirectory && (
-            <TaggableGrid
+          {(!groupByDirectory || groupLimitExceeded) && (
+            <VirtualTaggableGrid
               taggables={taggables}
               selection={selection}
               onSelect={selectItem}
               onRightClick={rightClickSelect}
             />
           )}
-          {groupByDirectory && (
+          {groupByDirectory && !groupLimitExceeded && (
             <GroupedTaggableGrid
               groups={taggableGroups}
               selection={selection}
