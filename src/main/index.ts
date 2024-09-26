@@ -1,6 +1,7 @@
 import 'reflect-metadata'
 import { app, shell, BrowserWindow, protocol, net, nativeImage } from 'electron'
 import { join } from 'path'
+import url from 'node:url'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { setupTaggableApi } from './api/taggableApi'
@@ -10,6 +11,7 @@ import { setupTagApi } from './api/tagApi'
 import { seedGroups } from './database/seed'
 import { setupIndexApi } from './api/indexApi'
 import { indexingManager } from './indexables/indexingManager'
+import { thumbnailManager } from './indexables/thumbnailManager'
 
 interface ImpartApp {
   mainWindow?: BrowserWindow
@@ -59,22 +61,9 @@ app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.electron')
 
   protocol.handle('thum', async (request) => {
-    let url = request.url.slice('thum:///'.length).replaceAll('/', '\\').replaceAll('%20', ' ')
-    // The Windows implementation will ignore size.height and scale the height according to size.width.
-    const image = await nativeImage.createThumbnailFromPath(url, {
-      width: 400,
-      height: 400
-    })
+    let taggableId = Number(request.url.slice('thum:///'.length))
 
-    if (url.endsWith('jpg') || url.endsWith('jpeg')) {
-      return new Response(image.toJPEG(100), {
-        headers: { 'content-type': 'image/jpg' }
-      })
-    }
-
-    return new Response(image.toPNG(), {
-      headers: { 'content-type': 'image/png' }
-    })
+    return net.fetch(url.pathToFileURL(await thumbnailManager.getThumbnail(taggableId)).toString())
   })
 
   // Default open or close DevTools by F12 in development
