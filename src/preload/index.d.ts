@@ -20,6 +20,7 @@ declare global {
 
     interface Directory {
       path: string
+      autoTags: number[]
     }
 
     interface CountedDirectory extends Directory {

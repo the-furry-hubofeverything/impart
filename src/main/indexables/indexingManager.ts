@@ -22,7 +22,7 @@ class IndexingManager {
 
     try {
       this.isIndexing = true
-      const directories = await Directory.find()
+      const directories = await Directory.find({ relations: { autoTags: true } })
 
       for (const directory of directories) {
         console.log('Indexing:', directory.path)

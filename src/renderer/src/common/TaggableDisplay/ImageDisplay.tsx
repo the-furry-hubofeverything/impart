@@ -19,7 +19,7 @@ export function ImageDisplay({ image }: ImageDisplayProps) {
       // immediately sprints to downloading the image before it reads
       // the rest of the attributes
       loading="lazy"
-      src={`thum:///${image.fileIndex.path}`}
+      src={`thum:///${image.id}`}
       alt={image.fileIndex.fileName}
       borderRadius={2}
       width={targetWidth}

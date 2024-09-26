@@ -22,14 +22,24 @@ export interface ContextMenuOption {
 
 export interface ContextMenuProps extends BoxProps {
   options?: (ContextMenuOption | 'divider')[]
+  disabled?: boolean
 }
 
-export function ContextMenu({ options, children, ...boxProps }: ContextMenuProps) {
+export function ContextMenu({ options, children, disabled, ...boxProps }: ContextMenuProps) {
   const { anchorPosition, closeMenu, handleContextMenu, open } = useContextMenu()
 
   return (
     <>
-      <Box width="100%" height="100%" {...boxProps} onContextMenu={handleContextMenu}>
+      <Box
+        width="100%"
+        height="100%"
+        {...boxProps}
+        onContextMenu={(e) => {
+          if (!disabled) {
+            handleContextMenu(e)
+          }
+        }}
+      >
         {children}
       </Box>
       <Menu

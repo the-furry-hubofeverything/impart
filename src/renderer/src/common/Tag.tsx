@@ -1,6 +1,7 @@
 import {
   Box,
   Chip,
+  ChipProps,
   Fade,
   IconButton,
   Paper,
@@ -20,11 +21,13 @@ import CheckIcon from '@mui/icons-material/Check'
 
 export interface TagProps {
   tag: Impart.Tag
+  editable?: boolean
   selected?: boolean
+  size?: ChipProps['size']
   onClick?: () => void
 }
 
-export function Tag({ tag, selected, onClick }: TagProps) {
+export function Tag({ tag, selected, editable, onClick, size }: TagProps) {
   const [editMode, setEditMode] = useState(false)
   const theme = useTheme()
   const [internalLabel, setInternalLabel] = useState(tag.label ?? '')
@@ -77,6 +80,7 @@ export function Tag({ tag, selected, onClick }: TagProps) {
       )}
       {!editMode && (
         <ContextMenu
+          disabled={!editable}
           options={[
             {
               icon: <EditIcon />,
@@ -93,6 +97,7 @@ export function Tag({ tag, selected, onClick }: TagProps) {
         >
           <Chip
             onClick={onClick}
+            size={size}
             label={tag.label ? tag.label : 'Unnamed Tag'}
             sx={{
               bgcolor: tag.color ?? 'primary.main',

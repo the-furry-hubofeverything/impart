@@ -18,11 +18,9 @@ import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TaskStatus } from '@renderer/common/TaskStatus'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
 
-export interface IndexedDirectoriesSettingsProps {
-  onChange?: () => void
-}
+export interface IndexedDirectoriesSettingsProps {}
 
-export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSettingsProps) {
+export function IndexedDirectoriesSettings({}: IndexedDirectoriesSettingsProps) {
   const { data: originalDirectories, reload: reloadDirectories } = useDirectories()
   const { fetchTaggables } = useTaggables()
   const [isSaving, setSaving] = useState(false)
@@ -41,7 +39,7 @@ export function IndexedDirectoriesSettings({ onChange }: IndexedDirectoriesSetti
     if (folder != null) {
       setDirectoryState(
         produce(directoryState, (next) => {
-          next.push({ path: folder })
+          next.push({ path: folder, autoTags: [] })
         })
       )
     }

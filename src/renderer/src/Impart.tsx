@@ -27,6 +27,8 @@ export interface ImpartProps {}
 export function Impart({}: ImpartProps) {
   const { data: directories, startingUp, reload: reloadDirectories } = useDirectories()
 
+  console.log(directories)
+
   const hasDirectories = directories && directories.length !== 0
 
   const [currentModal, setCurrentModal] = useState<ImpartModal | null>(null)
