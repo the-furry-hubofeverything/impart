@@ -50,20 +50,20 @@ export interface GridActionsProps {
 }
 
 export function GridActions({ groupByDirectory, onChange }: GridActionsProps) {
-  const [internalSearch, setInternalSearch] = useState('')
+  // const [internalSearch, setInternalSearch] = useState('')
 
   const {
-    fetchOptions: { order, year },
+    fetchOptions: { order, year, search },
     setFetchOptions
   } = useTaggables()
 
-  useDebounceEffect(
-    () => {
-      setFetchOptions({ search: internalSearch != '' ? internalSearch : undefined })
-    },
-    250,
-    [internalSearch]
-  )
+  // useDebounceEffect(
+  //   () => {
+  //     setFetchOptions({ search: internalSearch != '' ? internalSearch : undefined })
+  //   },
+  //   250,
+  //   [internalSearch]
+  // )
 
   const { data } = useImpartIpcData(() => window.taggableApi.getAllTaggableYears(), [])
 
@@ -84,8 +84,8 @@ export function GridActions({ groupByDirectory, onChange }: GridActionsProps) {
             placeholder="Search"
             size="small"
             fullWidth
-            value={internalSearch}
-            onChange={(e) => setInternalSearch(e.currentTarget.value)}
+            value={search}
+            onChange={(e) => setFetchOptions({ search: e.currentTarget.value })}
             slotProps={{
               input: {
                 startAdornment: (
@@ -94,7 +94,7 @@ export function GridActions({ groupByDirectory, onChange }: GridActionsProps) {
                   </Box>
                 ),
                 endAdornment: (
-                  <IconButton size="small" onClick={() => setInternalSearch('')}>
+                  <IconButton size="small" onClick={() => setFetchOptions({ search: undefined })}>
                     <ClearIcon fontSize="inherit" />
                   </IconButton>
                 )

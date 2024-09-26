@@ -47,6 +47,7 @@ import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
 import { forwardRef } from 'react'
 import { GridComponents, VirtuosoGrid } from 'react-virtuoso'
 import { BOX_WIDTH } from '../TaggableDisplay/TaggableDisplay'
+import { useDirectories } from '@renderer/EntityProviders/DirectoryProvider'
 
 const gridComponents: GridComponents = {
   List: forwardRef(({ children, ...props }, ref) => (
@@ -55,7 +56,7 @@ const gridComponents: GridComponents = {
     </Grid>
   )),
   Item: forwardRef(({ children, ...props }, ref) => (
-    <Grid minWidth={BOX_WIDTH} {...props} ref={ref} size={{ xs: 'grow' }}>
+    <Grid minWidth={BOX_WIDTH + 28} {...props} ref={ref} size={{ xs: 'grow' }}>
       {children}
     </Grid>
   ))
