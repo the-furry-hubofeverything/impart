@@ -63,9 +63,20 @@ export class DirectoryManager {
   }
 
   private async createDirectory(payload: DirectoryPayload) {
-    const directory = Directory.create({ path: payload.path })
+    const tags =
+      (payload.autoTags?.length ?? 0) > 0 ? await Tag.findBy({ id: In(payload.autoTags!) }) : []
+
+    const directory = Directory.create({
+      path: payload.path,
+      autoTags: tags
+    })
+
     await directory.save()
     await indexingManager.indexFiles(directory)
+
+    if (tags.length > 0) {
+      tagManager.bulkTagTaggables(() => Taggable.findBy({ directory: directory }), tags)
+    }
   }
 
   private async updateDirectory(directory: Directory, payload: DirectoryPayload) {
