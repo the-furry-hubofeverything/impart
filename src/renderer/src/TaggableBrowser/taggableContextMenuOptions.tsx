@@ -4,11 +4,17 @@ import TagIcon from '@mui/icons-material/LocalOffer'
 import BrushIcon from '@mui/icons-material/Brush'
 import { isTaggableImage } from '@renderer/common/taggable'
 import BookmarksIcon from '@mui/icons-material/Bookmarks'
+import BurstModeIcon from '@mui/icons-material/BurstMode'
+
+interface Events {
+  onEditTags?: (taggable: Impart.Taggable) => void
+  onBulkTag?: (taggables: Impart.Taggable[]) => void
+  onCreateStack?: (taggables: Impart.Taggable[]) => void
+}
 
 export function getTaggableContextMenuOptions(
   selection: Impart.Taggable[],
-  onEditTags?: (target: Impart.Taggable) => void,
-  onBulkTag?: (targets: Impart.Taggable[]) => void
+  { onEditTags, onBulkTag, onCreateStack }: Events
 ): (ContextMenuOption | 'divider')[] {
   let selectedImage: Impart.TaggableImage | undefined = undefined
 
@@ -33,14 +39,20 @@ export function getTaggableContextMenuOptions(
     {
       icon: <TagIcon />,
       label: 'Edit Tags',
-      disabled: selection.length > 1,
+      hide: selection.length > 1,
       onClick: () => onEditTags && onEditTags(selection[0])
     },
     {
       icon: <BookmarksIcon />,
       label: 'Bulk Tag',
-      disabled: selection.length < 2,
+      hide: selection.length < 2,
       onClick: () => onBulkTag && onBulkTag(selection)
+    },
+    {
+      icon: <BurstModeIcon />,
+      label: 'Create Stack',
+      hide: selection.length < 2,
+      onClick: () => onCreateStack && onCreateStack(selection)
     }
   ]
 }

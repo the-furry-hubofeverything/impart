@@ -20,12 +20,14 @@ export interface TaggableBrowserProps {
   onSettingsPressed?: () => void
   onEditTags?: (file: Impart.Taggable) => void
   onBulkTag?: (files: Impart.Taggable[]) => void
+  onCreateStack?: (taggables: Impart.Taggable[]) => void
 }
 
 export function TaggableBrowser({
   onSettingsPressed,
   onEditTags,
-  onBulkTag
+  onBulkTag,
+  onCreateStack
 }: TaggableBrowserProps) {
   const { taggables } = useTaggables()
   const { isTaskRunning } = useTaskStatus()
@@ -77,7 +79,11 @@ export function TaggableBrowser({
         </Box>
         <ContextMenu
           flex={1}
-          options={getTaggableContextMenuOptions(selection, onEditTags, onBulkTag)}
+          options={getTaggableContextMenuOptions(selection, {
+            onEditTags,
+            onBulkTag,
+            onCreateStack
+          })}
         >
           {(!groupByDirectory || groupLimitExceeded) && (
             <VirtualTaggableGrid

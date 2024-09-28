@@ -17,6 +17,7 @@ import BackIcon from '@mui/icons-material/ArrowBack'
 import { TaggableDisplay } from './common/TaggableDisplay'
 import { TaggableGrid } from './common/TaggableGrid'
 import InfoIcon from '@mui/icons-material/Info'
+import { Backable } from './common/Backable'
 
 export interface BulkTagProps {
   items: Impart.Taggable[]
@@ -44,13 +45,7 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
   }
 
   return (
-    <Box position="relative" height="100%">
-      <Box position="absolute" top={20} left={20}>
-        <IconButton onClick={onFinish} size="large">
-          <BackIcon fontSize="inherit" />
-        </IconButton>
-      </Box>
-
+    <Backable onBack={onFinish}>
       <Stack direction="row" p={1} gap={1} height="100%">
         <Stack flex={1} alignItems="center">
           <Typography variant="h2">Bulk Tags</Typography>
@@ -80,6 +75,6 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
           </Card>
         </Box>
       </Stack>
-    </Box>
+    </Backable>
   )
 }

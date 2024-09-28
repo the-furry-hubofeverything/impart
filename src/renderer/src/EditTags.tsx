@@ -14,6 +14,7 @@ import { Tag } from './common/Tag'
 import CheckIcon from '@mui/icons-material/Check'
 import BackIcon from '@mui/icons-material/ArrowBack'
 import { TaggableDisplay } from './common/TaggableDisplay'
+import { Backable } from './common/Backable'
 
 export interface EditTagsProps {
   item: Impart.Taggable
@@ -47,13 +48,7 @@ export function EditTags({ item, onFinish }: EditTagsProps) {
   }
 
   return (
-    <Box position="relative" height="100%">
-      <Box position="absolute" top={20} left={20}>
-        <IconButton onClick={onFinish} size="large">
-          <BackIcon fontSize="inherit" />
-        </IconButton>
-      </Box>
-
+    <Backable onBack={onFinish}>
       <Stack direction="row" p={1} gap={1} height="100%">
         <Stack flex={1} alignItems="center">
           <Typography variant="h2">Edit Tags</Typography>
@@ -81,6 +76,6 @@ export function EditTags({ item, onFinish }: EditTagsProps) {
           </Card>
         </Box>
       </Stack>
-    </Box>
+    </Backable>
   )
 }

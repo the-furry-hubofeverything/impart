@@ -16,6 +16,7 @@ export interface ContextMenuOption {
   icon?: React.ReactNode
   shortcut?: string
   disabled?: boolean
+  hide?: boolean
   danger?: boolean
   onClick?: () => void
 }
@@ -49,37 +50,39 @@ export function ContextMenu({ options, children, disabled, ...boxProps }: Contex
         anchorPosition={anchorPosition}
         sx={{ '& .MuiPaper-root': { minWidth: 200 } }}
       >
-        {options?.map((o, index) =>
-          o === 'divider' ? (
-            <Divider key={index} />
-          ) : (
-            <MenuItem
-              key={index}
-              onClick={() => {
-                o.onClick && o.onClick()
-                closeMenu()
-              }}
-              disabled={o.disabled}
-            >
-              {o.icon && (
-                <ListItemIcon sx={{ color: o.danger ? 'error.main' : undefined }}>
-                  {o.icon}
-                </ListItemIcon>
-              )}
-              <ListItemText inset={!o.icon} sx={{ color: o.danger ? 'error.dark' : undefined }}>
-                {o.label}
-              </ListItemText>
-              {o.shortcut && (
-                <Typography
-                  variant="body2"
-                  sx={{ color: o.danger ? 'error.light' : 'text.secondary' }}
-                >
-                  {o.shortcut}
-                </Typography>
-              )}
-            </MenuItem>
-          )
-        )}
+        {options
+          ?.filter((o) => o === 'divider' || !o.hide)
+          .map((o, index) =>
+            o === 'divider' ? (
+              <Divider key={index} />
+            ) : (
+              <MenuItem
+                key={index}
+                onClick={() => {
+                  o.onClick && o.onClick()
+                  closeMenu()
+                }}
+                disabled={o.disabled}
+              >
+                {o.icon && (
+                  <ListItemIcon sx={{ color: o.danger ? 'error.main' : undefined }}>
+                    {o.icon}
+                  </ListItemIcon>
+                )}
+                <ListItemText inset={!o.icon} sx={{ color: o.danger ? 'error.dark' : undefined }}>
+                  {o.label}
+                </ListItemText>
+                {o.shortcut && (
+                  <Typography
+                    variant="body2"
+                    sx={{ color: o.danger ? 'error.light' : 'text.secondary' }}
+                  >
+                    {o.shortcut}
+                  </Typography>
+                )}
+              </MenuItem>
+            )
+          )}
       </Menu>
     </>
   )

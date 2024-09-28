@@ -8,8 +8,9 @@ import { EditTags } from './EditTags'
 import { useDirectories } from './EntityProviders/DirectoryProvider'
 import { Settings } from './Settings'
 import { BulkTag } from './BulkTag'
+import { CreateStack } from './CreateStack'
 
-type ImpartModal = 'editTags' | 'bulkTag' | 'settings'
+type ImpartModal = 'editTags' | 'bulkTag' | 'settings' | 'createStack'
 
 export interface ImpartProps {}
 
@@ -43,6 +44,8 @@ export function Impart({}: ImpartProps) {
         return <EditTags item={selection[0]} onFinish={() => setCurrentModal(null)} />
       case 'bulkTag':
         return <BulkTag items={selection} onFinish={() => setCurrentModal(null)} />
+      case 'createStack':
+        return <CreateStack items={selection} onFinish={() => setCurrentModal(null)} />
     }
   }
 
@@ -61,6 +64,10 @@ export function Impart({}: ImpartProps) {
             onBulkTag={(files) => {
               setSelection(files)
               setCurrentModal('bulkTag')
+            }}
+            onCreateStack={(files) => {
+              setSelection(files)
+              setCurrentModal('createStack')
             }}
           />
           <Dialog open={currentModal != null} onClose={() => setCurrentModal(null)} fullScreen>

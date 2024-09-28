@@ -19,6 +19,7 @@ export class DirectoryManager {
     const result = await query
       .loadRelationCountAndMap('directories.taggableCount', 'directories.taggables', 'taggables')
       .loadRelationIdAndMap('directories.autoTags', 'directories.autoTags')
+      .orderBy('directories.path')
       .getMany()
 
     return result
