@@ -1,3 +1,7 @@
+// The @electron/rebuild package didn't seem to fix the build issues with better-sqlite3
+// so instead, we're using this rebuild script that was acquired from here:
+// https://github.com/caoxiemeihao/electron-vite-samples/blob/main/better-sqlite3-main-process/rebuild.js
+
 const path = require('path');
 const child = require('child_process');
 
