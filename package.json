@@ -1,6 +1,6 @@
 {
   "name": "impart",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -16,7 +16,8 @@
     "typewatch:node": "tsc --noEmit -w -p tsconfig.node.json --composite false",
     "typewatch:web": "tsc --noEmit -w -p tsconfig.web.json --composite false",
     "build": "npm run typecheck && electron-vite build",
-    "postinstall": "electron-builder install-app-deps",
+    "rebuild:better-sqlite3": "electron rebuild.js",
+    "postinstall": "electron-builder install-app-deps && npm run rebuild:better-sqlite3",
     "build:unpack": "npm run build && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
@@ -30,14 +31,14 @@
     "@mui/icons-material": "^6.0.2",
     "@mui/material": "^6.0.2",
     "@types/uuid": "^10.0.0",
+    "better-sqlite3": "^11.3.0",
     "image-size": "^1.1.1",
     "immer": "^10.1.1",
     "react-color": "^2.19.3",
-    "react-virtuoso": "^4.10.2",
     "react-colorful": "^5.6.1",
     "react-virtualized-auto-sizer": "^1.0.24",
+    "react-virtuoso": "^4.10.2",
     "reflect-metadata": "^0.2.2",
-    "sqlite3": "^5.1.7",
     "typeorm": "^0.3.20",
     "uuid": "^10.0.0"
   },
@@ -60,5 +61,10 @@
     "react-dom": "^18.3.1",
     "typescript": "^5.5.2",
     "vite": "^5.3.1"
+  },
+  "overrides": {
+    "typeorm": {
+      "better-sqlite3": "$better-sqlite3"
+    }
   }
 }

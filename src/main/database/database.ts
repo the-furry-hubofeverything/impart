@@ -12,7 +12,7 @@ import { TaggableStack } from './entities/TaggableStack'
 const path = app.getPath('appData')
 
 export const AppDataSource = new DataSource({
-  type: 'sqlite',
+  type: 'better-sqlite3',
   database: app.isPackaged ? `${path}/impart/app/db.sqlite` : `${path}/impart/dev/db.sqlite`,
   entities: [
     Directory,
