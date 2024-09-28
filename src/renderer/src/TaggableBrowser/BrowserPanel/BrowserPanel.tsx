@@ -5,8 +5,8 @@ import {
   GroupedTaggableGrid,
   buildTaggableGroups
 } from '@renderer/common/TaggableGrid'
-import React, { useCallback, useMemo, useState } from 'react'
-import { GridActions } from './GridActions'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { GridActions } from './GridActions/GridActions'
 import { SelectionIndicator } from './SelectionIndicator'
 import { TaggableGridEvents, getTaggableContextMenuOptions } from './taggableContextMenuOptions'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
@@ -37,6 +37,16 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
   )
   const rightClickSelect = useCallback((item: Impart.Taggable) => selectItem(item), [selectItem])
 
+  const [stack, setStack] = useState<Impart.TaggableStack[]>([])
+
+  useEffect(() => {
+    if (stack.length > 0) {
+      setFetchOptions({ stackId: stack[stack.length - 1].id })
+    } else {
+      setFetchOptions({ stackId: undefined })
+    }
+  }, [stack])
+
   return (
     <Stack overflow="auto" position={'relative'} flex={1} pr={1} gap={2}>
       <Box position="sticky" top={8} pl={1} zIndex={1}>
@@ -45,7 +55,9 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
             <GridActions
               groupByDirectory={groupByDirectory}
               disableGrouping={groupLimitExceeded}
-              onChange={setGroupByDirectory}
+              stack={stack}
+              onGroupChange={setGroupByDirectory}
+              onStackChange={setStack}
             />
           </CardActions>
         </Card>
@@ -54,7 +66,7 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
         flex={1}
         options={getTaggableContextMenuOptions(selection, {
           ...gridEvents,
-          onOpenStack: (t) => setFetchOptions({ stackId: t.id })
+          onOpenStack: (t) => setStack(stack.concat([t]))
         })}
       >
         {(!groupByDirectory || groupLimitExceeded) && (
@@ -63,7 +75,7 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
             selection={selection}
             onSelect={selectItem}
             onRightClick={rightClickSelect}
-            onDoubleClick={(t) => isTaggableStack(t) && setFetchOptions({ stackId: t.id })}
+            onDoubleClick={(t) => isTaggableStack(t) && setStack(stack.concat([t]))}
           />
         )}
         {groupByDirectory && !groupLimitExceeded && (
@@ -72,7 +84,7 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
             selection={selection}
             onSelect={selectItem}
             onRightClick={rightClickSelect}
-            onDoubleClick={(t) => isTaggableStack(t) && setFetchOptions({ stackId: t.id })}
+            onDoubleClick={(t) => isTaggableStack(t) && setStack(stack.concat([t]))}
           />
         )}
       </ContextMenu>

@@ -16,7 +16,7 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
   return (
     <Stack direction="row" gap={1} height="100vh">
       <BrowserPanel {...gridEvents} />
-      <Box minWidth={300} flex={0.25} py={1} pr={1}>
+      <Box minWidth={360} flex={0.25} py={1} pr={1}>
         <Stack width="100%" height="100%">
           <TaggingPanel />
           <Collapse in={showIndexingPanel}>
