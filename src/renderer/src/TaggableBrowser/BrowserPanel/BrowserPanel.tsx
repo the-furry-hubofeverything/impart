@@ -11,12 +11,13 @@ import { SelectionIndicator } from './SelectionIndicator'
 import { TaggableGridEvents, getTaggableContextMenuOptions } from './taggableContextMenuOptions'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { useMultiSelection } from '@renderer/common/useMultiSelection'
+import { isTaggableStack } from '@renderer/common/taggable'
 
 export interface BrowserPanelProps extends TaggableGridEvents {}
 
 export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
   const { onBulkTag, onCreateStack, onEditTags } = gridEvents
-  const { taggables } = useTaggables()
+  const { taggables, setFetchOptions } = useTaggables()
   const taggableGroups = useMemo(() => buildTaggableGroups(taggables), [taggables])
   const taggableFlatMap = useMemo(
     () => taggableGroups.flatMap((g) => g.taggables),
@@ -49,13 +50,20 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
           </CardActions>
         </Card>
       </Box>
-      <ContextMenu flex={1} options={getTaggableContextMenuOptions(selection, gridEvents)}>
+      <ContextMenu
+        flex={1}
+        options={getTaggableContextMenuOptions(selection, {
+          ...gridEvents,
+          onOpenStack: (t) => setFetchOptions({ stackId: t.id })
+        })}
+      >
         {(!groupByDirectory || groupLimitExceeded) && (
           <VirtualTaggableGrid
             taggables={taggables}
             selection={selection}
             onSelect={selectItem}
             onRightClick={rightClickSelect}
+            onDoubleClick={(t) => isTaggableStack(t) && setFetchOptions({ stackId: t.id })}
           />
         )}
         {groupByDirectory && !groupLimitExceeded && (
@@ -64,6 +72,7 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
             selection={selection}
             onSelect={selectItem}
             onRightClick={rightClickSelect}
+            onDoubleClick={(t) => isTaggableStack(t) && setFetchOptions({ stackId: t.id })}
           />
         )}
       </ContextMenu>

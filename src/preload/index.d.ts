@@ -57,6 +57,7 @@ declare global {
       order?: 'alpha' | 'date'
       search?: string
       year?: number
+      stackId?: number
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*

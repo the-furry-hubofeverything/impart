@@ -5,6 +5,7 @@ import { forwardRef } from 'react'
 import { GridComponents, VirtuosoGrid } from 'react-virtuoso'
 import { BOX_WIDTH } from '../TaggableDisplay/TaggableDisplay'
 import { useDirectories } from '@renderer/EntityProviders/DirectoryProvider'
+import { CommonTaggableGridProps } from './TaggableGrid'
 
 const gridComponents: GridComponents = {
   List: forwardRef(({ children, ...props }, ref) => (
@@ -19,18 +20,12 @@ const gridComponents: GridComponents = {
   ))
 }
 
-export interface CommonTaggableGridProps {
-  taggables?: Impart.Taggable[]
-  selection?: Impart.Taggable[]
-  onSelect?: (item: Impart.Taggable, add: boolean, range: boolean) => void
-  onRightClick?: (item: Impart.Taggable, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
-}
-
 export function VirtualTaggableGrid({
   taggables,
   selection,
   onSelect,
-  onRightClick
+  onRightClick,
+  onDoubleClick
 }: CommonTaggableGridProps) {
   if (!taggables) {
     return null
@@ -47,6 +42,7 @@ export function VirtualTaggableGrid({
             onRightClick && onRightClick(f, e)
           }}
           onClick={(e) => onSelect && onSelect(f, e.ctrlKey, e.shiftKey)}
+          onDoubleClick={() => onDoubleClick && onDoubleClick(f)}
         >
           <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />
         </Box>
