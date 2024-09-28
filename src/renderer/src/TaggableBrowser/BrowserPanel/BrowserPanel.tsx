@@ -29,13 +29,20 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
-  const { selectItem } = useMultiSelection(
+  const { selectItem, itemIsSelected } = useMultiSelection(
     groupByDirectory ? taggableFlatMap : taggables,
     selection,
     setSelection,
     useCallback((a, b) => a.id === b.id, [])
   )
-  const rightClickSelect = useCallback((item: Impart.Taggable) => selectItem(item), [selectItem])
+  const rightClickSelect = useCallback(
+    (item: Impart.Taggable) => {
+      if (!itemIsSelected(item)) {
+        selectItem(item)
+      }
+    },
+    [selectItem, itemIsSelected]
+  )
 
   const [stack, setStack] = useState<Impart.TaggableStack[]>([])
 
