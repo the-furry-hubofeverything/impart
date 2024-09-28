@@ -37,7 +37,10 @@ export class TaggableManager {
       }
     }
 
-    query.leftJoin('files.images', 'associatedImages').andWhere('associatedImages.id IS NULL')
+    query
+      .leftJoin('files.images', 'associatedImages')
+      .andWhere('associatedImages.id IS NULL')
+      .andWhere('files.parentId IS NULL')
 
     return await query.getMany()
   }
@@ -98,7 +101,7 @@ export class TaggableManager {
 
     const stack = TaggableStack.create({
       name,
-      coverPath: isTaggableImage(cover) ? cover.fileIndex.path : undefined,
+      cover: isTaggableImage(cover) ? cover : undefined,
       taggables: childTaggables,
       directory: cover.directory,
       dateModified: cover.dateModified

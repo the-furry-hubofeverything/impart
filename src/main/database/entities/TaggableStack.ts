@@ -1,5 +1,6 @@
-import { ChildEntity, Column, OneToMany, OneToOne } from 'typeorm'
+import { ChildEntity, Column, JoinColumn, OneToMany, OneToOne } from 'typeorm'
 import { Taggable } from './Taggable'
+import { TaggableImage } from './TaggableImage'
 
 @ChildEntity()
 export class TaggableStack extends Taggable {
@@ -9,8 +10,9 @@ export class TaggableStack extends Taggable {
   @Column({ nullable: true })
   name: string
 
-  @Column({ nullable: true })
-  coverPath?: string
+  @OneToOne(() => TaggableImage, { nullable: true, eager: true })
+  @JoinColumn()
+  cover?: TaggableImage
 }
 
 export function isTaggableStack(t: Taggable): t is TaggableStack {

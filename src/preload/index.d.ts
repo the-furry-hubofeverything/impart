@@ -47,7 +47,7 @@ declare global {
     interface TaggableStack extends BaseTaggable {
       taggables: Taggable[]
       name: string
-      cover: Taggable
+      cover?: TaggableImage
     }
 
     type Taggable = TaggableImage | TaggableFile | TaggableStack

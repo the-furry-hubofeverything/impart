@@ -5,7 +5,6 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   TableInheritance
 } from 'typeorm'
@@ -25,8 +24,10 @@ export class Taggable extends BaseEntity {
   @ManyToOne(() => Directory, { nullable: false, onDelete: 'CASCADE' })
   directory: Directory
 
-  @ManyToOne(() => Directory, { nullable: true })
-  parent?: Directory
+  //This should only be pointing to TaggableStacks, but we can't set that because of weird
+  // circular dependency issues ("can't load Taggable before it's instantiated" or some such)
+  @ManyToOne(() => Taggable, { nullable: true })
+  parent?: Taggable
 
   @Column({ nullable: false })
   dateModified: Date
