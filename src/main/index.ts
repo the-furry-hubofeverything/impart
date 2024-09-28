@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { app, shell, BrowserWindow, protocol, net, nativeImage } from 'electron'
+import { app, shell, BrowserWindow, protocol, net } from 'electron'
 import { join } from 'path'
 import url from 'node:url'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
@@ -8,9 +8,7 @@ import { setupTaggableApi } from './api/taggableApi'
 import { setupFileApi } from './api/fileApi'
 import { AppDataSource } from './database/database'
 import { setupTagApi } from './api/tagApi'
-import { seedGroups } from './database/seed'
 import { setupIndexApi } from './api/indexApi'
-import { indexingManager } from './indexables/indexingManager'
 import { thumbnailManager } from './indexables/thumbnailManager'
 
 interface ImpartApp {
@@ -74,7 +72,6 @@ app.whenReady().then(async () => {
   })
 
   await AppDataSource.initialize()
-  // seedGroups()
 
   setupFileApi()
   setupTaggableApi()
