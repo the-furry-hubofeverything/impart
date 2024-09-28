@@ -32,7 +32,7 @@ export const TaggableDisplay = React.memo(function ({
           bgcolor: isSelected ? '#FFFFFF55' : '#FFFFFF33'
         }
       }}
-      onDoubleClick={() => window.fileApi.openFile(taggable.id)}
+      onDoubleClick={() => !isTaggableStack(taggable) && window.fileApi.openFile(taggable.id)}
     >
       {isTaggableImage(taggable) && <ImageDisplay image={taggable} />}
       {isTaggableFile(taggable) && (

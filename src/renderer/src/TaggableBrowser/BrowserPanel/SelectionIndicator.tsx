@@ -3,14 +3,21 @@ import React, { useEffect, useState } from 'react'
 import CancelIcon from '@mui/icons-material/Cancel'
 import BookmarksIcon from '@mui/icons-material/Bookmarks'
 import SellIcon from '@mui/icons-material/Sell'
+import BurstModeIcon from '@mui/icons-material/BurstMode'
 
 export interface SelectionIndicatorProps {
   count?: number
   onTag?: () => void
+  onCreateStack?: () => void
   onClear?: () => void
 }
 
-export function SelectionIndicator({ count, onTag, onClear }: SelectionIndicatorProps) {
+export function SelectionIndicator({
+  count,
+  onTag,
+  onCreateStack,
+  onClear
+}: SelectionIndicatorProps) {
   const [displayCount, setDisplayCount] = useState(count)
 
   useEffect(() => {
@@ -32,16 +39,22 @@ export function SelectionIndicator({ count, onTag, onClear }: SelectionIndicator
         <Typography variant="body2">
           {displayCount} item{displayCount != 1 ? 's' : ''} selected
         </Typography>
-        <Tooltip
-          title={displayCount == 1 ? 'Edit Tags' : 'Bulk Tag'}
-          placement="top"
-          onClick={onTag}
-        >
-          <IconButton>
-            {displayCount == 1 && <SellIcon />}
-            {displayCount != 1 && <BookmarksIcon />}
-          </IconButton>
-        </Tooltip>
+        <Stack direction="row">
+          <Tooltip title={displayCount == 1 ? 'Edit Tags' : 'Bulk Tag'} placement="top">
+            <IconButton onClick={onTag}>
+              {displayCount == 1 && <SellIcon />}
+              {displayCount != 1 && <BookmarksIcon />}
+            </IconButton>
+          </Tooltip>
+          {displayCount != 1 && (
+            <Tooltip title="Create Stack" placement="top">
+              <IconButton onClick={onCreateStack}>
+                <BurstModeIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Stack>
+
         <Tooltip title="Clear Selection" placement="top">
           <IconButton size="small" color="error" onClick={onClear}>
             <CancelIcon />

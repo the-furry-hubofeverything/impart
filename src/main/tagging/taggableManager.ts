@@ -8,6 +8,7 @@ export interface FetchTaggablesOptions {
   order?: 'alpha' | 'date'
   search?: string
   year?: number
+  stackId?: number
 }
 
 export class TaggableManager {
@@ -37,10 +38,11 @@ export class TaggableManager {
       }
     }
 
-    query
-      .leftJoin('files.images', 'associatedImages')
-      .andWhere('associatedImages.id IS NULL')
-      .andWhere('files.parentId IS NULL')
+    if (!options?.stackId) {
+      query.andWhere('files.parentId IS NULL')
+    } else {
+      query.andWhere('files.parentId = :stackId', { stackId: options.stackId })
+    }
 
     return await query.getMany()
   }

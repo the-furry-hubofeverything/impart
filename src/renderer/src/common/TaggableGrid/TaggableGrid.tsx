@@ -8,6 +8,7 @@ export interface CommonTaggableGridProps {
   selection?: Impart.Taggable[]
   onSelect?: (item: Impart.Taggable, add: boolean, range: boolean) => void
   onRightClick?: (item: Impart.Taggable, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+  onDoubleClick?: (item: Impart.Taggable) => void
 }
 
 export interface TaggableGridProps extends CommonTaggableGridProps {}
@@ -16,7 +17,8 @@ export const TaggableGrid = React.memo(function ({
   taggables,
   selection,
   onSelect,
-  onRightClick
+  onRightClick,
+  onDoubleClick
 }: TaggableGridProps) {
   if (!taggables) {
     return null
@@ -33,6 +35,7 @@ export const TaggableGrid = React.memo(function ({
             onRightClick && onRightClick(f, e)
           }}
           onClick={(e) => onSelect && onSelect(f, e.ctrlKey, e.shiftKey)}
+          onDoubleClick={() => onDoubleClick && onDoubleClick(f)}
         >
           <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />
         </Grid>

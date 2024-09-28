@@ -6,7 +6,7 @@ import { isTaggableImage } from '@renderer/common/taggable'
 import BookmarksIcon from '@mui/icons-material/Bookmarks'
 import BurstModeIcon from '@mui/icons-material/BurstMode'
 
-interface Events {
+export interface TaggableGridEvents {
   onEditTags?: (taggable: Impart.Taggable) => void
   onBulkTag?: (taggables: Impart.Taggable[]) => void
   onCreateStack?: (taggables: Impart.Taggable[]) => void
@@ -14,7 +14,7 @@ interface Events {
 
 export function getTaggableContextMenuOptions(
   selection: Impart.Taggable[],
-  { onEditTags, onBulkTag, onCreateStack }: Events
+  { onEditTags, onBulkTag, onCreateStack }: TaggableGridEvents
 ): (ContextMenuOption | 'divider')[] {
   let selectedImage: Impart.TaggableImage | undefined = undefined
 
