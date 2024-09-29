@@ -38,6 +38,8 @@ export class TaggableManager {
       }
     }
 
+    query.leftJoin('files.images', 'associatedImages').andWhere('associatedImages.id IS NULL')
+
     if (!options?.stackId) {
       query.andWhere('files.parentId IS NULL')
     } else {
