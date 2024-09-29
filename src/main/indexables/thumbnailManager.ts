@@ -4,6 +4,7 @@ import { writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { v4 } from 'uuid'
 import { Thumbnail } from '../database/entities/Thumbnail'
+import { APP_DIR, DEV_DIR } from '../common/appDir'
 
 class ThumbnailManager {
   public async getThumbnail(taggableImageId: number) {
@@ -29,9 +30,7 @@ class ThumbnailManager {
       }
     )
 
-    const thumbnailPath = app.isPackaged
-      ? `${app.getPath('appData')}/impart/app/thumbnails`
-      : `${app.getPath('appData')}/impart/dev/thumbnails`
+    const thumbnailPath = `${app.getPath('appData')}/impart/${app.isPackaged ? APP_DIR : DEV_DIR}/thumbnails`
 
     if (!existsSync(thumbnailPath)) {
       await mkdir(thumbnailPath)

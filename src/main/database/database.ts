@@ -8,12 +8,13 @@ import { Taggable } from './entities/Taggable'
 import { TaggableFile } from './entities/TaggableFile'
 import { Thumbnail } from './entities/Thumbnail'
 import { TaggableStack } from './entities/TaggableStack'
+import { APP_DIR, DEV_DIR } from '../common/appDir'
 
 const path = app.getPath('appData')
 
 export const AppDataSource = new DataSource({
   type: 'better-sqlite3',
-  database: app.isPackaged ? `${path}/impart/app/db.sqlite` : `${path}/impart/dev/db.sqlite`,
+  database: `${path}/impart/${app.isPackaged ? APP_DIR : DEV_DIR}/db.sqlite`,
   entities: [
     Directory,
     Tag,

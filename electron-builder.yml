@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: impart
+appId: com.arastryx.impart
+productName: Impart
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: impart
+  executableName: impart-beta
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
