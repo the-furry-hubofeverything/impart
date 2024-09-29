@@ -9,6 +9,10 @@ import { useDirectories } from './EntityProviders/DirectoryProvider'
 import { Settings } from './Settings'
 import { BulkTag } from './BulkTag'
 import { CreateStack } from './CreateStack'
+import { useLocalStorage } from './common/useLocalStorage'
+import { BetaWarning } from './BetaWarning/BetaWarning'
+
+const SHOW_BETA_WARNING_KEY = 'showBetaWarning'
 
 type ImpartModal = 'editTags' | 'bulkTag' | 'settings' | 'createStack'
 
@@ -21,6 +25,7 @@ export function Impart({}: ImpartProps) {
 
   const [currentModal, setCurrentModal] = useState<ImpartModal | null>(null)
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
+  const [showBetaWarning, setShowBetaWarning] = useLocalStorage(SHOW_BETA_WARNING_KEY, true)
 
   const { fetchTaggables } = useTaggables()
 
@@ -49,34 +54,40 @@ export function Impart({}: ImpartProps) {
     }
   }
 
+  if (startingUp) {
+    return null
+  }
+
+  if (showBetaWarning) {
+    return <BetaWarning onClose={() => setShowBetaWarning(false)} />
+  }
+
+  if (!hasDirectories) {
+    return <IntroSetup reload={reloadDirectories} />
+  }
+
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {!startingUp && !hasDirectories && <IntroSetup reload={reloadDirectories} />}
-      {!startingUp && hasDirectories && (
-        <Box>
-          <FileBrowser
-            onSettingsPressed={() => setCurrentModal('settings')}
-            onEditTags={(file) => {
-              setSelection([file])
-              setCurrentModal('editTags')
-            }}
-            onBulkTag={(files) => {
-              setSelection(files)
-              setCurrentModal('bulkTag')
-            }}
-            onCreateStack={(files) => {
-              setSelection(files)
-              setCurrentModal('createStack')
-            }}
-          />
-          <Dialog open={currentModal != null} onClose={() => setCurrentModal(null)} fullScreen>
-            <DialogContent sx={(theme) => ({ bgcolor: theme.palette.background.default })}>
-              {renderContent()}
-            </DialogContent>
-          </Dialog>
-        </Box>
-      )}
-    </ThemeProvider>
+    <Box>
+      <FileBrowser
+        onSettingsPressed={() => setCurrentModal('settings')}
+        onEditTags={(file) => {
+          setSelection([file])
+          setCurrentModal('editTags')
+        }}
+        onBulkTag={(files) => {
+          setSelection(files)
+          setCurrentModal('bulkTag')
+        }}
+        onCreateStack={(files) => {
+          setSelection(files)
+          setCurrentModal('createStack')
+        }}
+      />
+      <Dialog open={currentModal != null} onClose={() => setCurrentModal(null)} fullScreen>
+        <DialogContent sx={(theme) => ({ bgcolor: theme.palette.background.default })}>
+          {renderContent()}
+        </DialogContent>
+      </Dialog>
+    </Box>
   )
 }

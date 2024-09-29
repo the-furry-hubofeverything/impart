@@ -5,6 +5,9 @@ import { TagProvider } from './EntityProviders/TagProvider/TagProvider'
 import { TaggableProvider } from './EntityProviders/TaggableProvider'
 import { DirectoryProvider } from './EntityProviders/DirectoryProvider'
 import { TaskStatusProvider } from './TaskStatusProvider'
+import { ThemeProvider } from '@emotion/react'
+import { CssBaseline } from '@mui/material'
+import { theme } from './theme'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -12,7 +15,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <DirectoryProvider>
         <TaggableProvider>
           <TagProvider>
-            <Impart />
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <Impart />
+            </ThemeProvider>
           </TagProvider>
         </TaggableProvider>
       </DirectoryProvider>
