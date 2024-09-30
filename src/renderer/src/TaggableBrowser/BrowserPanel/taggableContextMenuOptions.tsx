@@ -5,17 +5,19 @@ import BrushIcon from '@mui/icons-material/Brush'
 import { isTaggableImage, isTaggableStack } from '@renderer/common/taggable'
 import BookmarksIcon from '@mui/icons-material/Bookmarks'
 import BurstModeIcon from '@mui/icons-material/BurstMode'
+import HideImageIcon from '@mui/icons-material/HideImage'
 
 export interface TaggableGridEvents {
   onEditTags?: (taggable: Impart.Taggable) => void
   onBulkTag?: (taggables: Impart.Taggable[]) => void
   onCreateStack?: (taggables: Impart.Taggable[]) => void
   onOpenStack?: (taggable: Impart.TaggableStack) => void
+  onHide?: (taggable: Impart.Taggable[]) => void
 }
 
 export function getTaggableContextMenuOptions(
   selection: Impart.Taggable[],
-  { onEditTags, onBulkTag, onCreateStack, onOpenStack }: TaggableGridEvents
+  { onEditTags, onBulkTag, onCreateStack, onOpenStack, onHide }: TaggableGridEvents
 ): (ContextMenuOption | 'divider')[] {
   let selectedImage: Impart.TaggableImage | undefined = undefined
 
@@ -57,6 +59,12 @@ export function getTaggableContextMenuOptions(
       label: 'Create Stack',
       hide: selection.length < 2,
       onClick: () => onCreateStack && onCreateStack(selection)
+    },
+    'divider',
+    {
+      icon: <HideImageIcon />,
+      label: 'Hide',
+      onClick: () => onHide && onHide(selection)
     }
   ]
 }

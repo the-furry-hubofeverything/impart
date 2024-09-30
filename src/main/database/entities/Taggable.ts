@@ -33,4 +33,7 @@ export class Taggable extends BaseEntity {
   @Column({ nullable: false })
   @Index()
   dateModified: Date
+
+  @Column({ default: false })
+  hide: boolean
 }

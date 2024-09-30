@@ -97,6 +97,7 @@ declare global {
       getTaggables: (options?: Impart.FetchTaggablesOptions) => Promise<Impart.Taggable[]>
       getAllTaggableYears: () => Promise<number[]>
       createStack: (name: string, taggableIds: number[], coverId: number) => Promise<void>
+      setHidden: (ids: number[], hidden: boolean) => Promise<void>
     }
 
     taskApi: {

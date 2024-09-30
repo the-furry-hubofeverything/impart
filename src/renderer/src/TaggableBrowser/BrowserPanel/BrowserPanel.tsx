@@ -13,11 +13,11 @@ import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { useMultiSelection } from '@renderer/common/useMultiSelection'
 import { isTaggableStack } from '@renderer/common/taggable'
 
-export interface BrowserPanelProps extends TaggableGridEvents {}
+export interface BrowserPanelProps extends Omit<TaggableGridEvents, 'onHide' | 'onOpenStack'> {}
 
 export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
   const { onBulkTag, onCreateStack, onEditTags } = gridEvents
-  const { taggables, setFetchOptions } = useTaggables()
+  const { taggables, setFetchOptions, fetchTaggables } = useTaggables()
   const taggableGroups = useMemo(() => buildTaggableGroups(taggables), [taggables])
   const taggableFlatMap = useMemo(
     () => taggableGroups.flatMap((g) => g.taggables),
@@ -73,7 +73,14 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
         flex={1}
         options={getTaggableContextMenuOptions(selection, {
           ...gridEvents,
-          onOpenStack: (t) => setStack(stack.concat([t]))
+          onOpenStack: (t) => setStack(stack.concat([t])),
+          onHide: async (taggables) => {
+            await window.taggableApi.setHidden(
+              taggables.map((t) => t.id),
+              true
+            )
+            fetchTaggables()
+          }
         })}
       >
         {(!groupByDirectory || groupLimitExceeded) && (

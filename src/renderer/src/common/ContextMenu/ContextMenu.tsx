@@ -48,13 +48,16 @@ export function ContextMenu({ options, children, disabled, ...boxProps }: Contex
         onClose={closeMenu}
         anchorReference="anchorPosition"
         anchorPosition={anchorPosition}
-        sx={{ '& .MuiPaper-root': { minWidth: 200 } }}
+        sx={{
+          '& .MuiPaper-root': { minWidth: 200 },
+          '& .MuiMenuItem-root+.MuiDivider-root': { marginY: 0.5 }
+        }}
       >
         {options
           ?.filter((o) => o === 'divider' || !o.hide)
           .map((o, index) =>
             o === 'divider' ? (
-              <Divider key={index} />
+              <Divider key={index} sx={{ margin: 0 }} />
             ) : (
               <MenuItem
                 key={index}

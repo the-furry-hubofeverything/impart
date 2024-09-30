@@ -38,7 +38,9 @@ export class TaggableManager {
       }
     }
 
-    query.leftJoin('files.images', 'associatedImages').andWhere('associatedImages.id IS NULL')
+    query
+      .leftJoin('files.images', 'associatedImages')
+      .andWhere('associatedImages.id IS NULL AND files.hide = 0')
 
     if (!options?.stackId) {
       query.andWhere('files.parentId IS NULL')
@@ -112,6 +114,17 @@ export class TaggableManager {
     })
 
     await stack.save()
+  }
+
+  public async setHidden(ids: number[], hidden: boolean) {
+    const taggables = await Taggable.findBy({ id: In(ids) })
+
+    await Promise.all(
+      taggables.map(async (t) => {
+        t.hide = hidden
+        await t.save()
+      })
+    )
   }
 }
 
