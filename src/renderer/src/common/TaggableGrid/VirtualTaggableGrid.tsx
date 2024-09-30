@@ -1,10 +1,8 @@
 import { Box, Grid2 as Grid } from '@mui/material'
-import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
 import { forwardRef } from 'react'
 import { GridComponents, VirtuosoGrid } from 'react-virtuoso'
 import { BOX_WIDTH } from '../TaggableDisplay/TaggableDisplay'
-import { useDirectories } from '@renderer/EntityProviders/DirectoryProvider'
 import { CommonTaggableGridProps } from './TaggableGrid'
 
 const gridComponents: GridComponents = {
@@ -49,17 +47,5 @@ export function VirtualTaggableGrid({
         </Box>
       )}
     />
-    // <Grid container spacing={1}>
-    //   {taggables?.map((f) => (
-    //     <Grid item key={f.id} xs={true}>
-    //       <TaggableDisplay
-    //         taggable={f}
-    //         isSelected={selection?.some((s) => s.id === f.id)}
-    //         onClick={({ ctrl, shift }) => onSelect && onSelect(f, ctrl, shift)}
-    //         onRightClick={(e) => onRightClick && onRightClick(f, e)}
-    //       />
-    //     </Grid>
-    //   ))}
-    // </Grid>
   )
 }
