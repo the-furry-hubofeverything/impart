@@ -31,6 +31,12 @@ function createWindow(): void {
     }
   })
 
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    // open url in a browser and prevent default
+    shell.openExternal(url)
+    return { action: 'deny' }
+  })
+
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })

@@ -29,16 +29,20 @@ export function BetaWarning({ onClose }: BetaWarningProps) {
                 <ul>
                   <Typography component="li">
                     <Typography component="span" fontWeight={'bold'} fontSize={18}>
-                      A future update will reset your data
+                      A future update will reset your app
                     </Typography>{' '}
-                    (approximately Oct/Nov 2024). You're free to try things out, but you'll need to
-                    start over when the app releases.
+                    (approximately Oct/Nov 2024). Feel free to try things out, but keep in mind that
+                    you will need to start over when the app releases.
                   </Typography>
                   <Typography component="li">
                     <Typography component="span" fontWeight={'bold'} fontSize={18}>
                       Auto-updating is <i>not</i> implemented.
                     </Typography>{' '}
-                    If you want an updated version of the app, please contact Arastryx.
+                    If you'd like to try the latest version of the app, you can find it over at the{' '}
+                    <a href="https://github.com/Arastryx/impart/releases" target="_blank">
+                      Impart Releases
+                    </a>
+                    !
                   </Typography>
                 </ul>
               </Box>
