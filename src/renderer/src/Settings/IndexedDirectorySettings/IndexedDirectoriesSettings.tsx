@@ -55,6 +55,9 @@ export function IndexedDirectoriesSettings({}: IndexedDirectoriesSettingsProps) 
 
   return (
     <Box>
+      <Box mt={1} mb={2}>
+        <Typography variant="h3">Directories</Typography>
+      </Box>
       <Stack gap={1}>
         <DirectoryList
           directoryState={directoryState}
