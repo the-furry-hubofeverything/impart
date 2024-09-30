@@ -36,6 +36,7 @@ export function VirtualTaggableGrid({
       data={taggables}
       totalCount={taggables.length}
       components={gridComponents}
+      computeItemKey={(index, item) => item.id}
       itemContent={(index, f) => (
         <Box
           onContextMenu={(e) => {
