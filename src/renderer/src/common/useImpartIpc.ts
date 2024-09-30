@@ -32,9 +32,9 @@ export function useImpartIpcData<Result>(call: AsyncCall<[], Result>, deps: Depe
     const requestId = requestIdRef.current
     setLoading(true)
     const result = await callIpc()
-    setLoading(false)
 
     if (requestId === requestIdRef.current) {
+      setLoading(false)
       setData(result)
     }
   }, [callIpc])
