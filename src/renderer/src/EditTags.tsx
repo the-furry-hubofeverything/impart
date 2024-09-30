@@ -22,8 +22,6 @@ export interface EditTagsProps {
 }
 
 export function EditTags({ item, onFinish }: EditTagsProps) {
-  console.log(item)
-
   const [tagSelection, setTagSelection] = useState(item.tags ?? [])
 
   useEffect(() => {
