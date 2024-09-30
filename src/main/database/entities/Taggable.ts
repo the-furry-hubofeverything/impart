@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  Index,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -30,5 +31,6 @@ export class Taggable extends BaseEntity {
   parent?: Taggable
 
   @Column({ nullable: false })
+  @Index()
   dateModified: Date
 }
