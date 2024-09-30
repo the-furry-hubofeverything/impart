@@ -58,6 +58,7 @@ declare global {
       search?: string
       year?: number
       stackId?: number
+      onlyHidden?: boolean
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*

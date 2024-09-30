@@ -1,25 +1,13 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Collapse,
-  Divider,
-  Fade,
-  IconButton,
-  Paper,
-  Stack,
-  Tab,
-  Tabs
-} from '@mui/material'
-import React, { useState } from 'react'
+import { Box, Card, IconButton, Stack, Tab, Tabs } from '@mui/material'
+import { useState } from 'react'
 import FolderIcon from '@mui/icons-material/Folder'
 import CloseIcon from '@mui/icons-material/Close'
 import { IndexedDirectoriesSettings } from './IndexedDirectorySettings'
-import { TaskStatus } from '@renderer/common/TaskStatus'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
+import HideImageIcon from '@mui/icons-material/HideImage'
+import { HiddenItems } from './HiddenItems'
 
-type SettingsType = 'directories' | 'TODO'
+type SettingsType = 'directories' | 'hiddenItems'
 
 export interface SettingsProps {
   onClose?: () => void
@@ -44,6 +32,7 @@ export function Settings({ onClose }: SettingsProps) {
           <Stack direction="row" gap={2} height={'100%'}>
             <Stack
               alignItems="flex-end"
+              justifyContent="center"
               height={'100%'}
               sx={(theme) => ({
                 bgcolor: '#cae6e0',
@@ -60,10 +49,12 @@ export function Settings({ onClose }: SettingsProps) {
                 TabIndicatorProps={{ sx: (theme) => ({ bgcolor: theme.palette.background.paper }) }}
               >
                 <Tab label="Directories" value="directories" icon={<FolderIcon />} />
+                <Tab label="Hidden Items" value="hiddenItems" icon={<HideImageIcon />} />
               </Tabs>
             </Stack>
             <Box flex={1} p={1} pr={8} height="100%" sx={{ overflowY: 'scroll' }}>
               {selectedTab === 'directories' && <IndexedDirectoriesSettings />}
+              {selectedTab === 'hiddenItems' && <HiddenItems />}
             </Box>
           </Stack>
         </Box>

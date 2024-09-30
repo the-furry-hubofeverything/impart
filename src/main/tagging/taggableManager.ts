@@ -9,6 +9,7 @@ export interface FetchTaggablesOptions {
   search?: string
   year?: number
   stackId?: number
+  onlyHidden?: boolean
 }
 
 export class TaggableManager {
@@ -40,7 +41,9 @@ export class TaggableManager {
 
     query
       .leftJoin('files.images', 'associatedImages')
-      .andWhere('associatedImages.id IS NULL AND files.hide = 0')
+      .andWhere('associatedImages.id IS NULL AND files.hide = :hidden', {
+        hidden: options?.onlyHidden ? true : false
+      })
 
     if (!options?.stackId) {
       query.andWhere('files.parentId IS NULL')
