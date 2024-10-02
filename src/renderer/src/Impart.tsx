@@ -33,9 +33,10 @@ export function Impart({}: ImpartProps) {
     window.indexApi.indexAll()
   }, [])
 
-  useEffect(() => {
+  const closeAndRefresh = () => {
+    setCurrentModal(null)
     fetchTaggables()
-  }, [fetchTaggables])
+  }
 
   const renderContent = () => {
     switch (currentModal) {
@@ -46,11 +47,11 @@ export function Impart({}: ImpartProps) {
           throw new Error('Tried to edit tags while zero or multiple images were selected')
         }
 
-        return <EditTags item={selection[0]} onFinish={() => setCurrentModal(null)} />
+        return <EditTags item={selection[0]} onFinish={closeAndRefresh} />
       case 'bulkTag':
-        return <BulkTag items={selection} onFinish={() => setCurrentModal(null)} />
+        return <BulkTag items={selection} onFinish={closeAndRefresh} />
       case 'createStack':
-        return <CreateStack items={selection} onFinish={() => setCurrentModal(null)} />
+        return <CreateStack items={selection} onFinish={closeAndRefresh} />
     }
   }
 
