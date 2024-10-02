@@ -97,6 +97,7 @@ export class TagManager {
   public async deleteGroup(id: number) {
     const groupEntity = await TagGroup.findOneByOrFail({ id })
     await groupEntity.remove()
+    return true
   }
 
   public async createTag(groupId: number) {
@@ -134,6 +135,7 @@ export class TagManager {
   public async deleteTag(id: number) {
     const tagEntity = await Tag.findOneByOrFail({ id })
     await tagEntity.remove()
+    return true
   }
 }
 

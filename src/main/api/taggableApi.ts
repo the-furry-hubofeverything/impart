@@ -12,18 +12,18 @@ export function setupTaggableApi() {
   ipcMain.handle(
     'taggable/getAllTaggableYears',
     (e, ...params: Parameters<InstanceType<typeof TaggableManager>['getAllTaggableYears']>) =>
-      taggableManager.getAllTaggableYears(...params)
+      handleError(() => taggableManager.getAllTaggableYears(...params))
   )
 
   ipcMain.handle(
     'taggable/createStack',
     (e, ...params: Parameters<InstanceType<typeof TaggableManager>['createStack']>) =>
-      taggableManager.createStack(...params)
+      handleError(() => taggableManager.createStack(...params))
   )
 
   ipcMain.handle(
     'taggable/setHidden',
     (e, ...params: Parameters<InstanceType<typeof TaggableManager>['setHidden']>) =>
-      taggableManager.setHidden(...params)
+      handleError(() => taggableManager.setHidden(...params))
   )
 }

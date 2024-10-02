@@ -104,9 +104,13 @@ declare global {
       getTaggables: (
         options?: Impart.FetchTaggablesOptions
       ) => Promise<Impart.Taggable[] | Impart.Error>
-      getAllTaggableYears: () => Promise<number[]>
-      createStack: (name: string, taggableIds: number[], coverId: number) => Promise<void>
-      setHidden: (ids: number[], hidden: boolean) => Promise<void>
+      getAllTaggableYears: () => Promise<number[] | Impart.Error>
+      createStack: (
+        name: string,
+        taggableIds: number[],
+        coverId: number
+      ) => Promise<void | Impart.Error>
+      setHidden: (ids: number[], hidden: boolean) => Promise<void | Impart.Error>
     }
 
     taskApi: {
@@ -119,24 +123,28 @@ declare global {
     }
 
     tagApi: {
-      getGroups: () => Promise<Impart.TagGroup[]>
-      editFileTags: (taggableId: number, tagIds: number[]) => Promise<void>
-      bulkTag: (taggableIds: number[], tagIds: number[]) => Promise<void>
+      getGroups: () => Promise<Impart.TagGroup[] | Impart.Error>
+      editFileTags: (taggableId: number, tagIds: number[]) => Promise<void | Impart.Error>
+      bulkTag: (taggableIds: number[], tagIds: number[]) => Promise<void | Impart.Error>
 
-      createGroup: () => Promise<Impart.TagGroup>
-      editGroup: (id: number, label?: string, defaultTagColor?: string) => Promise<Impart.TagGroup>
-      deleteGroup: (id: number) => Promise<void>
+      createGroup: () => Promise<Impart.TagGroup | Impart.Error>
+      editGroup: (
+        id: number,
+        label?: string,
+        defaultTagColor?: string
+      ) => Promise<Impart.TagGroup | Impart.Error>
+      deleteGroup: (id: number) => Promise<true | Impart.Error>
 
-      createTag: (groupId: number) => Promise<Impart.Tag>
-      editTag: (tagId: number, label?: string, color?: string) => Promise<Impart.Tag>
-      deleteTag: (id: number) => Promise<void>
+      createTag: (groupId: number) => Promise<Impart.Tag | Impart.Error>
+      editTag: (tagId: number, label?: string, color?: string) => Promise<Impart.Tag | Impart.Error>
+      deleteTag: (id: number) => Promise<true | Impart.Error>
     }
 
     indexApi: {
       indexAll: () => Promise<void>
       selectDirectory: () => Promise<string | undefined>
-      updateDirectories: (payload: Impart.Directory[]) => Promise<void>
-      getDirectories: () => Promise<Impart.CountedDirectory[]>
+      updateDirectories: (payload: Impart.Directory[]) => Promise<void | Impart.Error>
+      getDirectories: () => Promise<Impart.CountedDirectory[] | Impart.Error>
     }
   }
 }

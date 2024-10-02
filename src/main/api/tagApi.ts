@@ -1,39 +1,42 @@
 import { ipcMain } from 'electron'
 import { TagManager, tagManager } from '../tagging/tagManager'
+import { handleError } from '../common/handleError'
 
 export function setupTagApi() {
-  ipcMain.handle('tag/getGroups', () => tagManager.getTagGroups())
+  ipcMain.handle('tag/getGroups', () => handleError(() => tagManager.getTagGroups()))
 
   ipcMain.handle('tag/editFileTags', (e, fileId: number, tagIds: number[]) =>
-    tagManager.setFileTags(fileId, tagIds)
+    handleError(() => tagManager.setFileTags(fileId, tagIds))
   )
   ipcMain.handle(
     'tag/bulkTag',
     (e, ...params: Parameters<InstanceType<typeof TagManager>['bulkTag']>) =>
-      tagManager.bulkTag(...params)
+      handleError(() => tagManager.bulkTag(...params))
   )
 
-  ipcMain.handle('tag/createGroup', () => tagManager.createGroup())
+  ipcMain.handle('tag/createGroup', () => handleError(() => tagManager.createGroup()))
   ipcMain.handle(
     'tag/editGroup',
     (e, ...params: Parameters<InstanceType<typeof TagManager>['editGroup']>) =>
-      tagManager.editGroup(...params)
+      handleError(() => tagManager.editGroup(...params))
   )
   ipcMain.handle(
     'tag/deleteGroup',
     (e, ...params: Parameters<InstanceType<typeof TagManager>['deleteGroup']>) =>
-      tagManager.deleteGroup(...params)
+      handleError(() => tagManager.deleteGroup(...params))
   )
 
-  ipcMain.handle('tag/createTag', (e, groupId: number) => tagManager.createTag(groupId))
+  ipcMain.handle('tag/createTag', (e, groupId: number) =>
+    handleError(() => tagManager.createTag(groupId))
+  )
   ipcMain.handle(
     'tag/editTag',
     (e, ...params: Parameters<InstanceType<typeof TagManager>['editTag']>) =>
-      tagManager.editTag(...params)
+      handleError(() => tagManager.editTag(...params))
   )
   ipcMain.handle(
     'tag/deleteTag',
     (e, ...params: Parameters<InstanceType<typeof TagManager>['deleteTag']>) =>
-      tagManager.deleteTag(...params)
+      handleError(() => tagManager.deleteTag(...params))
   )
 }

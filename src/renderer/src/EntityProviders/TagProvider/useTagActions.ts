@@ -1,3 +1,4 @@
+import { useImpartIpcCall } from '@renderer/common/useImpartIpc'
 import { produce } from 'immer'
 import { useCallback } from 'react'
 
@@ -5,9 +6,17 @@ export function useTagActions(
   groups: Impart.TagGroup[] | undefined,
   setGroups: React.Dispatch<React.SetStateAction<Impart.TagGroup[] | undefined>>
 ) {
+  const { callIpc: impartCreateTag } = useImpartIpcCall(window.tagApi.createTag, [])
+  const { callIpc: impartEditTag } = useImpartIpcCall(window.tagApi.editTag, [])
+  const { callIpc: impartDeleteTag } = useImpartIpcCall(window.tagApi.deleteTag, [])
+
   const createTag = useCallback(
     async (groupId: number) => {
-      const tag = await window.tagApi.createTag(groupId)
+      const tag = await impartCreateTag(groupId)
+
+      if (!tag) {
+        return
+      }
 
       setGroups(
         produce(groups, (next) => {
@@ -30,8 +39,13 @@ export function useTagActions(
 
   const editTag = useCallback(
     async (...params: Parameters<typeof window.tagApi.editTag>) => {
-      await window.tagApi.editTag(...params)
-      const [tagId, label, color] = params
+      const result = await impartEditTag(...params)
+
+      if (!result) {
+        return
+      }
+
+      const { id, label, color } = result
 
       setGroups(
         produce(groups, (next) => {
@@ -40,7 +54,7 @@ export function useTagActions(
           }
 
           for (const group of next) {
-            const tag = group.tags?.find((t) => t.id === tagId)
+            const tag = group.tags?.find((t) => t.id === id)
 
             if (tag) {
               tag.label = label
@@ -55,7 +69,11 @@ export function useTagActions(
 
   const deleteTag = useCallback(
     async (id: number) => {
-      await window.tagApi.deleteTag(id)
+      const result = await impartDeleteTag(id)
+
+      if (result !== true) {
+        return
+      }
 
       setGroups(
         produce(groups, (next) => {

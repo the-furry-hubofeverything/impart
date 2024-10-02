@@ -1,17 +1,29 @@
+import { useImpartIpcCall } from '@renderer/common/useImpartIpc'
 import { useCallback } from 'react'
 
 export function useTagGroupActions(
   groups: Impart.TagGroup[] | undefined,
   setGroups: React.Dispatch<React.SetStateAction<Impart.TagGroup[] | undefined>>
 ) {
+  const { callIpc: impartCreateGroup } = useImpartIpcCall(window.tagApi.createGroup, [])
+  const { callIpc: impartEditGroup } = useImpartIpcCall(window.tagApi.editGroup, [])
+  const { callIpc: impartDeleteGroup } = useImpartIpcCall(window.tagApi.deleteGroup, [])
+
   const createGroup = useCallback(async () => {
-    const group = await window.tagApi.createGroup()
-    setGroups((g) => g?.concat([group]))
+    const group = await impartCreateGroup()
+
+    if (group) {
+      setGroups((g) => g?.concat([group]))
+    }
   }, [])
 
   const editGroup = useCallback(
     async (...params: Parameters<typeof window.tagApi.editGroup>) => {
-      const group = await window.tagApi.editGroup(...params)
+      const group = await impartEditGroup(...params)
+      if (!group) {
+        return
+      }
+
       const copy = groups?.slice()
 
       const [id] = params
@@ -29,7 +41,11 @@ export function useTagGroupActions(
 
   const deleteGroup = useCallback(
     async (id: number) => {
-      await window.tagApi.deleteGroup(id)
+      const result = await impartDeleteGroup(id)
+
+      if (result !== true) {
+        return
+      }
 
       const copy = groups?.slice()
 

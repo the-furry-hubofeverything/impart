@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { useTagActions } from './useTagActions'
 import { useTagGroupActions } from './useTagGroupActions'
+import { useImpartIpcCall } from '@renderer/common/useImpartIpc'
 
 interface TagData extends ReturnType<typeof useTagActions>, ReturnType<typeof useTagGroupActions> {
   groups?: Impart.TagGroup[]
@@ -14,10 +15,11 @@ export interface TagProviderProps {
 
 export function TagProvider({ children }: TagProviderProps) {
   const [groups, setGroups] = useState<Impart.TagGroup[]>()
+  const { callIpc: getGroups } = useImpartIpcCall(window.tagApi.getGroups, [])
 
   useEffect(() => {
     ;(async () => {
-      setGroups(await window.tagApi.getGroups())
+      setGroups((await getGroups()) ?? [])
     })()
   }, [])
 
