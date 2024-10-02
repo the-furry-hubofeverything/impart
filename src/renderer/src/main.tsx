@@ -8,20 +8,23 @@ import { TaskStatusProvider } from './TaskStatusProvider'
 import { ThemeProvider } from '@emotion/react'
 import { CssBaseline } from '@mui/material'
 import { theme } from './theme'
+import { ErrorNotificationProvider } from './common/ErrorNotificationProvider'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <TaskStatusProvider>
-      <DirectoryProvider>
-        <TaggableProvider>
-          <TagProvider>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <Impart />
-            </ThemeProvider>
-          </TagProvider>
-        </TaggableProvider>
-      </DirectoryProvider>
-    </TaskStatusProvider>
+    <ErrorNotificationProvider>
+      <TaskStatusProvider>
+        <DirectoryProvider>
+          <TaggableProvider>
+            <TagProvider>
+              <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Impart />
+              </ThemeProvider>
+            </TagProvider>
+          </TaggableProvider>
+        </DirectoryProvider>
+      </TaskStatusProvider>
+    </ErrorNotificationProvider>
   </React.StrictMode>
 )

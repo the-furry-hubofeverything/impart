@@ -85,6 +85,12 @@ declare global {
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
     type TaskType = 'indexing' | 'sourceAssociation' | 'bulkTag'
+
+    interface Error {
+      message: string
+      name?: string
+      stack?: string
+    }
   }
 
   interface Window {
@@ -95,7 +101,9 @@ declare global {
     }
 
     taggableApi: {
-      getTaggables: (options?: Impart.FetchTaggablesOptions) => Promise<Impart.Taggable[]>
+      getTaggables: (
+        options?: Impart.FetchTaggablesOptions
+      ) => Promise<Impart.Taggable[] | Impart.Error>
       getAllTaggableYears: () => Promise<number[]>
       createStack: (name: string, taggableIds: number[], coverId: number) => Promise<void>
       setHidden: (ids: number[], hidden: boolean) => Promise<void>

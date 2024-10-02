@@ -1,11 +1,12 @@
 import { ipcMain } from 'electron'
 import { TaggableManager, taggableManager } from '../tagging/taggableManager'
+import { handleError } from '../common/handleError'
 
 export function setupTaggableApi() {
   ipcMain.handle(
     'taggable/getTaggables',
     (e, ...params: Parameters<InstanceType<typeof TaggableManager>['getTaggables']>) =>
-      taggableManager.getTaggables(...params)
+      handleError(() => taggableManager.getTaggables(...params))
   )
 
   ipcMain.handle(
