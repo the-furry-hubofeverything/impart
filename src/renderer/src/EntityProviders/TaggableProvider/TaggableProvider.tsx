@@ -43,6 +43,8 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
       let interval = setInterval(() => fetchTaggables(), 1000)
 
       return () => clearInterval(interval)
+    } else {
+      fetchTaggables()
     }
   }, [isTaskRunning, fetchTaggables])
 
