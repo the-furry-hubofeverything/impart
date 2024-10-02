@@ -18,14 +18,15 @@ export function EditTagGroup({ group, onClose, show }: EditTagGroupProps) {
     group.defaultTagColor ?? theme.palette.primary.main
   )
 
-  const { editGroup } = useTagGroups()
+  const { reload } = useTagGroups()
 
   if (!show) {
     return null
   }
 
   const update = async () => {
-    await editGroup(group.id, internalLabel, internalColor)
+    await window.tagApi.editGroup(group.id, internalLabel, internalColor)
+    reload()
     onClose()
   }
 

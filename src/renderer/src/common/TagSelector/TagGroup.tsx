@@ -26,16 +26,16 @@ export interface TagGroupProps {
 
 export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
   const [editMode, setEditMode] = useState(false)
-
-  const { createTag, deleteGroup } = useTagGroups()
+  const { reload } = useTagGroups()
 
   const [showRemoveWarning, setShowRemoveWarning] = useState(false)
 
-  const remove = () => {
+  const remove = async () => {
     if ((group.tags?.length ?? 0) > 0) {
       setShowRemoveWarning(true)
     } else {
-      deleteGroup(group.id)
+      await window.tagApi.deleteGroup(group.id)
+      reload()
     }
   }
 
@@ -68,18 +68,28 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
       )}
 
       <Grid container py={1} spacing={2}>
-        {group.tags?.map((t) => (
-          <Grid key={t.id}>
-            <Tag
-              tag={t}
-              editable
-              onClick={() => onSelect && onSelect(t)}
-              selected={selectedTags?.some((s) => s.id === t.id)}
-            />
-          </Grid>
-        ))}
+        {group.tags
+          ?.slice()
+          .sort((a, b) => a.tagOrder - b.tagOrder)
+          .map((t) => (
+            <Grid key={t.id}>
+              <Tag
+                tag={t}
+                editable
+                onClick={() => onSelect && onSelect(t)}
+                selected={selectedTags?.some((s) => s.id === t.id)}
+              />
+            </Grid>
+          ))}
         <Grid>
-          <IconButton size="small" onClick={() => createTag(group.id)} className="fade-in-button">
+          <IconButton
+            size="small"
+            onClick={async () => {
+              await window.tagApi.createTag(group.id)
+              reload()
+            }}
+            className="fade-in-button"
+          >
             <AddIcon />
           </IconButton>
         </Grid>
@@ -95,7 +105,10 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
             variant="contained"
             color="error"
             startIcon={<DeleteIcon />}
-            onClick={() => deleteGroup(group.id)}
+            onClick={async () => {
+              await window.tagApi.deleteGroup(group.id)
+              reload()
+            }}
           >
             Remove
           </Button>

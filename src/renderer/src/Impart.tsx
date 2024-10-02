@@ -1,7 +1,7 @@
 import { Box, CssBaseline, Dialog, DialogContent, ThemeProvider } from '@mui/material'
 import { theme } from './theme'
 import { useEffect, useState } from 'react'
-import { useTaggables } from './EntityProviders/TaggableProvider/TaggableProvider'
+import { useTaggables } from './EntityProviders/TaggableProvider'
 import { FileBrowser } from './TaggableBrowser'
 import { IntroSetup } from './IntroSetup'
 import { EditTags } from './EditTags'

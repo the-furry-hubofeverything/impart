@@ -33,10 +33,11 @@ export function Tag({ tag, selected, editable, onClick, size }: TagProps) {
   const [internalLabel, setInternalLabel] = useState(tag.label ?? '')
   const [internalColor, setInternalColor] = useState(tag.color ?? theme.palette.primary.main)
 
-  const { editTag, deleteTag } = useTagGroups()
+  const { reload } = useTagGroups()
 
   const edit = async () => {
-    await editTag(tag.id, internalLabel, internalColor)
+    await window.tagApi.editTag(tag.id, internalLabel, internalColor)
+    reload()
     setEditMode(false)
   }
 
@@ -90,7 +91,10 @@ export function Tag({ tag, selected, editable, onClick, size }: TagProps) {
             {
               icon: <DeleteIcon />,
               label: 'Delete',
-              onClick: () => deleteTag(tag.id),
+              onClick: async () => {
+                await window.tagApi.deleteTag(tag.id)
+                reload()
+              },
               danger: true
             }
           ]}

@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Impart } from './Impart'
-import { TagProvider } from './EntityProviders/TagProvider/TagProvider'
+import { TagProvider } from './EntityProviders/TagProvider'
 import { TaggableProvider } from './EntityProviders/TaggableProvider'
 import { DirectoryProvider } from './EntityProviders/DirectoryProvider'
 import { TaskStatusProvider } from './TaskStatusProvider'

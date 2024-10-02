@@ -12,7 +12,7 @@ export interface TagSelectorProps {
 }
 
 export function TagSelector({ selection, onChange }: TagSelectorProps) {
-  const { groups, createGroup } = useTagGroups()
+  const { groups, reload } = useTagGroups()
   const tags = useMemo(() => groups?.flatMap((g) => g.tags ?? []) ?? [], [groups])
 
   const { selectItem } = useMultiSelection(
@@ -31,7 +31,10 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
           variant="contained"
           startIcon={<SparkleIcon />}
           color="success"
-          onClick={createGroup}
+          onClick={async () => {
+            await window.tagApi.createGroup()
+            reload()
+          }}
         >
           Create New Group
         </Button>
@@ -57,7 +60,12 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
         <TagGroup key={g.id} group={g} selectedTags={selection} onSelect={selectItem} />
       ))}
 
-      <Button onClick={createGroup}>
+      <Button
+        onClick={async () => {
+          await window.tagApi.createGroup()
+          reload()
+        }}
+      >
         <AddIcon />
       </Button>
     </Stack>
