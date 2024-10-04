@@ -71,10 +71,6 @@ export function Impart({}: ImpartProps) {
     <Box>
       <FileBrowser
         onSettingsPressed={() => setCurrentModal('settings')}
-        onEditTags={(file) => {
-          setSelection([file])
-          setCurrentModal('editTags')
-        }}
         onBulkTag={(files) => {
           setSelection(files)
           setCurrentModal('bulkTag')

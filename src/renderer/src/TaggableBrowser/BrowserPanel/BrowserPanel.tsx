@@ -14,9 +14,11 @@ import { useMultiSelection } from '@renderer/common/useMultiSelection'
 import { isTaggableStack } from '@renderer/common/taggable'
 import { GeneratingThumbnailIndicator } from './GeneratingThumbnailIndicator'
 
-export interface BrowserPanelProps extends Omit<TaggableGridEvents, 'onHide' | 'onOpenStack'> {}
+export interface BrowserPanelProps extends Omit<TaggableGridEvents, 'onHide' | 'onOpenStack'> {
+  onSelectionChange?: () => void
+}
 
-export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
+export function BrowserPanel({ onSelectionChange, ...gridEvents }: BrowserPanelProps) {
   const { onBulkTag, onCreateStack, onEditTags } = gridEvents
   const { taggables, setFetchOptions, fetchTaggables } = useTaggables()
   const taggableGroups = useMemo(() => buildTaggableGroups(taggables), [taggables])
@@ -46,6 +48,10 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
   )
 
   const [stack, setStack] = useState<Impart.TaggableStack[]>([])
+
+  useEffect(() => {
+    onSelectionChange && onSelectionChange()
+  }, [selection, onSelectionChange])
 
   useEffect(() => {
     if (stack.length > 0) {

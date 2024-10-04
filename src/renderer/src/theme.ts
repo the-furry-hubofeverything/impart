@@ -36,6 +36,14 @@ export const theme = createTheme(
     cssVariables: true,
     palette: seafoam,
     components: {
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            borderRadius: 8
+          }
+        }
+      },
+
       MuiList: {
         styleOverrides: {
           root: {

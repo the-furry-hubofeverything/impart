@@ -13,7 +13,7 @@ export function useMultiSelection<Item>(
 
   useEffect(() => {
     onChange && onChange([])
-  }, [items, onChange])
+  }, [items])
 
   const itemIsSelected = useCallback(
     (item: Item) => {

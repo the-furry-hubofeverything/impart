@@ -1,9 +1,25 @@
-import { Box, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  ClickAwayListener,
+  Grid2,
+  IconButton,
+  Paper,
+  Popover,
+  Popper,
+  Stack,
+  Typography
+} from '@mui/material'
 import { isTaggableFile, isTaggableImage, isTaggableStack } from '../taggable'
 import { ImageDisplay } from './ImageDisplay'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
-import React from 'react'
+import { useRef } from 'react'
 import BurstModeIcon from '@mui/icons-material/BurstMode'
+import { Tag } from '../Tag'
+import { PaperStack } from './PaperStack'
+import { useEditTags } from '@renderer/TaggableBrowser/EditTagsProvider'
+import { BetterPopover } from '../BetterPopper'
+import { EditTags } from './EditTags'
 
 export const BOX_WIDTH = 220
 export const BOX_HEIGHT = 190
@@ -13,26 +29,32 @@ export interface TaggableDisplayProps {
   isSelected?: boolean
 }
 
-export const TaggableDisplay = React.memo(function ({
-  taggable,
-  isSelected
-}: TaggableDisplayProps) {
+export function TaggableDisplay({ taggable, isSelected }: TaggableDisplayProps) {
+  const anchorRef = useRef<HTMLDivElement | null>(null)
+
+  const editState = useEditTags()
+
   return (
     <Stack
+      ref={anchorRef}
+      position="relative"
       alignItems="center"
       justifyContent="center"
       width={BOX_WIDTH + 20}
       height={BOX_HEIGHT + 40}
       p={1}
       borderRadius={2}
+      onDoubleClick={() => !isTaggableStack(taggable) && window.fileApi.openFile(taggable.id)}
       sx={{
         userSelect: 'none',
         bgcolor: isSelected ? '#FFFFFF55' : undefined,
         '&:hover': {
           bgcolor: isSelected ? '#FFFFFF55' : '#FFFFFF33'
-        }
+        },
+        transition: 'opacity 0.2s',
+        opacity:
+          editState && editState.editTarget && editState.editTarget.id != taggable.id ? 0.5 : 1
       }}
-      onDoubleClick={() => !isTaggableStack(taggable) && window.fileApi.openFile(taggable.id)}
     >
       {isTaggableImage(taggable) && <ImageDisplay image={taggable} />}
       {isTaggableFile(taggable) && (
@@ -42,33 +64,9 @@ export const TaggableDisplay = React.memo(function ({
       )}
       {isTaggableStack(taggable) &&
         (taggable.cover ? (
-          <Box mt={2} ml={2}>
-            <Box
-              p={0.1}
-              bgcolor="background.paper"
-              borderRadius={2}
-              sx={{
-                boxShadow: 2
-              }}
-            >
-              <Box
-                p={0.1}
-                ml={-1}
-                mt={-1}
-                mr={1}
-                mb={1}
-                bgcolor="background.paper"
-                borderRadius={2}
-                sx={{
-                  boxShadow: 2
-                }}
-              >
-                <Box ml={-1} mt={-1} mr={1} mb={1}>
-                  <ImageDisplay image={taggable.cover} shrink />
-                </Box>
-              </Box>
-            </Box>
-          </Box>
+          <PaperStack>
+            <ImageDisplay image={taggable.cover} shrink />
+          </PaperStack>
         ) : (
           <Stack width={BOX_WIDTH} px={2} alignItems="center" justifyContent="center">
             <BurstModeIcon sx={{ fontSize: 120 }} />
@@ -80,6 +78,20 @@ export const TaggableDisplay = React.memo(function ({
           {isTaggableStack(taggable) && taggable.name}
         </Typography>
       </Box>
+      {editState !== false && (
+        <BetterPopover open={editState.editTarget?.id === taggable.id} anchorEl={anchorRef.current}>
+          <Paper>
+            <EditTags
+              tags={editState.tags}
+              onClose={editState.close}
+              onSave={async () => {
+                await editState.save()
+                editState.close()
+              }}
+            />
+          </Paper>
+        </BetterPopover>
+      )}
     </Stack>
   )
-})
+}
