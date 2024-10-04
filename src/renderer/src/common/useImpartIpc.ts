@@ -34,7 +34,7 @@ function isNotError<T>(
 }
 
 function isError(result: any): result is Impart.Error {
-  return result.message != null
+  return result?.message != null
 }
 
 export function useImpartIpcData<Result>(
