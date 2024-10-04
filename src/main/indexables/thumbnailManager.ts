@@ -5,6 +5,7 @@ import { existsSync } from 'fs'
 import { v4 } from 'uuid'
 import { Thumbnail } from '../database/entities/Thumbnail'
 import { APP_DIR, DEV_DIR } from '../common/appDir'
+import { thumbnailMessenger } from './thumbnailMessenger'
 
 class ThumbnailManager {
   public async getThumbnail(taggableImageId: number) {
@@ -14,8 +15,10 @@ class ThumbnailManager {
     })
 
     if (!image.thumbnail) {
+      thumbnailMessenger.buildingThumbnail()
       image.thumbnail = await this.buildThumbnail(image)
       await image.save()
+      thumbnailMessenger.thumbnailBuilt()
     }
 
     return image.thumbnail.path

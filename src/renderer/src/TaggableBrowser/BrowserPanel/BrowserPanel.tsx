@@ -12,6 +12,7 @@ import { TaggableGridEvents, getTaggableContextMenuOptions } from './taggableCon
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { useMultiSelection } from '@renderer/common/useMultiSelection'
 import { isTaggableStack } from '@renderer/common/taggable'
+import { GeneratingThumbnailIndicator } from './GeneratingThumbnailIndicator'
 
 export interface BrowserPanelProps extends Omit<TaggableGridEvents, 'onHide' | 'onOpenStack'> {}
 
@@ -103,7 +104,7 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
         )}
       </ContextMenu>
       <Fade in={selection.length > 0}>
-        <Box position="fixed" bottom={10} left={10}>
+        <Box position="absolute" bottom={10} left={10}>
           <SelectionIndicator
             count={selection.length}
             onTag={() =>
@@ -116,6 +117,9 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
           />
         </Box>
       </Fade>
+      <Box position="absolute" bottom={10} right={40}>
+        <GeneratingThumbnailIndicator />
+      </Box>
     </Stack>
   )
 }

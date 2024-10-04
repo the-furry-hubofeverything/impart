@@ -146,5 +146,10 @@ declare global {
       updateDirectories: (payload: Impart.Directory[]) => Promise<void | Impart.Error>
       getDirectories: () => Promise<Impart.CountedDirectory[] | Impart.Error>
     }
+
+    thumbnailApi: {
+      onBuildingThumbnail: CallbackFunc<void>
+      onThumbnailBuilt: CallbackFunc<void>
+    }
   }
 }

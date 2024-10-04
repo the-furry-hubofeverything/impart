@@ -59,3 +59,8 @@ contextBridge.exposeInMainWorld('indexApi', {
   updateDirectories: generateEndpoint('index/updateDirectories'),
   getDirectories: generateEndpoint('index/getDirectories')
 })
+
+contextBridge.exposeInMainWorld('thumbnailApi', {
+  onBuildingThumbnail: generateCallback('thumbnail/buildingThumbnail'),
+  onThumbnailBuilt: generateCallback('thumbnail/thumbnailBuilt')
+})
