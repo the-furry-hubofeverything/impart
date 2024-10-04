@@ -27,15 +27,15 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
     setFetchOptions({ tagIds: fetchByTagSelection.map((t) => t.id) })
   }, [fetchByTagSelection])
 
-  const clearEdit = useCallback(() => setEditTarget(undefined), [])
-
   return (
     <Stack direction="row" gap={1} height="100vh">
       <EditTagsProvider
         editTarget={editTarget}
         tags={editTagSelection}
-        onEdited={fetchTaggables}
-        onClose={() => setEditTarget(undefined)}
+        onFinish={() => {
+          fetchTaggables()
+          setEditTarget(undefined)
+        }}
       >
         <BrowserPanel
           {...gridEvents}
@@ -43,7 +43,6 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
             setEditTarget(t)
             setEditTagSelection(t.tags)
           }}
-          onSelectionChange={clearEdit}
         />
         <Box minWidth={360} flex={0.25} py={1} pr={1}>
           <Stack width="100%" height="100%">

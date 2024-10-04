@@ -25,10 +25,7 @@ const ToolbarIconButton = styled(IconButton)(({ theme }) => ({
 }))
 
 export interface GridActionsProps {
-  groupByDirectory: boolean
-  disableGrouping?: boolean
   stack: Impart.TaggableStack[]
-  onGroupChange: (groupByDirectory: boolean) => void
   onStackChange: (stack: Impart.TaggableStack[]) => void
 }
 
@@ -52,13 +49,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   }
 }) as typeof Chip // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 
-export function GridActions({
-  groupByDirectory,
-  onGroupChange,
-  disableGrouping,
-  stack,
-  onStackChange
-}: GridActionsProps) {
+export function GridActions({ stack, onStackChange }: GridActionsProps) {
   return (
     <Box width="100%">
       <Stack
@@ -73,28 +64,6 @@ export function GridActions({
           <SearchBar />
         </Box>
         <YearSelector />
-        <Tooltip
-          title={
-            disableGrouping
-              ? 'Grouping is disabled when there are over 1000 items'
-              : 'Group by Directory'
-          }
-        >
-          <StyledToggleButtonGroup
-            value={groupByDirectory ? 'group' : null}
-            size="small"
-            exclusive
-            onChange={(e, value) => {
-              onGroupChange(value === 'group')
-            }}
-            disabled={disableGrouping}
-            sx={{ opacity: disableGrouping ? 0.6 : 1 }}
-          >
-            <ToggleButton value={'group'}>
-              <FolderIcon />
-            </ToggleButton>
-          </StyledToggleButtonGroup>
-        </Tooltip>
         <SortButtons />
       </Stack>
       <Collapse in={stack.length > 0}>

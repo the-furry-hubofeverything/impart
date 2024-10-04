@@ -4,6 +4,8 @@ import { forwardRef } from 'react'
 import { GridComponents, VirtuosoGrid } from 'react-virtuoso'
 import { BOX_WIDTH } from '../TaggableDisplay/TaggableDisplay'
 import { CommonTaggableGridProps } from './TaggableGrid'
+import { useEditTags } from '@renderer/TaggableBrowser/EditTagsProvider'
+import { useScrollLock } from '../useScrollLock'
 
 const gridComponents: GridComponents = {
   List: forwardRef(({ children, ...props }, ref) => (
@@ -29,11 +31,15 @@ export function VirtualTaggableGrid({
     return null
   }
 
+  const editState = useEditTags()
+  const handleScroll = useScrollLock(editState && editState.editTarget != null)
+
   return (
     <VirtuosoGrid
       data={taggables}
       totalCount={taggables.length}
       components={gridComponents}
+      onScroll={handleScroll}
       computeItemKey={(index, item) => item.id}
       itemContent={(index, f) => (
         <Box

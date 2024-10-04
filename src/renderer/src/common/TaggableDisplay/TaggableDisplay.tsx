@@ -35,63 +35,58 @@ export function TaggableDisplay({ taggable, isSelected }: TaggableDisplayProps) 
   const editState = useEditTags()
 
   return (
-    <Stack
-      ref={anchorRef}
-      position="relative"
-      alignItems="center"
-      justifyContent="center"
-      width={BOX_WIDTH + 20}
-      height={BOX_HEIGHT + 40}
-      p={1}
-      borderRadius={2}
-      onDoubleClick={() => !isTaggableStack(taggable) && window.fileApi.openFile(taggable.id)}
-      sx={{
-        userSelect: 'none',
-        bgcolor: isSelected ? '#FFFFFF55' : undefined,
-        '&:hover': {
-          bgcolor: isSelected ? '#FFFFFF55' : '#FFFFFF33'
-        },
-        transition: 'opacity 0.2s',
-        opacity:
-          editState && editState.editTarget && editState.editTarget.id != taggable.id ? 0.5 : 1
-      }}
-    >
-      {isTaggableImage(taggable) && <ImageDisplay image={taggable} />}
-      {isTaggableFile(taggable) && (
-        <Stack width={BOX_WIDTH} px={2} alignItems="center" justifyContent="center">
-          <InsertDriveFileIcon sx={{ fontSize: 120 }} />
-        </Stack>
-      )}
-      {isTaggableStack(taggable) &&
-        (taggable.cover ? (
-          <PaperStack>
-            <ImageDisplay image={taggable.cover} shrink />
-          </PaperStack>
-        ) : (
+    <>
+      <Stack
+        ref={anchorRef}
+        position="relative"
+        alignItems="center"
+        justifyContent="center"
+        width={BOX_WIDTH + 20}
+        height={BOX_HEIGHT + 40}
+        p={1}
+        borderRadius={2}
+        onDoubleClick={() => !isTaggableStack(taggable) && window.fileApi.openFile(taggable.id)}
+        sx={{
+          userSelect: 'none',
+          bgcolor: isSelected ? '#FFFFFF55' : undefined,
+          '&:hover': {
+            bgcolor: isSelected ? '#FFFFFF55' : '#FFFFFF33'
+          },
+          transition: 'opacity 0.2s',
+          opacity:
+            editState && editState.editTarget && editState.editTarget.id != taggable.id ? 0.5 : 1
+        }}
+      >
+        {isTaggableImage(taggable) && <ImageDisplay image={taggable} />}
+        {isTaggableFile(taggable) && (
           <Stack width={BOX_WIDTH} px={2} alignItems="center" justifyContent="center">
-            <BurstModeIcon sx={{ fontSize: 120 }} />
+            <InsertDriveFileIcon sx={{ fontSize: 120 }} />
           </Stack>
-        ))}
-      <Box maxWidth={BOX_WIDTH} pt={0.25}>
-        <Typography textAlign="center" variant="caption" sx={{ wordBreak: 'break-all' }}>
-          {!isTaggableStack(taggable) && taggable.fileIndex.fileName}
-          {isTaggableStack(taggable) && taggable.name}
-        </Typography>
-      </Box>
+        )}
+        {isTaggableStack(taggable) &&
+          (taggable.cover ? (
+            <PaperStack>
+              <ImageDisplay image={taggable.cover} shrink />
+            </PaperStack>
+          ) : (
+            <Stack width={BOX_WIDTH} px={2} alignItems="center" justifyContent="center">
+              <BurstModeIcon sx={{ fontSize: 120 }} />
+            </Stack>
+          ))}
+        <Box maxWidth={BOX_WIDTH} pt={0.25}>
+          <Typography textAlign="center" variant="caption" sx={{ wordBreak: 'break-all' }}>
+            {!isTaggableStack(taggable) && taggable.fileIndex.fileName}
+            {isTaggableStack(taggable) && taggable.name}
+          </Typography>
+        </Box>
+      </Stack>
       {editState !== false && (
         <BetterPopover open={editState.editTarget?.id === taggable.id} anchorEl={anchorRef.current}>
-          <Paper>
-            <EditTags
-              tags={editState.tags}
-              onClose={editState.close}
-              onSave={async () => {
-                await editState.save()
-                editState.close()
-              }}
-            />
+          <Paper elevation={8}>
+            <EditTags tags={editState.tags} />
           </Paper>
         </BetterPopover>
       )}
-    </Stack>
+    </>
   )
 }

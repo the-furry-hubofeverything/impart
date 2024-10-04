@@ -1,18 +1,13 @@
-import { Stack, Typography, Grid2, Button } from '@mui/material'
-import React from 'react'
+import { Stack, Typography, Grid2 } from '@mui/material'
 import { Tag } from '../Tag'
-import CheckIcon from '@mui/icons-material/Check'
-import CloseIcon from '@mui/icons-material/Close'
 
 export interface EditTagsProps {
   tags: Impart.Tag[]
-  onSave: () => void
-  onClose: () => void
 }
 
-export function EditTags({ tags, onSave, onClose }: EditTagsProps) {
+export function EditTags({ tags }: EditTagsProps) {
   return (
-    <Stack p={2} gap={2}>
+    <Stack p={2} gap={2} onClick={(e) => e.stopPropagation()}>
       <Typography textAlign="center" variant="h6">
         Tags
       </Typography>
@@ -30,14 +25,6 @@ export function EditTags({ tags, onSave, onClose }: EditTagsProps) {
           Untagged
         </Typography>
       )}
-      <Stack direction="row" justifyContent="center" gap={1}>
-        <Button size="small" startIcon={<CloseIcon />} onClick={onClose}>
-          Cancel
-        </Button>
-        <Button variant="outlined" size="small" startIcon={<CheckIcon />} onClick={onSave}>
-          Save
-        </Button>
-      </Stack>
     </Stack>
   )
 }
