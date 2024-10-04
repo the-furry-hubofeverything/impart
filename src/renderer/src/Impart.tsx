@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { useTaggables } from './EntityProviders/TaggableProvider'
 import { FileBrowser } from './TaggableBrowser'
 import { IntroSetup } from './IntroSetup'
-import { EditTags } from './EditTags'
 import { useDirectories } from './EntityProviders/DirectoryProvider'
 import { Settings } from './Settings'
 import { BulkTag } from './BulkTag'
@@ -14,7 +13,7 @@ import { BetaWarning } from './BetaWarning/BetaWarning'
 
 const SHOW_BETA_WARNING_KEY = 'showBetaWarning'
 
-type ImpartModal = 'editTags' | 'bulkTag' | 'settings' | 'createStack'
+type ImpartModal = 'bulkTag' | 'settings' | 'createStack'
 
 export interface ImpartProps {}
 
@@ -42,12 +41,6 @@ export function Impart({}: ImpartProps) {
     switch (currentModal) {
       case 'settings':
         return <Settings onClose={() => setCurrentModal(null)} />
-      case 'editTags':
-        if (selection.length !== 1) {
-          throw new Error('Tried to edit tags while zero or multiple images were selected')
-        }
-
-        return <EditTags item={selection[0]} onFinish={closeAndRefresh} />
       case 'bulkTag':
         return <BulkTag items={selection} onFinish={closeAndRefresh} />
       case 'createStack':
