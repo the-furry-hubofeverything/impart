@@ -3,9 +3,10 @@ import { Tag } from '../Tag'
 
 export interface EditTagsProps {
   tags: Impart.Tag[]
+  removeTag?: (t: Impart.Tag) => void
 }
 
-export function EditTags({ tags }: EditTagsProps) {
+export function EditTags({ tags, removeTag }: EditTagsProps) {
   return (
     <Stack p={2} gap={2} onClick={(e) => e.stopPropagation()}>
       <Typography textAlign="center" variant="h6">
@@ -15,7 +16,7 @@ export function EditTags({ tags }: EditTagsProps) {
         <Grid2 container maxWidth={360} spacing={1} justifyContent={'center'}>
           {tags.map((t) => (
             <Grid2 key={t.id}>
-              <Tag tag={t} />
+              <Tag tag={t} onClick={() => removeTag && removeTag(t)} />
             </Grid2>
           ))}
         </Grid2>

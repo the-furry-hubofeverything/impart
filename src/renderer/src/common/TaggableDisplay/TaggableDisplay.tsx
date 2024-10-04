@@ -83,7 +83,7 @@ export function TaggableDisplay({ taggable, isSelected }: TaggableDisplayProps) 
       {editState !== false && (
         <BetterPopover open={editState.editTarget?.id === taggable.id} anchorEl={anchorRef.current}>
           <Paper elevation={8}>
-            <EditTags tags={editState.tags} />
+            <EditTags tags={editState.tags} removeTag={editState.removeTag} />
           </Paper>
         </BetterPopover>
       )}

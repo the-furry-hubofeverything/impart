@@ -32,6 +32,15 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
       <EditTagsProvider
         editTarget={editTarget}
         tags={editTagSelection}
+        onRemoveTag={(t) => {
+          const copy = editTagSelection.slice()
+          const index = copy.findIndex((c) => c.id === t.id)
+
+          if (index != -1) {
+            copy.splice(index, 1)
+            setEditTagSelection(copy)
+          }
+        }}
         onFinish={() => {
           fetchTaggables()
           setEditTarget(undefined)

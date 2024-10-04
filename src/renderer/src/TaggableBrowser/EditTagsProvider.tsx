@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useMemo } from 'react'
 export interface EditTagsData {
   editTarget?: Impart.Taggable
   tags: Impart.Tag[]
+  removeTag: (tag: Impart.Tag) => void
   saveAndClose: () => Promise<void>
 }
 
@@ -13,10 +14,17 @@ export interface EditTagsProviderProps {
   editTarget?: Impart.Taggable
   tags: Impart.Tag[]
   onFinish?: () => void
+  onRemoveTag: (tag: Impart.Tag) => void
   children?: React.ReactNode
 }
 
-export function EditTagsProvider({ editTarget, tags, onFinish, children }: EditTagsProviderProps) {
+export function EditTagsProvider({
+  editTarget,
+  tags,
+  onFinish,
+  children,
+  onRemoveTag
+}: EditTagsProviderProps) {
   const saveAndClose = useCallback(async () => {
     if (editTarget) {
       await window.tagApi.editFileTags(
@@ -28,7 +36,7 @@ export function EditTagsProvider({ editTarget, tags, onFinish, children }: EditT
   }, [editTarget, tags])
 
   const result = useMemo(
-    () => ({ editTarget, tags, saveAndClose }),
+    () => ({ editTarget, tags, saveAndClose, removeTag: onRemoveTag }),
     [editTarget, tags, saveAndClose]
   )
 
