@@ -51,7 +51,7 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
   }, [stack])
 
   return (
-    <Stack position={'relative'} flex={1} pr={1} gap={2}>
+    <Stack position={'relative'} flex={1} pr={1} gap={2} onClick={() => setSelection([])}>
       <Box mt={1} pl={1}>
         <Card>
           <CardActions>
@@ -71,15 +71,19 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
             fetchTaggables()
           }
         })}
-      >
-        <VirtualTaggableGrid
-          taggables={taggables}
-          selection={selection}
-          onSelect={selectItem}
-          onRightClick={rightClickSelect}
-          onDoubleClick={(t) => isTaggableStack(t) && setStack(stack.concat([t]))}
-        />
-      </ContextMenu>
+        render={(open) => (
+          <VirtualTaggableGrid
+            taggables={taggables}
+            selection={selection}
+            onSelect={selectItem}
+            onRightClick={(item, e) => {
+              rightClickSelect(item)
+              open(e)
+            }}
+            onDoubleClick={(t) => isTaggableStack(t) && setStack(stack.concat([t]))}
+          />
+        )}
+      ></ContextMenu>
 
       <Fade in={selection.length > 0}>
         <Box position="absolute" bottom={10} left={10}>

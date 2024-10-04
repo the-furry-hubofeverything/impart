@@ -1,4 +1,4 @@
-import { Box, Grid2 as Grid } from '@mui/material'
+import { Box, Grid2 as Grid, Stack } from '@mui/material'
 import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
 import { forwardRef } from 'react'
 import { GridComponents, VirtuosoGrid } from 'react-virtuoso'
@@ -42,15 +42,21 @@ export function VirtualTaggableGrid({
       onScroll={handleScroll}
       computeItemKey={(index, item) => item.id}
       itemContent={(index, f) => (
-        <Box
-          onContextMenu={(e) => {
-            onRightClick && onRightClick(f, e)
-          }}
-          onClick={(e) => onSelect && onSelect(f, e.ctrlKey, e.shiftKey)}
-          onDoubleClick={() => onDoubleClick && onDoubleClick(f)}
-        >
-          <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />
-        </Box>
+        <Stack width="100%" height="100%" alignItems="center" justifyContent="center">
+          <Box
+            onContextMenu={(e) => {
+              onRightClick && onRightClick(f, e)
+              e.stopPropagation()
+            }}
+            onClick={(e) => {
+              onSelect && onSelect(f, e.ctrlKey, e.shiftKey)
+              e.stopPropagation()
+            }}
+            onDoubleClick={() => onDoubleClick && onDoubleClick(f)}
+          >
+            <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />
+          </Box>
+        </Stack>
       )}
     />
   )

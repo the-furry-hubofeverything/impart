@@ -98,26 +98,28 @@ export function Tag({ tag, selected, editable, onClick, size }: TagProps) {
               danger: true
             }
           ]}
-        >
-          <Chip
-            onClick={onClick}
-            size={size}
-            label={tag.label ? tag.label : 'Unnamed Tag'}
-            sx={{
-              bgcolor: tag.color ?? 'primary.main',
-              color: theme.palette.getContrastText(tag.color ?? theme.palette.primary.main),
-              boxShadow: selected
-                ? `0px 0px 0px 2px ${theme.palette.secondary.light}, 0px 0px 0px 5px ${theme.palette.secondary.dark}`
-                : undefined,
-
-              '&:hover': {
-                opacity: 0.8,
+          render={(open) => (
+            <Chip
+              onClick={onClick}
+              size={size}
+              label={tag.label ? tag.label : 'Unnamed Tag'}
+              onContextMenu={open}
+              sx={{
                 bgcolor: tag.color ?? 'primary.main',
-                color: theme.palette.getContrastText(tag.color ?? theme.palette.primary.main)
-              }
-            }}
-          />
-        </ContextMenu>
+                color: theme.palette.getContrastText(tag.color ?? theme.palette.primary.main),
+                boxShadow: selected
+                  ? `0px 0px 0px 2px ${theme.palette.secondary.light}, 0px 0px 0px 5px ${theme.palette.secondary.dark}`
+                  : undefined,
+
+                '&:hover': {
+                  opacity: 0.8,
+                  bgcolor: tag.color ?? 'primary.main',
+                  color: theme.palette.getContrastText(tag.color ?? theme.palette.primary.main)
+                }
+              }}
+            />
+          )}
+        />
       )}
       <Fade in={editMode} unmountOnExit>
         <Box

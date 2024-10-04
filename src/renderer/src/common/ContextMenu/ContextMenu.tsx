@@ -21,27 +21,23 @@ export interface ContextMenuOption {
   onClick?: () => void
 }
 
-export interface ContextMenuProps extends BoxProps {
+export interface ContextMenuProps extends Omit<BoxProps, 'children'> {
   options?: (ContextMenuOption | 'divider')[]
   disabled?: boolean
+  render: (open: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void) => React.ReactNode
 }
 
-export function ContextMenu({ options, children, disabled, ...boxProps }: ContextMenuProps) {
+export function ContextMenu({ options, render, disabled, ...boxProps }: ContextMenuProps) {
   const { anchorPosition, closeMenu, handleContextMenu, open } = useContextMenu()
 
   return (
     <>
-      <Box
-        width="100%"
-        height="100%"
-        {...boxProps}
-        onContextMenu={(e) => {
+      <Box width="100%" height="100%" {...boxProps}>
+        {render((e) => {
           if (!disabled) {
             handleContextMenu(e)
           }
-        }}
-      >
-        {children}
+        })}
       </Box>
       <Menu
         open={open}
@@ -61,9 +57,10 @@ export function ContextMenu({ options, children, disabled, ...boxProps }: Contex
             ) : (
               <MenuItem
                 key={index}
-                onClick={() => {
+                onClick={(e) => {
                   o.onClick && o.onClick()
                   closeMenu()
+                  e.stopPropagation()
                 }}
                 disabled={o.disabled}
               >
