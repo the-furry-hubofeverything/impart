@@ -18,7 +18,7 @@ import BurstModeIcon from '@mui/icons-material/BurstMode'
 import { Tag } from '../Tag'
 import { PaperStack } from './PaperStack'
 import { useEditTags } from '@renderer/TaggableBrowser/EditTagsProvider'
-import { BetterPopover } from '../BetterPopper'
+import { BetterPopper } from '../BetterPopper'
 import { EditTags } from './EditTags'
 
 export const BOX_WIDTH = 220
@@ -81,11 +81,11 @@ export function TaggableDisplay({ taggable, isSelected }: TaggableDisplayProps) 
         </Box>
       </Stack>
       {editState !== false && (
-        <BetterPopover open={editState.editTarget?.id === taggable.id} anchorEl={anchorRef.current}>
+        <BetterPopper open={editState.editTarget?.id === taggable.id} anchorEl={anchorRef.current}>
           <Paper elevation={8}>
             <EditTags tags={editState.tags} removeTag={editState.removeTag} />
           </Paper>
-        </BetterPopover>
+        </BetterPopper>
       )}
     </>
   )

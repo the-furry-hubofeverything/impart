@@ -98,7 +98,7 @@ export function Tag({ tag, selected, editable, onClick, size }: TagProps) {
               danger: true
             }
           ]}
-          render={(open) => (
+          render={({ open }) => (
             <Chip
               onClick={onClick}
               size={size}

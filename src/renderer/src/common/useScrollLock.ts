@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 export function useScrollLock(lock: boolean) {
   const [scrollPosition, setScrollPosition] = useState(0)

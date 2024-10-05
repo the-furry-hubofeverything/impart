@@ -1,6 +1,10 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useId, useState } from 'react'
+import { useActiveContextMenu } from './ActiveContextMenuProvider'
 
 export function useContextMenu() {
+  const id = useId()
+  const { activeId, setActiveId } = useActiveContextMenu()
+
   const [anchorPosition, setAnchorPosition] = useState<{
     left: number
     top: number
@@ -8,26 +12,21 @@ export function useContextMenu() {
 
   const handleContextMenu = useCallback((event: React.MouseEvent) => {
     event.preventDefault()
-    setAnchorPosition(
-      anchorPosition == null
-        ? {
-            left: event.clientX + 2,
-            top: event.clientY - 6
-          }
-        : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
-          // Other native context menus might behave different.
-          // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-          undefined
-    )
+    setAnchorPosition({
+      left: event.clientX + 2,
+      top: event.clientY - 6
+    })
+    setActiveId(id)
   }, [])
 
   const closeMenu = useCallback(() => {
     setAnchorPosition(undefined)
+    setActiveId(undefined)
   }, [])
 
   return {
     anchorPosition,
-    open: anchorPosition != null,
+    open: activeId == id && anchorPosition != null,
     handleContextMenu,
     closeMenu
   }

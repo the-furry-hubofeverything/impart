@@ -6,8 +6,8 @@ import React from 'react'
 export interface CommonTaggableGridProps {
   taggables?: Impart.Taggable[]
   selection?: Impart.Taggable[]
-  onSelect?: (item: Impart.Taggable, add: boolean, range: boolean) => void
-  onRightClick?: (item: Impart.Taggable, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+  onSelect?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, item: Impart.Taggable) => void
+  onRightClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, item: Impart.Taggable) => void
   onDoubleClick?: (item: Impart.Taggable) => void
 }
 
@@ -32,9 +32,9 @@ export const TaggableGrid = React.memo(function ({
           minWidth={BOX_WIDTH + 26}
           size={{ xs: 'grow' }}
           onContextMenu={(e) => {
-            onRightClick && onRightClick(f, e)
+            onRightClick && onRightClick(e, f)
           }}
-          onClick={(e) => onSelect && onSelect(f, e.ctrlKey, e.shiftKey)}
+          onClick={(e) => onSelect && onSelect(e, f)}
           onDoubleClick={() => onDoubleClick && onDoubleClick(f)}
         >
           <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />

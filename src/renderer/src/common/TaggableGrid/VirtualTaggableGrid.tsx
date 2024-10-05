@@ -45,13 +45,9 @@ export function VirtualTaggableGrid({
         <Stack width="100%" height="100%" alignItems="center" justifyContent="center">
           <Box
             onContextMenu={(e) => {
-              onRightClick && onRightClick(f, e)
-              e.stopPropagation()
+              onRightClick && onRightClick(e, f)
             }}
-            onClick={(e) => {
-              onSelect && onSelect(f, e.ctrlKey, e.shiftKey)
-              e.stopPropagation()
-            }}
+            onClick={(e) => onSelect && onSelect(e, f)}
             onDoubleClick={() => onDoubleClick && onDoubleClick(f)}
           >
             <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />

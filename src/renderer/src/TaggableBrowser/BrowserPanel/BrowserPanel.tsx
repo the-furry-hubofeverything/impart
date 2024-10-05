@@ -51,57 +51,62 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
   }, [stack])
 
   return (
-    <Stack position={'relative'} flex={1} pr={1} gap={2} onClick={() => setSelection([])}>
-      <Box mt={1} pl={1}>
-        <Card>
-          <CardActions>
-            <GridActions stack={stack} onStackChange={setStack} />
-          </CardActions>
-        </Card>
-      </Box>
-      <ContextMenu
-        options={getTaggableContextMenuOptions(selection, {
-          ...gridEvents,
-          onOpenStack: (t) => setStack(stack.concat([t])),
-          onHide: async (taggables) => {
-            await window.taggableApi.setHidden(
-              taggables.map((t) => t.id),
-              true
-            )
-            fetchTaggables()
-          }
-        })}
-        render={(open) => (
+    <ContextMenu
+      options={getTaggableContextMenuOptions(selection, {
+        ...gridEvents,
+        onOpenStack: (t) => setStack(stack.concat([t])),
+        onHide: async (taggables) => {
+          await window.taggableApi.setHidden(
+            taggables.map((t) => t.id),
+            true
+          )
+          fetchTaggables()
+        }
+      })}
+      render={({ isOpen: contextMenuOpen, open, close }) => (
+        <Stack position={'relative'} height="100%" pr={1} gap={2} onClick={() => setSelection([])}>
+          <Box mt={1} pl={1}>
+            <Card>
+              <CardActions>
+                <GridActions stack={stack} onStackChange={setStack} />
+              </CardActions>
+            </Card>
+          </Box>
+
           <VirtualTaggableGrid
             taggables={taggables}
             selection={selection}
-            onSelect={selectItem}
-            onRightClick={(item, e) => {
+            onSelect={(e, t) => {
+              selectItem(t, e.ctrlKey, e.shiftKey)
+              e.stopPropagation()
+              close()
+            }}
+            onRightClick={(e, item) => {
               rightClickSelect(item)
               open(e)
             }}
             onDoubleClick={(t) => isTaggableStack(t) && setStack(stack.concat([t]))}
           />
-        )}
-      ></ContextMenu>
 
-      <Fade in={selection.length > 0}>
-        <Box position="absolute" bottom={10} left={10}>
-          <SelectionIndicator
-            count={selection.length}
-            onTag={() =>
-              selection.length == 1
-                ? onEditTags && onEditTags(selection[0])
-                : onBulkTag && onBulkTag(selection)
-            }
-            onCreateStack={() => onCreateStack && onCreateStack(selection)}
-            onClear={() => setSelection([])}
-          />
-        </Box>
-      </Fade>
-      <Box position="absolute" bottom={10} right={40}>
-        <GeneratingThumbnailIndicator />
-      </Box>
-    </Stack>
+          <Fade in={selection.length > 0}>
+            <Box position="absolute" bottom={10} left={10}>
+              <SelectionIndicator
+                count={selection.length}
+                onTag={() =>
+                  selection.length == 1
+                    ? onEditTags && onEditTags(selection[0])
+                    : onBulkTag && onBulkTag(selection)
+                }
+                onCreateStack={() => onCreateStack && onCreateStack(selection)}
+                onClear={() => setSelection([])}
+              />
+            </Box>
+          </Fade>
+          <Box position="absolute" bottom={10} right={40}>
+            <GeneratingThumbnailIndicator />
+          </Box>
+        </Stack>
+      )}
+    ></ContextMenu>
   )
 }

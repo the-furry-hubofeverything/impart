@@ -1,15 +1,20 @@
 import {
   Box,
   BoxProps,
+  ClickAwayListener,
   Divider,
   ListItemIcon,
   ListItemText,
-  Menu,
   MenuItem,
+  MenuList,
+  Paper,
+  PopoverVirtualElement,
   Typography
 } from '@mui/material'
-import React from 'react'
+import React, { useId, useState } from 'react'
 import { useContextMenu } from './useContextMenu'
+import { BetterPopper } from '../BetterPopper'
+import { v4 } from 'uuid'
 
 export interface ContextMenuOption {
   label: React.ReactNode
@@ -21,69 +26,105 @@ export interface ContextMenuOption {
   onClick?: () => void
 }
 
+export interface ContextMenuRenderProps {
+  isOpen: boolean
+  open: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+  close: () => void
+}
+
 export interface ContextMenuProps extends Omit<BoxProps, 'children'> {
   options?: (ContextMenuOption | 'divider')[]
   disabled?: boolean
-  render: (open: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void) => React.ReactNode
+  render: (props: ContextMenuRenderProps) => React.ReactNode
 }
 
 export function ContextMenu({ options, render, disabled, ...boxProps }: ContextMenuProps) {
   const { anchorPosition, closeMenu, handleContextMenu, open } = useContextMenu()
 
+  const { left = 0, top = 0 } = { ...anchorPosition }
+
   return (
     <>
       <Box width="100%" height="100%" {...boxProps}>
-        {render((e) => {
-          if (!disabled) {
-            handleContextMenu(e)
-          }
+        {render({
+          isOpen: open,
+          open: (e) => {
+            if (!disabled) {
+              handleContextMenu(e)
+            }
+          },
+          close: closeMenu
         })}
       </Box>
-      <Menu
+      <BetterPopper
+        placement="bottom-start"
         open={open}
-        onClose={closeMenu}
-        anchorReference="anchorPosition"
-        anchorPosition={anchorPosition}
-        sx={{
-          '& .MuiPaper-root': { minWidth: 200 },
-          '& .MuiMenuItem-root+.MuiDivider-root': { marginY: 0.5 }
-        }}
+        anchorEl={() =>
+          ({
+            getBoundingClientRect: () => ({
+              width: 0,
+              height: 0,
+              top: top,
+              right: left,
+              bottom: top,
+              left: left,
+              x: left,
+              y: top,
+              toJSON: () => ({})
+            }),
+            nodeType: 1
+          }) satisfies PopoverVirtualElement
+        }
       >
-        {options
-          ?.filter((o) => o === 'divider' || !o.hide)
-          .map((o, index) =>
-            o === 'divider' ? (
-              <Divider key={index} sx={{ margin: 0 }} />
-            ) : (
-              <MenuItem
-                key={index}
-                onClick={(e) => {
-                  o.onClick && o.onClick()
-                  closeMenu()
-                  e.stopPropagation()
-                }}
-                disabled={o.disabled}
-              >
-                {o.icon && (
-                  <ListItemIcon sx={{ color: o.danger ? 'error.main' : undefined }}>
-                    {o.icon}
-                  </ListItemIcon>
+        <ClickAwayListener onClickAway={() => closeMenu()}>
+          <Paper>
+            <MenuList
+              sx={{
+                '& .MuiPaper-root': { minWidth: 200 },
+                '& .MuiMenuItem-root+.MuiDivider-root': { marginY: 0.5 }
+              }}
+            >
+              {options
+                ?.filter((o) => o === 'divider' || !o.hide)
+                .map((o, index) =>
+                  o === 'divider' ? (
+                    <Divider key={index} sx={{ margin: 0 }} />
+                  ) : (
+                    <MenuItem
+                      key={index}
+                      onClick={(e) => {
+                        o.onClick && o.onClick()
+                        closeMenu()
+                        e.stopPropagation()
+                      }}
+                      disabled={o.disabled}
+                    >
+                      {o.icon && (
+                        <ListItemIcon sx={{ color: o.danger ? 'error.main' : undefined }}>
+                          {o.icon}
+                        </ListItemIcon>
+                      )}
+                      <ListItemText
+                        inset={!o.icon}
+                        sx={{ color: o.danger ? 'error.dark' : undefined }}
+                      >
+                        {o.label}
+                      </ListItemText>
+                      {o.shortcut && (
+                        <Typography
+                          variant="body2"
+                          sx={{ color: o.danger ? 'error.light' : 'text.secondary' }}
+                        >
+                          {o.shortcut}
+                        </Typography>
+                      )}
+                    </MenuItem>
+                  )
                 )}
-                <ListItemText inset={!o.icon} sx={{ color: o.danger ? 'error.dark' : undefined }}>
-                  {o.label}
-                </ListItemText>
-                {o.shortcut && (
-                  <Typography
-                    variant="body2"
-                    sx={{ color: o.danger ? 'error.light' : 'text.secondary' }}
-                  >
-                    {o.shortcut}
-                  </Typography>
-                )}
-              </MenuItem>
-            )
-          )}
-      </Menu>
+            </MenuList>
+          </Paper>
+        </ClickAwayListener>
+      </BetterPopper>
     </>
   )
 }

@@ -1,13 +1,12 @@
 import { ClickAwayListener, Popper, PopperProps } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
-export interface BetterPopoverProps extends Omit<PopperProps, 'modifiers' | 'placement'> {}
+export interface BetterPopper extends Omit<PopperProps, 'modifiers'> {}
 
-export function BetterPopover({ ...popperProps }: BetterPopoverProps) {
+export function BetterPopper({ ...popperProps }: BetterPopper) {
   return (
     <Popper
       {...popperProps}
-      placement="bottom"
       modifiers={[
         {
           name: 'preventOverflow',

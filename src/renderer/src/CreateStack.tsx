@@ -41,7 +41,7 @@ export function CreateStack({ onFinish, items }: CreateStackProps) {
           <Typography variant="h2">Create Stack</Typography>
           <Stack flex={1} justifyContent="center" alignItems="center" gap={2}>
             <Box flex="1 1 0" width="100%" overflow="auto">
-              <TaggableGrid taggables={items} onSelect={setCoverImage} />
+              <TaggableGrid taggables={items} onSelect={(e, item) => setCoverImage(item)} />
             </Box>
           </Stack>
         </Stack>

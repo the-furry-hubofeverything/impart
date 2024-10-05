@@ -8,7 +8,7 @@ export interface EditTagsProps {
 
 export function EditTags({ tags, removeTag }: EditTagsProps) {
   return (
-    <Stack p={2} gap={2} onClick={(e) => e.stopPropagation()}>
+    <Stack p={2} gap={2}>
       <Typography textAlign="center" variant="h6">
         Tags
       </Typography>
