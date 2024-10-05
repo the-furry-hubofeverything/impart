@@ -10,6 +10,7 @@ import { imageSize } from 'image-size'
 import { taskQueue } from '../task/taskQueue'
 import { Tag } from '../database/entities/Tag'
 import { tagManager } from '../tagging/tagManager'
+import dayjs from 'dayjs'
 
 class IndexingManager {
   private isIndexing = false
@@ -126,14 +127,24 @@ class IndexingManager {
   }
 
   private async findAndAssociateSourceFile(image: TaggableImage, directory: Directory) {
-    const possibleSourceFile = await TaggableFile.findOneBy({
+    const possibleSourceFiles = await TaggableFile.findBy({
       fileIndex: { fileName: Like(`${path.parse(image.fileIndex.path).name}.%`) },
       directory
     })
 
-    if (possibleSourceFile) {
-      console.log('Associating indexed image with: ', possibleSourceFile.fileIndex.path)
-      image.source = possibleSourceFile
+    if (possibleSourceFiles.length > 0) {
+      //If multiple files have the same filename (but with different extensions),
+      // we grab whichever one has the closest modification date to the image
+      if (possibleSourceFiles.length > 1) {
+        possibleSourceFiles.sort(
+          (a, b) =>
+            Math.abs(dayjs(a.dateModified).diff(image.dateModified)) -
+            Math.abs(dayjs(b.dateModified).diff(image.dateModified))
+        )
+      }
+
+      console.log('Associating indexed image with: ', possibleSourceFiles[0].fileIndex.path)
+      image.source = possibleSourceFiles[0]
 
       await image.save()
     }
