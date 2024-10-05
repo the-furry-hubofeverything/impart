@@ -1,6 +1,6 @@
 {
   "name": "impart",
-  "version": "0.3.0-beta",
+  "version": "0.3.0",
   "description": "Tag-based art organization app",
   "main": "./out/main/index.js",
   "author": "github.com/Arastryx",
