@@ -6,6 +6,7 @@ import { BOX_WIDTH } from '../TaggableDisplay/TaggableDisplay'
 import { CommonTaggableGridProps } from './TaggableGrid'
 import { useEditTags } from '@renderer/TaggableBrowser/EditTagsProvider'
 import { useScrollLock } from '../useScrollLock'
+import { Draggable } from '../DragAndDrop/Draggable'
 
 const gridComponents: GridComponents = {
   List: forwardRef(({ children, ...props }, ref) => (
@@ -43,15 +44,17 @@ export function VirtualTaggableGrid({
       computeItemKey={(index, item) => item.id}
       itemContent={(index, f) => (
         <Stack width="100%" height="100%" alignItems="center" justifyContent="center">
-          <Box
-            onContextMenu={(e) => {
-              onRightClick && onRightClick(e, f)
-            }}
-            onClick={(e) => onSelect && onSelect(e, f)}
-            onDoubleClick={() => onDoubleClick && onDoubleClick(f)}
-          >
-            <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />
-          </Box>
+          <Draggable id={f.id} type="taggable">
+            <Box
+              onContextMenu={(e) => {
+                onRightClick && onRightClick(e, f)
+              }}
+              onMouseDown={(e) => onSelect && onSelect(e, f)}
+              onDoubleClick={() => onDoubleClick && onDoubleClick(f)}
+            >
+              <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />
+            </Box>
+          </Draggable>
         </Stack>
       )}
     />

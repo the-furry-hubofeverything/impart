@@ -34,7 +34,7 @@ export const TaggableGrid = React.memo(function ({
           onContextMenu={(e) => {
             onRightClick && onRightClick(e, f)
           }}
-          onClick={(e) => onSelect && onSelect(e, f)}
+          onMouseDown={(e) => onSelect && onSelect(e, f)}
           onDoubleClick={() => onDoubleClick && onDoubleClick(f)}
         >
           <TaggableDisplay taggable={f} isSelected={selection?.some((s) => s.id === f.id)} />

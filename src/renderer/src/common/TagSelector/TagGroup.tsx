@@ -17,6 +17,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { EditTagGroup } from './EditTagGroup'
+import { Draggable } from '../DragAndDrop/Draggable'
 
 export interface TagGroupProps {
   group: Impart.TagGroup
@@ -73,12 +74,14 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
           .sort((a, b) => a.tagOrder - b.tagOrder)
           .map((t) => (
             <Grid key={t.id}>
-              <Tag
-                tag={t}
-                editable
-                onClick={() => onSelect && onSelect(t)}
-                selected={selectedTags?.some((s) => s.id === t.id)}
-              />
+              <Draggable id={t.id} type="tag">
+                <Tag
+                  tag={t}
+                  editable
+                  onClick={() => onSelect && onSelect(t)}
+                  selected={selectedTags?.some((s) => s.id === t.id)}
+                />
+              </Draggable>
             </Grid>
           ))}
         <Grid>

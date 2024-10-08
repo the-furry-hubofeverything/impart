@@ -10,6 +10,8 @@ import { BulkTag } from './BulkTag'
 import { CreateStack } from './CreateStack'
 import { useLocalStorage } from './common/useLocalStorage'
 import { BetaWarning } from './BetaWarning/BetaWarning'
+import { DndContext, DragOverlay, MouseSensor, useSensor } from '@dnd-kit/core'
+import { TaggableDisplay } from './common/TaggableDisplay'
 
 const SHOW_BETA_WARNING_KEY = 'showBetaWarning'
 
@@ -26,7 +28,18 @@ export function Impart({}: ImpartProps) {
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
   const [showBetaWarning, setShowBetaWarning] = useLocalStorage(SHOW_BETA_WARNING_KEY, true)
 
-  const { fetchTaggables } = useTaggables()
+  const [currentDraggable, setCurrentDraggable] = useState<number>()
+  const { fetchTaggables, taggables } = useTaggables()
+
+  const draggedTaggable = taggables.find((t) => t.id === currentDraggable)
+
+  console.log(currentDraggable)
+
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 10
+    }
+  })
 
   useEffect(() => {
     window.indexApi.indexAll()
@@ -61,23 +74,30 @@ export function Impart({}: ImpartProps) {
   }
 
   return (
-    <Box>
-      <FileBrowser
-        onSettingsPressed={() => setCurrentModal('settings')}
-        onBulkTag={(files) => {
-          setSelection(files)
-          setCurrentModal('bulkTag')
-        }}
-        onCreateStack={(files) => {
-          setSelection(files)
-          setCurrentModal('createStack')
-        }}
-      />
-      <Dialog open={currentModal != null} onClose={() => setCurrentModal(null)} fullScreen>
-        <DialogContent sx={(theme) => ({ bgcolor: theme.palette.background.default })}>
-          {renderContent()}
-        </DialogContent>
-      </Dialog>
-    </Box>
+    <DndContext
+      sensors={[mouseSensor]}
+      onDragStart={(e) => setCurrentDraggable(e.active.data.current?.id)}
+      onDragEnd={(e) => setCurrentDraggable(undefined)}
+    >
+      <Box>
+        <FileBrowser
+          onSettingsPressed={() => setCurrentModal('settings')}
+          onBulkTag={(files) => {
+            setSelection(files)
+            setCurrentModal('bulkTag')
+          }}
+          onCreateStack={(files) => {
+            setSelection(files)
+            setCurrentModal('createStack')
+          }}
+        />
+        <Dialog open={currentModal != null} onClose={() => setCurrentModal(null)} fullScreen>
+          <DialogContent sx={(theme) => ({ bgcolor: theme.palette.background.default })}>
+            {renderContent()}
+          </DialogContent>
+        </Dialog>
+      </Box>
+      <DragOverlay>{draggedTaggable && <TaggableDisplay taggable={draggedTaggable} />}</DragOverlay>
+    </DndContext>
   )
 }

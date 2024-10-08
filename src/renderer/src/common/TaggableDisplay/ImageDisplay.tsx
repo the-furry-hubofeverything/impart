@@ -20,9 +20,6 @@ export function ImageDisplay({ image, shrink }: ImageDisplayProps) {
   return (
     <Box
       component={'img'}
-      //The loading attr NEEDS to go before the src, otherwise chromium
-      // immediately sprints to downloading the image before it reads
-      // the rest of the attributes
       src={`thum:///${image.id}`}
       alt={image.fileIndex.fileName}
       borderRadius={2}
