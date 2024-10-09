@@ -126,6 +126,7 @@ declare global {
       getGroups: () => Promise<Impart.TagGroup[] | Impart.Error>
       editFileTags: (taggableId: number, tagIds: number[]) => Promise<void | Impart.Error>
       bulkTag: (taggableIds: number[], tagIds: number[]) => Promise<void | Impart.Error>
+      addTags: (taggableId: number, tagIds: number[]) => Promise<void | Impart.Error>
 
       createGroup: () => Promise<Impart.TagGroup | Impart.Error>
       editGroup: (

@@ -13,6 +13,11 @@ export function setupTagApi() {
     (e, ...params: Parameters<InstanceType<typeof TagManager>['bulkTag']>) =>
       handleError(() => tagManager.bulkTag(...params))
   )
+  ipcMain.handle(
+    'tag/addTags',
+    (e, ...params: Parameters<InstanceType<typeof TagManager>['addTags']>) =>
+      handleError(() => tagManager.addTags(...params))
+  )
 
   ipcMain.handle('tag/createGroup', () => handleError(() => tagManager.createGroup()))
   ipcMain.handle(

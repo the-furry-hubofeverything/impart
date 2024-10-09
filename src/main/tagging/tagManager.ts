@@ -39,7 +39,7 @@ export class TagManager {
           Tag.findBy({ id: In(tagIds) })
         ])
 
-        return taggables.map((t) => () => this.addTags(t, tags))
+        return taggables.map((t) => () => this.addTagsToTaggable(t, tags))
       },
       delayPerItem: 10,
       type: 'bulkTag'
@@ -50,14 +50,23 @@ export class TagManager {
     taskQueue.add({
       steps: async () => {
         const actualTaggables = typeof taggables === 'function' ? await taggables() : taggables
-        return actualTaggables.map((t) => () => this.addTags(t, tags))
+        return actualTaggables.map((t) => () => this.addTagsToTaggable(t, tags))
       },
       delayPerItem: 10,
       type: 'bulkTag'
     })
   }
 
-  private async addTags(taggable: Taggable, tags: Tag[]) {
+  public async addTags(taggableId: number, tagIds: number[]) {
+    const [taggable, tags] = await Promise.all([
+      Taggable.findOneByOrFail({ id: taggableId }),
+      Tag.findBy({ id: In(tagIds) })
+    ])
+
+    await this.addTagsToTaggable(taggable, tags)
+  }
+
+  private async addTagsToTaggable(taggable: Taggable, tags: Tag[]) {
     let added = false
 
     tags.forEach((addedTag) => {

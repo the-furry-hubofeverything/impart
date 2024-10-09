@@ -1,8 +1,9 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useMemo } from 'react'
 import { useImpartIpcData } from '@renderer/common/useImpartIpc'
 
 interface TagData {
   groups?: Impart.TagGroup[]
+  tags?: Impart.Tag[]
   isLoading: boolean
   reload: () => void
 }
@@ -16,7 +17,13 @@ export interface TagProviderProps {
 export function TagProvider({ children }: TagProviderProps) {
   const { data: groups, isLoading, reload } = useImpartIpcData(() => window.tagApi.getGroups(), [])
 
-  return <TagContext.Provider value={{ groups, isLoading, reload }}>{children}</TagContext.Provider>
+  const tags = useMemo(() => groups?.map((g) => g.tags ?? []).flat(), [groups])
+
+  return (
+    <TagContext.Provider value={{ groups, tags, isLoading, reload }}>
+      {children}
+    </TagContext.Provider>
+  )
 }
 
 export function useTagGroups() {

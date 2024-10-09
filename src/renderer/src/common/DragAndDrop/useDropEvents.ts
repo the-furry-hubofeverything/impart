@@ -1,6 +1,9 @@
 import { useCallback, useMemo } from 'react'
 import { DraggableData, DraggableType } from './Draggable'
 import { DroppableData, DroppableType } from './Droppable'
+import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
+import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
+import { useImpartIpcCall } from '../useImpartIpc'
 
 interface DropEvent {
   dragType: DraggableType
@@ -9,17 +12,21 @@ interface DropEvent {
 }
 
 export function useDropEvents() {
+  const { callIpc: addTags } = useImpartIpcCall(window.tagApi.addTags, [])
+  const { reload: reloadTags } = useTagGroups()
+
   const dropEvents = useMemo<DropEvent[]>(
     () => [
       {
         dragType: 'tag',
         dropType: 'taggable',
-        action: (draggable, droppable) => {
-          console.log('Tag item!')
+        action: async (draggable, droppable) => {
+          await addTags(droppable.id, [draggable.id])
+          reloadTags()
         }
       }
     ],
-    []
+    [addTags, reloadTags]
   )
 
   const isValidDrop = useCallback(
