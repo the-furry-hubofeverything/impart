@@ -38,6 +38,7 @@ export interface ImpartDragAndDropProviderProps {
 
 export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProviderProps) {
   const [current, setCurrent] = useState<DraggableData>()
+  const [successfulDrop, setSuccesfulDrop] = useState(false)
 
   const { handle, isValidDrop } = useDropEvents()
 
@@ -53,6 +54,11 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
     }
   })
 
+  const handleDrag = (e: DragStartEvent) => {
+    setCurrent(e.active.data.current as DraggableData)
+    setSuccesfulDrop(false)
+  }
+
   const handleDrop = (e: DragEndEvent) => {
     setCurrent(undefined)
 
@@ -60,19 +66,15 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
     const droppable = e.over?.data.current as DroppableData | undefined
 
     if (droppable) {
-      handle(draggable, droppable)
+      setSuccesfulDrop(handle(draggable, droppable))
     }
   }
 
   return (
     <ImpartDragAndDropContext.Provider value={{ isValidDrop }}>
-      <DndContext
-        sensors={[mouseSensor]}
-        onDragStart={(e) => setCurrent(e.active.data.current as DraggableData)}
-        onDragEnd={handleDrop}
-      >
+      <DndContext sensors={[mouseSensor]} onDragStart={handleDrag} onDragEnd={handleDrop}>
         {children}
-        <DragOverlay>
+        <DragOverlay dropAnimation={successfulDrop ? null : undefined}>
           {draggedTaggable && <TaggableDisplay taggable={draggedTaggable} />}
           {draggedTag && <Tag tag={draggedTag} />}
         </DragOverlay>

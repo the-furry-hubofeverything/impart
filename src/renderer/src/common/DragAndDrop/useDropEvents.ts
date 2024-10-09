@@ -43,7 +43,10 @@ export function useDropEvents() {
 
       if (event) {
         event.action(draggable, droppable)
+        return true
       }
+
+      return false
     },
     [dropEvents]
   )
