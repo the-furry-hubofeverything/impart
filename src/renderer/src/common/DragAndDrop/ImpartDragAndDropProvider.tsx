@@ -12,8 +12,9 @@ import { TaggableDisplay } from '../TaggableDisplay'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import { DraggableData, DraggableType } from './Draggable'
 import { Tag } from '../Tag'
-import { DroppableData } from './Droppable'
+import { DroppableData, DroppableType } from './Droppable'
 import { useDropEvents } from './useDropEvents'
+import { createContext, useContext } from 'react'
 
 function findTag(tagId: number, groups?: Impart.TagGroup[]) {
   for (const group of groups ?? []) {
@@ -25,6 +26,12 @@ function findTag(tagId: number, groups?: Impart.TagGroup[]) {
   }
 }
 
+export interface ImpartDragAndDropData {
+  isValidDrop: (dragType: DraggableType, dropType: DroppableType) => boolean
+}
+
+const ImpartDragAndDropContext = createContext<ImpartDragAndDropData | null>(null)
+
 export interface ImpartDragAndDropProviderProps {
   children?: React.ReactNode
 }
@@ -32,7 +39,7 @@ export interface ImpartDragAndDropProviderProps {
 export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProviderProps) {
   const [current, setCurrent] = useState<DraggableData>()
 
-  const { handle } = useDropEvents()
+  const { handle, isValidDrop } = useDropEvents()
 
   const { taggables } = useTaggables()
   const { groups } = useTagGroups()
@@ -58,16 +65,30 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
   }
 
   return (
-    <DndContext
-      sensors={[mouseSensor]}
-      onDragStart={(e) => setCurrent(e.active.data.current as DraggableData)}
-      onDragEnd={handleDrop}
-    >
-      {children}
-      <DragOverlay>
-        {draggedTaggable && <TaggableDisplay taggable={draggedTaggable} />}
-        {draggedTag && <Tag tag={draggedTag} />}
-      </DragOverlay>
-    </DndContext>
+    <ImpartDragAndDropContext.Provider value={{ isValidDrop }}>
+      <DndContext
+        sensors={[mouseSensor]}
+        onDragStart={(e) => setCurrent(e.active.data.current as DraggableData)}
+        onDragEnd={handleDrop}
+      >
+        {children}
+        <DragOverlay>
+          {draggedTaggable && <TaggableDisplay taggable={draggedTaggable} />}
+          {draggedTag && <Tag tag={draggedTag} />}
+        </DragOverlay>
+      </DndContext>
+    </ImpartDragAndDropContext.Provider>
   )
+}
+
+export function useImpartDragAndDrop() {
+  const result = useContext(ImpartDragAndDropContext)
+
+  if (!result) {
+    throw new Error(
+      'useImpartDragAndDrop() cannot be used without being wrapped by a ImpartDragAndDropProvider'
+    )
+  }
+
+  return result
 }

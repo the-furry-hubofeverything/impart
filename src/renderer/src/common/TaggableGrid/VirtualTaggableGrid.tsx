@@ -48,7 +48,7 @@ export function VirtualTaggableGrid({
           <Droppable
             type="taggable"
             id={f.id}
-            render={({ isOver }) => (
+            render={({ overType }) => (
               <Draggable id={f.id} type="taggable">
                 <Box
                   onContextMenu={(e) => {
@@ -60,7 +60,7 @@ export function VirtualTaggableGrid({
                   <TaggableDisplay
                     taggable={f}
                     isSelected={selection?.some((s) => s.id === f.id)}
-                    showTags={isOver}
+                    showTags={overType === 'tag'}
                   />
                 </Box>
               </Draggable>
