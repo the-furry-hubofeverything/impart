@@ -4,6 +4,11 @@ import React from 'react'
 
 export type DraggableType = 'taggable' | 'tag'
 
+export interface DraggableData {
+  type: DraggableType
+  id: number
+}
+
 export interface DraggableProps {
   children: React.ReactNode
   id: number
@@ -16,7 +21,7 @@ export function Draggable({ children, id, type }: DraggableProps) {
     data: {
       id,
       type
-    }
+    } satisfies DraggableData
   })
 
   return (
