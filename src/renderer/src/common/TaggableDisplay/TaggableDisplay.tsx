@@ -27,9 +27,10 @@ export const BOX_HEIGHT = 190
 export interface TaggableDisplayProps {
   taggable: Impart.Taggable
   isSelected?: boolean
+  showTags?: boolean
 }
 
-export function TaggableDisplay({ taggable, isSelected }: TaggableDisplayProps) {
+export function TaggableDisplay({ taggable, isSelected, showTags }: TaggableDisplayProps) {
   const anchorRef = useRef<HTMLDivElement | null>(null)
 
   const editState = useEditTags()
@@ -84,6 +85,13 @@ export function TaggableDisplay({ taggable, isSelected }: TaggableDisplayProps) 
         <BetterPopper open={editState.editTarget?.id === taggable.id} anchorEl={anchorRef.current}>
           <Paper elevation={8}>
             <EditTags tags={editState.tags} removeTag={editState.removeTag} />
+          </Paper>
+        </BetterPopper>
+      )}
+      {showTags && (
+        <BetterPopper open={showTags} anchorEl={anchorRef.current}>
+          <Paper elevation={8}>
+            <EditTags tags={taggable.tags} />
           </Paper>
         </BetterPopper>
       )}
