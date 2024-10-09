@@ -29,7 +29,7 @@ export function Draggable({ children, id, type }: DraggableProps) {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      sx={{ visibility: isDragging ? 'hidden' : undefined }}
+      sx={{ visibility: isDragging ? 'hidden' : undefined, outline: 'none' }}
     >
       {children}
     </Box>
