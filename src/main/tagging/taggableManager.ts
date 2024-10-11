@@ -79,7 +79,10 @@ export class TaggableManager {
     const terms = search.split(' ')
 
     terms.forEach((t, index) => {
-      query.andWhere(`files.fileIndex.fileName LIKE :term${index}`, { [`term${index}`]: `%${t}%` })
+      query.andWhere(
+        `(files.fileIndex.fileName LIKE :term${index} OR files.name LIKE :term${index})`,
+        { [`term${index}`]: `%${t}%` }
+      )
     })
   }
 
