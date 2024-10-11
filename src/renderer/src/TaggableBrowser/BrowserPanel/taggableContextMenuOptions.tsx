@@ -1,5 +1,6 @@
 import { ContextMenuOption } from '@renderer/common/ContextMenu/ContextMenu'
 import FileOpenIcon from '@mui/icons-material/FileOpen'
+import FolderIcon from '@mui/icons-material/Folder'
 import TagIcon from '@mui/icons-material/LocalOffer'
 import BrushIcon from '@mui/icons-material/Brush'
 import { isTaggableImage, isTaggableStack } from '@renderer/common/taggable'
@@ -36,9 +37,17 @@ export function getTaggableContextMenuOptions(
           : window.fileApi.openFile(selection[0].id)
     },
     {
+      icon: <FolderIcon />,
+      label: 'Open File Location',
+      disabled: selection.length > 1,
+      hide: selection.length != 0 && isTaggableStack(selection[0]),
+      onClick: () => window.fileApi.openFileLocation(selection[0].id)
+    },
+    {
       icon: <BrushIcon />,
       label: 'Open Source',
       disabled: !selectedImage || selectedImage.source == null,
+      hide: selection.length != 0 && isTaggableStack(selection[0]),
       onClick: () => window.fileApi.openFile(selectedImage!.source!.id)
     },
     'divider',

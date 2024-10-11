@@ -98,6 +98,7 @@ declare global {
 
     fileApi: {
       openFile: (indexableId: number) => void
+      openFileLocation: (indexableId: number) => void
     }
 
     taggableApi: {

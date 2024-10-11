@@ -151,14 +151,17 @@ class IndexingManager {
   }
 
   public async openFile(taggableId: number) {
-    const target = await Taggable.findOneBy({ id: taggableId })
-
-    if (!target) {
-      throw new Error(`Could not find taggable with Id ${taggableId}`)
-    }
-
+    const target = await Taggable.findOneByOrFail({ id: taggableId })
     if (isTaggableFile(target) || isTaggableImage(target)) {
       await shell.openPath(target.fileIndex.path)
+    }
+  }
+
+  public async openFileLocation(taggableId: number) {
+    const target = await Taggable.findOneByOrFail({ id: taggableId })
+
+    if (isTaggableFile(target) || isTaggableImage(target)) {
+      await shell.showItemInFolder(target.fileIndex.path)
     }
   }
 }

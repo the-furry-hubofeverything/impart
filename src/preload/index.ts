@@ -20,7 +20,8 @@ function generateCallback(channel: string) {
 }
 
 contextBridge.exposeInMainWorld('fileApi', {
-  openFile: generateCommand('file/openFile')
+  openFile: generateCommand('file/openFile'),
+  openFileLocation: generateCommand('file/openFileLocation')
 })
 
 contextBridge.exposeInMainWorld('taskApi', {
