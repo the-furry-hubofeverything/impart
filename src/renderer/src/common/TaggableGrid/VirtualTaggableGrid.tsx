@@ -25,7 +25,7 @@ const gridComponents: GridComponents = {
 export function VirtualTaggableGrid({
   taggables,
   selection,
-  onSelect,
+  onMouseDown,
   onRightClick,
   onDoubleClick
 }: CommonTaggableGridProps) {
@@ -54,7 +54,7 @@ export function VirtualTaggableGrid({
                   onContextMenu={(e) => {
                     onRightClick && onRightClick(e, f)
                   }}
-                  onMouseDown={(e) => onSelect && onSelect(e, f)}
+                  onMouseDown={(e) => onMouseDown && onMouseDown(e, f)}
                   onDoubleClick={() => onDoubleClick && onDoubleClick(f)}
                 >
                   <TaggableDisplay

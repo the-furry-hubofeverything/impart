@@ -1,7 +1,7 @@
 import { Stack, Box, Card, CardActions, Fade } from '@mui/material'
 import { ContextMenu } from '@renderer/common/ContextMenu'
 import { VirtualTaggableGrid } from '@renderer/common/TaggableGrid'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { GridActions } from './GridActions/GridActions'
 import { SelectionIndicator } from './SelectionIndicator'
 import { TaggableGridEvents, getTaggableContextMenuOptions } from './taggableContextMenuOptions'
@@ -65,7 +65,7 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
           fetchTaggables()
         }
       })}
-      render={({ isOpen: contextMenuOpen, open, close }) => (
+      render={({ open }) => (
         <Stack
           position={'relative'}
           height="100%"
@@ -75,8 +75,10 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
             if (!selectedItemRef.current) {
               setSelection([])
             }
+
             selectedItemRef.current = false
           }}
+          onContextMenu={() => (selectedItemRef.current = false)}
         >
           <Box mt={1} pl={1}>
             <Card>
@@ -89,9 +91,11 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
           <VirtualTaggableGrid
             taggables={taggables}
             selection={selection}
-            onSelect={(e, t) => {
-              selectedItemRef.current = true
-              selectItem(t, e.ctrlKey, e.shiftKey)
+            onMouseDown={(e, t) => {
+              if (e.button === 0) {
+                selectedItemRef.current = true
+                selectItem(t, e.ctrlKey, e.shiftKey)
+              }
             }}
             onRightClick={(e, item) => {
               rightClickSelect(item)
