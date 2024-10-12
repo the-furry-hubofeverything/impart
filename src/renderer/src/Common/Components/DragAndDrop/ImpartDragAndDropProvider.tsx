@@ -4,7 +4,9 @@ import {
   DndContext,
   DragOverlay,
   DragStartEvent,
-  DragEndEvent
+  DragEndEvent,
+  pointerWithin,
+  rectIntersection
 } from '@dnd-kit/core'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import React, { useState } from 'react'
@@ -27,7 +29,7 @@ function findTag(tagId: number, groups?: Impart.TagGroup[]) {
 }
 
 export interface ImpartDragAndDropData {
-  isValidDrop: (dragType: DraggableType, dropType: DroppableType) => boolean
+  isValidDrop: (dragType: DraggableType, dropType: DroppableType | DroppableType[]) => boolean
 }
 
 const ImpartDragAndDropContext = createContext<ImpartDragAndDropData | null>(null)
@@ -72,7 +74,23 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
 
   return (
     <ImpartDragAndDropContext.Provider value={{ isValidDrop }}>
-      <DndContext sensors={[mouseSensor]} onDragStart={handleDrag} onDragEnd={handleDrop}>
+      <DndContext
+        sensors={[mouseSensor]}
+        onDragStart={handleDrag}
+        onDragEnd={handleDrop}
+        collisionDetection={(args) => {
+          // First, let's see if there are any collisions with the pointer
+          const pointerCollisions = pointerWithin(args)
+
+          // Collision detection algorithms return an array of collisions
+          if (pointerCollisions.length > 0) {
+            return pointerCollisions
+          }
+
+          // If there are no collisions with the pointer, return rectangle intersections
+          return rectIntersection(args)
+        }}
+      >
         {children}
         <DragOverlay dropAnimation={successfulDrop ? null : undefined}>
           {draggedTaggable && <TaggableDisplay taggable={draggedTaggable} />}

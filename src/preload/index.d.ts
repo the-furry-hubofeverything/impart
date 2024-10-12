@@ -106,12 +106,14 @@ declare global {
         options?: Impart.FetchTaggablesOptions
       ) => Promise<Impart.Taggable[] | Impart.Error>
       getAllTaggableYears: () => Promise<number[] | Impart.Error>
-      createStack: (
-        name: string,
-        taggableIds: number[],
-        coverId: number
-      ) => Promise<void | Impart.Error>
+
       setHidden: (ids: number[], hidden: boolean) => Promise<void | Impart.Error>
+    }
+
+    stackApi: {
+      create: (name: string, taggableIds: number[], coverId: number) => Promise<void | Impart.Error>
+      addToStack: (taggableIds: number[], stackId: number) => Promise<void | Impart.Error>
+      moveToHome: (taggableIds: number[], currentStackId: number) => Promise<void | Impart.Error>
     }
 
     taskApi: {

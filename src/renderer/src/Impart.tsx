@@ -29,7 +29,7 @@ export function Impart({}: ImpartProps) {
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
   const [showBetaWarning, setShowBetaWarning] = useLocalStorage(SHOW_BETA_WARNING_KEY, true)
 
-  const { fetchTaggables } = useTaggables()
+  const { reload: fetchTaggables } = useTaggables()
 
   useEffect(() => {
     window.indexApi.indexAll()

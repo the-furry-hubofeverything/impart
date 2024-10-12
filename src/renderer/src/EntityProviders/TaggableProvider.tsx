@@ -6,7 +6,7 @@ import { useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
 interface TaggableData {
   taggables: Impart.Taggable[]
   isLoading: boolean
-  fetchTaggables: () => Promise<void>
+  reload: () => Promise<void>
   fetchOptions: Impart.FetchTaggablesOptions
   setFetchOptions: (options: Partial<Impart.FetchTaggablesOptions>) => void
 }
@@ -29,7 +29,7 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
   const {
     data: taggables,
     isLoading,
-    reload: fetchTaggables
+    reload
   } = useImpartIpcData(() => window.taggableApi.getTaggables(fetchOptions), [fetchOptions])
 
   useEffect(() => {
@@ -40,20 +40,20 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
 
   useEffect(() => {
     if (isTaskRunning) {
-      let interval = setInterval(() => fetchTaggables(), 1000)
+      let interval = setInterval(() => reload(), 1000)
 
       return () => clearInterval(interval)
     } else {
-      fetchTaggables()
+      reload()
     }
-  }, [isTaskRunning, fetchTaggables])
+  }, [isTaskRunning, reload])
 
   return (
     <TaggableContext.Provider
       value={{
         taggables: taggables ?? [],
         isLoading,
-        fetchTaggables,
+        reload,
         fetchOptions,
         setFetchOptions
       }}

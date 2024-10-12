@@ -16,12 +16,6 @@ export function setupTaggableApi() {
   )
 
   ipcMain.handle(
-    'taggable/createStack',
-    (e, ...params: Parameters<InstanceType<typeof TaggableManager>['createStack']>) =>
-      handleError(() => taggableManager.createStack(...params))
-  )
-
-  ipcMain.handle(
     'taggable/setHidden',
     (e, ...params: Parameters<InstanceType<typeof TaggableManager>['setHidden']>) =>
       handleError(() => taggableManager.setHidden(...params))

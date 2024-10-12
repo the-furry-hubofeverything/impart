@@ -18,6 +18,7 @@ import { StyledToggleButtonGroup } from './StyledToggleButtonGroup'
 import { SortButtons } from './SortButtons'
 import { SearchBar } from './SearchBar'
 import HomeIcon from '@mui/icons-material/Home'
+import { Droppable } from '@renderer/Common/Components/DragAndDrop/Droppable'
 
 const ToolbarIconButton = styled(IconButton)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -69,7 +70,17 @@ export function GridActions({ stack, onStackChange }: GridActionsProps) {
       <Collapse in={stack.length > 0}>
         <Box pt={1}>
           <Breadcrumbs>
-            <StyledBreadcrumb label="Home" icon={<HomeIcon />} onClick={() => onStackChange([])} />
+            <Droppable
+              type="home"
+              id={-1}
+              render={() => (
+                <StyledBreadcrumb
+                  label="Home"
+                  icon={<HomeIcon />}
+                  onClick={() => onStackChange([])}
+                />
+              )}
+            />
             {stack.map((s, index) => (
               <StyledBreadcrumb
                 key={s.id}

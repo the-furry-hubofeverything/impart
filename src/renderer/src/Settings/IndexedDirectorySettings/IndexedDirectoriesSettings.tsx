@@ -22,7 +22,7 @@ export interface IndexedDirectoriesSettingsProps {}
 
 export function IndexedDirectoriesSettings({}: IndexedDirectoriesSettingsProps) {
   const { data: originalDirectories, reload: reloadDirectories } = useDirectories()
-  const { fetchTaggables } = useTaggables()
+  const { reload: fetchTaggables } = useTaggables()
   const [isSaving, setSaving] = useState(false)
 
   const { isTaskRunning } = useTaskStatus()

@@ -8,16 +8,21 @@ export async function handleError<T>(func: () => Promise<T>): Promise<T | Impart
   try {
     return await func()
   } catch (e) {
+    let error: ImpartError = { message: '' }
+
     if (e instanceof Error) {
-      return e
+      error = e
     } else if (typeof e === 'string') {
-      return {
+      error = {
         message: e
       }
     } else {
-      return {
+      error = {
         message: 'An unknown error has occurred'
       }
     }
+
+    console.error(e)
+    return error
   }
 }

@@ -26,7 +26,7 @@ export function CreateStack({ onFinish, items }: CreateStackProps) {
 
   const { callIpc: save, isLoading } = useImpartIpcCall(
     () =>
-      window.taggableApi.createStack(
+      window.stackApi.create(
         name,
         items.map((t) => t.id),
         coverImage?.id ?? -1

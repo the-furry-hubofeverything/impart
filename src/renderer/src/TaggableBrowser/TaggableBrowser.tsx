@@ -15,7 +15,7 @@ export interface TaggableBrowserProps extends Omit<TaggableGridEvents, 'onEditTa
 
 export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBrowserProps) {
   const showIndexingPanel = useShowIndexingPanel()
-  const { fetchTaggables } = useTaggables()
+  const { reload: fetchTaggables } = useTaggables()
 
   const [editTarget, setEditTarget] = useState<Impart.Taggable>()
   const [editTagSelection, setEditTagSelection] = useState<Impart.Tag[]>([])

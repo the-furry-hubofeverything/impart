@@ -10,6 +10,7 @@ import { AppDataSource } from './database/database'
 import { setupTagApi } from './api/tagApi'
 import { setupIndexApi } from './api/indexApi'
 import { thumbnailManager } from './indexables/thumbnailManager'
+import { setupStackApi } from './api/stackApi'
 
 interface ImpartApp {
   mainWindow?: BrowserWindow
@@ -81,6 +82,7 @@ app.whenReady().then(async () => {
 
   setupFileApi()
   setupTaggableApi()
+  setupStackApi()
   setupTagApi()
   setupIndexApi()
 

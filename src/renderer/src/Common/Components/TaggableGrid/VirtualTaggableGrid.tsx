@@ -8,6 +8,7 @@ import { useEditTags } from '@renderer/TaggableBrowser/EditTagsProvider'
 import { useScrollLock } from '../../Hooks/useScrollLock'
 import { Draggable } from '../DragAndDrop/Draggable'
 import { Droppable } from '../DragAndDrop/Droppable'
+import { isTaggableStack } from '@renderer/Common/taggable'
 
 const gridComponents: GridComponents = {
   List: forwardRef(({ children, ...props }, ref) => (
@@ -46,7 +47,7 @@ export function VirtualTaggableGrid({
       itemContent={(index, f) => (
         <Stack width="100%" height="100%" alignItems="center" justifyContent="center">
           <Droppable
-            type="taggable"
+            type={isTaggableStack(f) ? ['taggable', 'stack'] : 'taggable'}
             id={f.id}
             render={({ overType }) => (
               <Draggable id={f.id} type="taggable">

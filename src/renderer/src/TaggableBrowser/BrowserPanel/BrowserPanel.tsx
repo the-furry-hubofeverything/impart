@@ -15,7 +15,7 @@ export interface BrowserPanelProps extends Omit<TaggableGridEvents, 'onHide' | '
 
 export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
   const { onBulkTag, onCreateStack, onEditTags } = gridEvents
-  const { taggables, setFetchOptions, fetchTaggables } = useTaggables()
+  const { taggables, setFetchOptions, reload: fetchTaggables } = useTaggables()
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 

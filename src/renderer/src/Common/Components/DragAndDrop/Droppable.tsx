@@ -4,22 +4,22 @@ import React from 'react'
 import { DraggableType } from './Draggable'
 import { useImpartDragAndDrop } from './ImpartDragAndDropProvider'
 
-export type DroppableType = 'taggable'
+export type DroppableType = 'taggable' | 'stack' | 'home'
 
 export interface DroppableData {
-  type: DroppableType
+  type: DroppableType | DroppableType[]
   id: number
 }
 
 export interface DroppableProps {
-  type: DroppableType
+  type: DroppableType | DroppableType[]
   id: number
   render: (props: { overType?: DraggableType }) => React.ReactNode
 }
 
 export function Droppable({ type, id, render }: DroppableProps) {
   const { setNodeRef, active, isOver } = useDroppable({
-    id: `${type}-${id}`,
+    id: `drop-${type}-${id}`,
     data: {
       type,
       id
