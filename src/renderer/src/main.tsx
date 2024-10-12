@@ -10,6 +10,7 @@ import { CssBaseline } from '@mui/material'
 import { theme } from './theme'
 import { ErrorNotificationProvider } from './Common/Components/ErrorNotificationProvider'
 import { ActiveContextMenuProvider } from './Common/Components/ContextMenu/ActiveContextMenuProvider'
+import { ConfirmationDialogProvider } from './Common/Components/ConfirmationDialogProvider'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -18,12 +19,14 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <DirectoryProvider>
           <TaggableProvider>
             <TagProvider>
-              <ActiveContextMenuProvider>
-                <ThemeProvider theme={theme}>
-                  <CssBaseline />
-                  <Impart />
-                </ThemeProvider>
-              </ActiveContextMenuProvider>
+              <ThemeProvider theme={theme}>
+                <ActiveContextMenuProvider>
+                  <ConfirmationDialogProvider>
+                    <CssBaseline />
+                    <Impart />
+                  </ConfirmationDialogProvider>
+                </ActiveContextMenuProvider>
+              </ThemeProvider>
             </TagProvider>
           </TaggableProvider>
         </DirectoryProvider>

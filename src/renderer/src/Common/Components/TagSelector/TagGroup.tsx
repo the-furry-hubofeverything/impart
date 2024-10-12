@@ -18,6 +18,7 @@ import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { EditTagGroup } from './EditTagGroup'
 import { Draggable } from '../DragAndDrop/Draggable'
+import { useConfirmationDialog } from '../ConfirmationDialogProvider'
 
 export interface TagGroupProps {
   group: Impart.TagGroup
@@ -29,11 +30,20 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
   const [editMode, setEditMode] = useState(false)
   const { reload } = useTagGroups()
 
-  const [showRemoveWarning, setShowRemoveWarning] = useState(false)
+  const confirm = useConfirmationDialog()
 
   const remove = async () => {
     if ((group.tags?.length ?? 0) > 0) {
-      setShowRemoveWarning(true)
+      confirm(
+        {
+          title: 'Remove Group?',
+          body: `This will remove ${group.tags?.length} tags as well. This action cannot be reversed.`
+        },
+        async () => {
+          await window.tagApi.deleteGroup(group.id)
+          reload()
+        }
+      )
     } else {
       await window.tagApi.deleteGroup(group.id)
       reload()
@@ -97,26 +107,6 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
           </IconButton>
         </Grid>
       </Grid>
-      <Dialog open={showRemoveWarning} onClose={() => setShowRemoveWarning(false)}>
-        <DialogTitle>Remove Group?</DialogTitle>
-        <DialogContent>
-          This will remove {group.tags?.length} tags as well. This action cannot be reversed.
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowRemoveWarning(false)}>Cancel</Button>
-          <Button
-            variant="contained"
-            color="error"
-            startIcon={<DeleteIcon />}
-            onClick={async () => {
-              await window.tagApi.deleteGroup(group.id)
-              reload()
-            }}
-          >
-            Remove
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   )
 }
