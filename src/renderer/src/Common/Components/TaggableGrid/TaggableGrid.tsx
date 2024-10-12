@@ -1,6 +1,6 @@
 import { Box, Grid2 as Grid } from '@mui/material'
-import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
-import { BOX_WIDTH } from '@renderer/common/TaggableDisplay/TaggableDisplay'
+import { TaggableDisplay } from '@renderer/Common/Components/TaggableDisplay'
+import { BOX_WIDTH } from '@renderer/Common/Components/TaggableDisplay/TaggableDisplay'
 import React from 'react'
 
 export interface CommonTaggableGridProps {

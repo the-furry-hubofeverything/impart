@@ -10,7 +10,7 @@ import {
   Stack,
   Typography
 } from '@mui/material'
-import { isTaggableFile, isTaggableImage, isTaggableStack } from '../taggable'
+import { isTaggableFile, isTaggableImage, isTaggableStack } from '../../taggable'
 import { ImageDisplay } from './ImageDisplay'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import { useRef } from 'react'

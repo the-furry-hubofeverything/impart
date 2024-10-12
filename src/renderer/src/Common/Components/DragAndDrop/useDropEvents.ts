@@ -3,7 +3,7 @@ import { DraggableData, DraggableType } from './Draggable'
 import { DroppableData, DroppableType } from './Droppable'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
-import { useImpartIpcCall } from '../useImpartIpc'
+import { useImpartIpcCall } from '../../Hooks/useImpartIpc'
 
 interface DropEvent {
   dragType: DraggableType

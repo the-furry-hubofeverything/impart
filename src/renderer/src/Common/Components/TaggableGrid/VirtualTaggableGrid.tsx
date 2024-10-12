@@ -1,11 +1,11 @@
 import { Box, Grid2 as Grid, Stack } from '@mui/material'
-import { TaggableDisplay } from '@renderer/common/TaggableDisplay'
+import { TaggableDisplay } from '@renderer/Common/Components/TaggableDisplay'
 import { forwardRef } from 'react'
 import { GridComponents, VirtuosoGrid } from 'react-virtuoso'
 import { BOX_WIDTH } from '../TaggableDisplay/TaggableDisplay'
 import { CommonTaggableGridProps } from './TaggableGrid'
 import { useEditTags } from '@renderer/TaggableBrowser/EditTagsProvider'
-import { useScrollLock } from '../useScrollLock'
+import { useScrollLock } from '../../Hooks/useScrollLock'
 import { Draggable } from '../DragAndDrop/Draggable'
 import { Droppable } from '../DragAndDrop/Droppable'
 

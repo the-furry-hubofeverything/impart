@@ -9,7 +9,7 @@ import {
   MenuItem
 } from '@mui/material'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
-import { Tag } from '@renderer/common/Tag'
+import { Tag } from '@renderer/Common/Components/Tag'
 import React from 'react'
 
 function flattenSelectOptions(groups: Impart.TagGroup[] | undefined, selected: number[]) {

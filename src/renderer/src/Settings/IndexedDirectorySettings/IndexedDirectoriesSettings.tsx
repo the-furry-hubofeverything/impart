@@ -15,7 +15,7 @@ import { DirectoryList } from './DirectoryList'
 import { produce } from 'immer'
 import SaveIcon from '@mui/icons-material/Save'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
-import { TaskStatus } from '@renderer/common/TaskStatus'
+import { TaskStatus } from '@renderer/Common/Components/TaskStatus'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
 
 export interface IndexedDirectoriesSettingsProps {}

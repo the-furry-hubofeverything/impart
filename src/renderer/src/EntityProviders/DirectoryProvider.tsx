@@ -1,4 +1,4 @@
-import { useImpartIpcData } from '@renderer/common/useImpartIpc'
+import { useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 export interface DirectoryData {

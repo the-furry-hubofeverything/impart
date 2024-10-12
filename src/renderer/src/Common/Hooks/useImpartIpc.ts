@@ -1,5 +1,5 @@
 import { DependencyList, useCallback, useEffect, useRef, useState } from 'react'
-import { useErrorNotification } from './ErrorNotificationProvider'
+import { useErrorNotification } from '../Components/ErrorNotificationProvider'
 
 type AsyncCall<Params extends any[], Result> = (...params: Params) => Promise<Result>
 

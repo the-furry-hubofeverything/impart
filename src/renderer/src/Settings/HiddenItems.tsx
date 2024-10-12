@@ -8,9 +8,9 @@ import {
   darken,
   styled
 } from '@mui/material'
-import { isTaggableStack } from '@renderer/common/taggable'
-import { useImpartIpcCall, useImpartIpcData } from '@renderer/common/useImpartIpc'
-import { useMultiSelection } from '@renderer/common/useMultiSelection'
+import { isTaggableStack } from '@renderer/Common/taggable'
+import { useImpartIpcCall, useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
+import { useMultiSelection } from '@renderer/Common/Hooks/useMultiSelection'
 import React, { useState } from 'react'
 import ImageIcon from '@mui/icons-material/Image'
 

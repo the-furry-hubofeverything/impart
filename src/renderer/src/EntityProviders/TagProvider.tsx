@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from 'react'
-import { useImpartIpcData } from '@renderer/common/useImpartIpc'
+import { useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
 
 interface TagData {
   groups?: Impart.TagGroup[]

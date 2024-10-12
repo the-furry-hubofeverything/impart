@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Backable } from './common/Backable'
+import { Backable } from './Common/Components/Backable'
 import {
   Stack,
   Typography,
@@ -10,10 +10,10 @@ import {
   TextField,
   CircularProgress
 } from '@mui/material'
-import { TaggableGrid } from './common/TaggableGrid'
+import { TaggableGrid } from './Common/Components/TaggableGrid'
 import CheckIcon from '@mui/icons-material/Check'
-import { TaggableDisplay } from './common/TaggableDisplay'
-import { useImpartIpcCall } from './common/useImpartIpc'
+import { TaggableDisplay } from './Common/Components/TaggableDisplay'
+import { useImpartIpcCall } from './Common/Hooks/useImpartIpc'
 
 export interface CreateStackProps {
   items: Impart.Taggable[]

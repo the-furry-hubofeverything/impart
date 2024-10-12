@@ -1,6 +1,6 @@
 import { Stack, Typography, Button } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { useMultiSelection } from '../useMultiSelection'
+import { useMultiSelection } from '../../Hooks/useMultiSelection'
 import { useCallback, useMemo } from 'react'
 import SparkleIcon from '@mui/icons-material/AutoAwesome'
 import { TagGroup } from './TagGroup'

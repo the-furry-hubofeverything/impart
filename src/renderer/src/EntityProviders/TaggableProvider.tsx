@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect } from 'react'
-import { usePartialState } from '@renderer/common/usePartialState'
+import { usePartialState } from '@renderer/Common/Hooks/usePartialState'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
-import { useImpartIpcData } from '@renderer/common/useImpartIpc'
+import { useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
 
 interface TaggableData {
   taggables: Impart.Taggable[]

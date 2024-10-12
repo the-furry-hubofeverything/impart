@@ -1,6 +1,6 @@
 import { TextField, MenuItem } from '@mui/material'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
-import { useImpartIpcData } from '@renderer/common/useImpartIpc'
+import { useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
 
 export interface YearSelectorProps {}
 

@@ -1,11 +1,11 @@
 import { Stack, Box, Collapse, Card, CardContent } from '@mui/material'
 import { SettingsPanel } from './SettingsPanel'
-import { TaskStatus } from '../common/TaskStatus'
+import { TaskStatus } from '../Common/Components/TaskStatus'
 import { TaggableGridEvents } from './BrowserPanel/taggableContextMenuOptions'
 import { useShowIndexingPanel } from './useShowIndexingPanel'
 import { BrowserPanel } from './BrowserPanel'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
-import { TagSelector } from '@renderer/common/TagSelector'
+import { TagSelector } from '@renderer/Common/Components/TagSelector'
 import { useState, useEffect, useCallback } from 'react'
 import { EditTagsProvider } from './EditTagsProvider'
 

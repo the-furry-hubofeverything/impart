@@ -10,14 +10,14 @@ import {
   Typography
 } from '@mui/material'
 import { useState } from 'react'
-import { TagSelector } from './common/TagSelector'
-import { Tag } from './common/Tag'
+import { TagSelector } from './Common/Components/TagSelector'
+import { Tag } from './Common/Components/Tag'
 import CheckIcon from '@mui/icons-material/Check'
 import BackIcon from '@mui/icons-material/ArrowBack'
-import { TaggableDisplay } from './common/TaggableDisplay'
-import { TaggableGrid } from './common/TaggableGrid'
+import { TaggableDisplay } from './Common/Components/TaggableDisplay'
+import { TaggableGrid } from './Common/Components/TaggableGrid'
 import InfoIcon from '@mui/icons-material/Info'
-import { Backable } from './common/Backable'
+import { Backable } from './Common/Components/Backable'
 
 export interface BulkTagProps {
   items: Impart.Taggable[]

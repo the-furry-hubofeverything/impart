@@ -8,8 +8,8 @@ import { TaskStatusProvider } from './TaskStatusProvider'
 import { ThemeProvider } from '@emotion/react'
 import { CssBaseline } from '@mui/material'
 import { theme } from './theme'
-import { ErrorNotificationProvider } from './common/ErrorNotificationProvider'
-import { ActiveContextMenuProvider } from './common/ContextMenu/ActiveContextMenuProvider'
+import { ErrorNotificationProvider } from './Common/Components/ErrorNotificationProvider'
+import { ActiveContextMenuProvider } from './Common/Components/ContextMenu/ActiveContextMenuProvider'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
