@@ -7,10 +7,14 @@ import {
   DialogTitle
 } from '@mui/material'
 import React, { createContext, useCallback, useContext, useRef, useState } from 'react'
+import CheckIcon from '@mui/icons-material/Check'
 
 export interface ConfirmProps {
-  title: string
+  title?: string
   body: React.ReactNode
+  danger?: boolean
+  confirmText?: string
+  confirmIcon?: React.ReactNode
 }
 
 interface InternalConfirmProps extends ConfirmProps {
@@ -19,7 +23,16 @@ interface InternalConfirmProps extends ConfirmProps {
   onConfirm: () => unknown | Promise<unknown>
 }
 
-function Confirm({ title, body, open, onClose, onConfirm }: InternalConfirmProps) {
+function Confirm({
+  title,
+  body,
+  danger,
+  confirmText,
+  confirmIcon,
+  open,
+  onClose,
+  onConfirm
+}: InternalConfirmProps) {
   const [isConfirming, setConfirming] = useState(false)
 
   const confirm = async () => {
@@ -30,14 +43,19 @@ function Confirm({ title, body, open, onClose, onConfirm }: InternalConfirmProps
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{title}</DialogTitle>
+      {title && <DialogTitle>{title}</DialogTitle>}
       <DialogContent>{body}</DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         {isConfirming && <CircularProgress />}
         {!isConfirming && (
-          <Button variant="contained" onClick={confirm}>
-            Confirm
+          <Button
+            variant="contained"
+            onClick={confirm}
+            color={danger ? 'error' : undefined}
+            startIcon={confirmIcon ?? <CheckIcon />}
+          >
+            {confirmText ?? 'Confirm'}
           </Button>
         )}
       </DialogActions>

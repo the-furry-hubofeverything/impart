@@ -1,16 +1,4 @@
-import {
-  Box,
-  Typography,
-  Divider,
-  Grid2 as Grid,
-  IconButton,
-  Stack,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button
-} from '@mui/material'
+import { Box, Typography, Divider, Grid2 as Grid, IconButton, Stack } from '@mui/material'
 import { useState } from 'react'
 import { Tag } from '../Tag'
 import AddIcon from '@mui/icons-material/Add'
@@ -37,7 +25,10 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
       confirm(
         {
           title: 'Remove Group?',
-          body: `This will remove ${group.tags?.length} tags as well. This action cannot be reversed.`
+          body: `This will remove ${group.tags?.length} tags as well. This action cannot be reversed.`,
+          danger: true,
+          confirmText: 'Delete',
+          confirmIcon: <DeleteIcon />
         },
         async () => {
           await window.tagApi.deleteGroup(group.id)
