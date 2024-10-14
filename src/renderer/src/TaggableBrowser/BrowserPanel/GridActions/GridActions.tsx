@@ -82,10 +82,16 @@ export function GridActions({ stack, onStackChange }: GridActionsProps) {
               )}
             />
             {stack.map((s, index) => (
-              <StyledBreadcrumb
-                key={s.id}
-                label={s.name}
-                onClick={() => onStackChange(stack.slice(0, index + 1))}
+              <Droppable
+                type="stack"
+                id={s.id}
+                render={() => (
+                  <StyledBreadcrumb
+                    key={s.id}
+                    label={s.name}
+                    onClick={() => onStackChange(stack.slice(0, index + 1))}
+                  />
+                )}
               />
             ))}
           </Breadcrumbs>

@@ -41,6 +41,12 @@ export function useDropEvents() {
         dragType: 'taggable',
         dropType: 'stack',
         action: async (draggable, droppable) => {
+          //Learned this the hard way, we don't want to be able to add a stack
+          // to itself
+          if (draggable.id === droppable.id) {
+            return
+          }
+
           await addToStack([draggable.id], droppable.id)
           reloadTaggables()
         }

@@ -17,6 +17,7 @@ import { Tag } from '../Tag'
 import { DroppableData, DroppableType } from './Droppable'
 import { useDropEvents } from './useDropEvents'
 import { createContext, useContext } from 'react'
+import { Box } from '@mui/material'
 
 function findTag(tagId: number, groups?: Impart.TagGroup[]) {
   for (const group of groups ?? []) {
@@ -93,8 +94,10 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
       >
         {children}
         <DragOverlay dropAnimation={successfulDrop ? null : undefined}>
-          {draggedTaggable && <TaggableDisplay taggable={draggedTaggable} />}
-          {draggedTag && <Tag tag={draggedTag} />}
+          <Box sx={{ opacity: 0.8 }}>
+            {draggedTaggable && <TaggableDisplay taggable={draggedTaggable} />}
+            {draggedTag && <Tag tag={draggedTag} />}
+          </Box>
         </DragOverlay>
       </DndContext>
     </ImpartDragAndDropContext.Provider>
