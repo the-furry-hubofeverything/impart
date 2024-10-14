@@ -14,6 +14,7 @@ import { TaggableGrid } from './Common/Components/TaggableGrid'
 import CheckIcon from '@mui/icons-material/Check'
 import { TaggableDisplay } from './Common/Components/TaggableDisplay'
 import { useImpartIpcCall } from './Common/Hooks/useImpartIpc'
+import { useTaggables } from './EntityProviders/TaggableProvider'
 
 export interface CreateStackProps {
   items: Impart.Taggable[]
@@ -23,13 +24,17 @@ export interface CreateStackProps {
 export function CreateStack({ onFinish, items }: CreateStackProps) {
   const [coverImage, setCoverImage] = useState<Impart.Taggable>()
   const [name, setName] = useState('')
+  const {
+    fetchOptions: { stackId }
+  } = useTaggables()
 
   const { callIpc: save, isLoading } = useImpartIpcCall(
     () =>
       window.stackApi.create(
         name,
         items.map((t) => t.id),
-        coverImage?.id ?? -1
+        coverImage?.id ?? -1,
+        stackId
       ),
     [name, items, coverImage]
   )

@@ -4,11 +4,21 @@ import { isTaggableImage } from '../database/entities/TaggableImage'
 import { TaggableStack } from '../database/entities/TaggableStack'
 
 export class StackManager {
-  public async create(name: string, taggableIds: number[], coverId: number) {
+  public async create(
+    name: string,
+    taggableIds: number[],
+    coverId: number,
+    parentStackId?: number
+  ) {
     const childTaggables = await Taggable.find({
       where: { id: In(taggableIds) }
     })
     const cover = childTaggables.find((t) => t.id === coverId)
+    let parent: TaggableStack | undefined = undefined
+
+    if (parentStackId) {
+      parent = await TaggableStack.findOneByOrFail({ id: parentStackId })
+    }
 
     if (!cover) {
       throw new Error('Cover taggable must be one of the items in the stack')
@@ -18,7 +28,8 @@ export class StackManager {
       name,
       cover: isTaggableImage(cover) ? cover : undefined,
       taggables: childTaggables,
-      dateModified: cover.dateModified
+      dateModified: cover.dateModified,
+      parent
     })
 
     await stack.save()

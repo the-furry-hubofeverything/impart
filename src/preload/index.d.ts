@@ -110,7 +110,12 @@ declare global {
     }
 
     stackApi: {
-      create: (name: string, taggableIds: number[], coverId: number) => Promise<void | Impart.Error>
+      create: (
+        name: string,
+        taggableIds: number[],
+        coverId: number,
+        parentStackId?: number
+      ) => Promise<void | Impart.Error>
       addToStack: (taggableIds: number[], stackId: number) => Promise<void | Impart.Error>
       moveToHome: (taggableIds: number[], currentStackId: number) => Promise<void | Impart.Error>
     }
