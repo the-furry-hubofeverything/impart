@@ -1,4 +1,4 @@
-import { ChildEntity, Column, OneToMany } from 'typeorm'
+import { BeforeInsert, BeforeUpdate, ChildEntity, Column, OneToMany } from 'typeorm'
 import { Taggable } from './Taggable'
 import { FileIndex } from './FileIndex'
 import { TaggableImage, isTaggableImage } from './TaggableImage'
@@ -10,6 +10,13 @@ export class TaggableFile extends Taggable {
 
   @OneToMany(() => TaggableImage, (t) => t.source)
   images: TaggableImage[]
+
+  @BeforeInsert()
+  checkDirectory() {
+    if (!this.directory) {
+      throw new Error('Files require a directory')
+    }
+  }
 }
 
 export function isTaggableFile(t: Taggable): t is TaggableFile {

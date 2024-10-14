@@ -12,11 +12,9 @@ export interface FetchTaggablesOptions {
 
 export class TaggableManager {
   public async getTaggables(options?: FetchTaggablesOptions) {
-    let query = Taggable.createQueryBuilder('files')
-      .setFindOptions({
-        loadEagerRelations: true
-      })
-      .loadRelationIdAndMap('files.directory', 'files.directory')
+    let query = Taggable.createQueryBuilder('files').setFindOptions({
+      loadEagerRelations: true
+    })
 
     if (options) {
       const { tagIds, order, search, year } = options
@@ -49,7 +47,9 @@ export class TaggableManager {
       query.andWhere('files.parentId = :stackId', { stackId: options.stackId })
     }
 
-    return await query.getMany()
+    const result = await query.getMany()
+
+    return result
   }
 
   private applyTags(query: SelectQueryBuilder<Taggable>, tagIds: number[]) {

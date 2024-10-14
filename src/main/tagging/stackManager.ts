@@ -6,8 +6,7 @@ import { TaggableStack } from '../database/entities/TaggableStack'
 export class StackManager {
   public async create(name: string, taggableIds: number[], coverId: number) {
     const childTaggables = await Taggable.find({
-      where: { id: In(taggableIds) },
-      relations: { directory: true }
+      where: { id: In(taggableIds) }
     })
     const cover = childTaggables.find((t) => t.id === coverId)
 
@@ -19,7 +18,6 @@ export class StackManager {
       name,
       cover: isTaggableImage(cover) ? cover : undefined,
       taggables: childTaggables,
-      directory: cover.directory,
       dateModified: cover.dateModified
     })
 

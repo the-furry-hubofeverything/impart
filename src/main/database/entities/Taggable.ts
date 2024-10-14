@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -22,8 +23,8 @@ export class Taggable extends BaseEntity {
   @JoinTable()
   tags: Tag[]
 
-  @ManyToOne(() => Directory, { nullable: false, onDelete: 'CASCADE' })
-  directory: Directory
+  @ManyToOne(() => Directory, (d) => d.taggables, { nullable: true, onDelete: 'CASCADE' })
+  directory?: Directory
 
   //This should only be pointing to TaggableStacks, but we can't set that because of weird
   // circular dependency issues ("can't load Taggable before it's instantiated" or some such)

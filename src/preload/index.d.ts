@@ -30,7 +30,6 @@ declare global {
     interface BaseTaggable {
       id: number
       tags: Impart.Tag[]
-      directory: string
       dateModified: Date
     }
 

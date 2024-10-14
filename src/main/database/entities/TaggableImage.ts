@@ -1,4 +1,12 @@
-import { ChildEntity, Column, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  ChildEntity,
+  Column,
+  JoinColumn,
+  ManyToOne,
+  OneToOne
+} from 'typeorm'
 import { Dimensions } from './Dimensions'
 import { Taggable } from './Taggable'
 import { FileIndex } from './FileIndex'
@@ -19,6 +27,13 @@ export class TaggableImage extends Taggable {
   @OneToOne(() => Thumbnail, { nullable: true, cascade: true })
   @JoinColumn()
   thumbnail?: Thumbnail
+
+  @BeforeInsert()
+  checkDirectory() {
+    if (!this.directory) {
+      throw new Error('Images require a directory')
+    }
+  }
 }
 
 export function isTaggableImage(t: Taggable): t is TaggableImage {
