@@ -9,8 +9,8 @@ import { Directory } from '../database/entities/Directory'
 import { imageSize } from 'image-size'
 import { taskQueue } from '../task/taskQueue'
 import { Tag } from '../database/entities/Tag'
-import { tagManager } from '../tagging/tagManager'
 import dayjs from 'dayjs'
+import { TagManager } from '../tagging/tagManager'
 
 class IndexingManager {
   private isIndexing = false
@@ -61,7 +61,7 @@ class IndexingManager {
     })
 
     if (directory.autoTags.length > 0) {
-      tagManager.bulkTagTaggables(async () => {
+      TagManager.bulkTagTaggables(async () => {
         const [addedImages, addedFiles] = await Promise.all([
           TaggableImage.findBy({ directory, fileIndex: { fileName: In(unindexedFiles) } }),
           TaggableFile.findBy({ directory, fileIndex: { fileName: In(unindexedFiles) } })

@@ -3,9 +3,9 @@ import { impartApp } from '..'
 import { Directory } from '../database/entities/Directory'
 import { indexingManager } from './indexingManager'
 import { Taggable } from '../database/entities/Taggable'
-import { tagManager } from '../tagging/tagManager'
 import { In } from 'typeorm'
 import { Tag } from '../database/entities/Tag'
+import { TagManager } from '../tagging/tagManager'
 
 interface DirectoryPayload {
   path: string
@@ -76,7 +76,7 @@ export class DirectoryManager {
     await indexingManager.indexFiles(directory)
 
     if (tags.length > 0) {
-      tagManager.bulkTagTaggables(() => Taggable.findBy({ directory: directory }), tags)
+      TagManager.bulkTagTaggables(() => Taggable.findBy({ directory: directory }), tags)
     }
   }
 
@@ -96,7 +96,7 @@ export class DirectoryManager {
         const directoryTaggables = await Taggable.findBy({ directory })
 
         if (directoryTaggables.length > 0) {
-          tagManager.bulkTagTaggables(directoryTaggables, addedTags)
+          TagManager.bulkTagTaggables(directoryTaggables, addedTags)
         }
       }
 
