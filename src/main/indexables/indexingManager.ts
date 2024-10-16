@@ -8,37 +8,36 @@ import { In, IsNull, Like } from 'typeorm'
 import { Directory } from '../database/entities/Directory'
 import { imageSize } from 'image-size'
 import { taskQueue } from '../task/taskQueue'
-import { Tag } from '../database/entities/Tag'
 import dayjs from 'dayjs'
 import { TagManager } from '../tagging/tagManager'
 
-class IndexingManager {
-  private isIndexing = false
+export namespace IndexingManager {
+  let isIndexing = false
 
-  public async indexAll() {
-    if (this.isIndexing) {
+  export async function indexAll() {
+    if (isIndexing) {
       console.log('Indexing skipped: Indexing is already in progress')
       return
     }
 
     try {
-      this.isIndexing = true
+      isIndexing = true
       const directories = await Directory.find({ relations: { autoTags: true } })
 
       for (const directory of directories) {
         console.log('Indexing:', directory.path)
-        await this.indexFiles(directory)
+        await indexFiles(directory)
       }
     } finally {
-      this.isIndexing = false
+      isIndexing = false
     }
   }
 
-  public async indexFiles(directory: Directory) {
+  export async function indexFiles(directory: Directory) {
     const dirents = await readdir(directory.path, { withFileTypes: true })
     const files = dirents.filter((dirent) => dirent.isFile()).map((dirent) => dirent.name)
 
-    const indexedTaggables = await this.getAllIndexedFilesInDirectory(directory)
+    const indexedTaggables = await getAllIndexedFilesInDirectory(directory)
     const unindexedFiles = files.filter((f) => !indexedTaggables.includes(f))
 
     if (unindexedFiles.length === 0) {
@@ -46,7 +45,7 @@ class IndexingManager {
     }
 
     taskQueue.add({
-      steps: unindexedFiles.map((fileName) => () => this.index(directory, fileName)),
+      steps: unindexedFiles.map((fileName) => () => index(directory, fileName)),
       delayPerItem: 18,
       type: 'indexing'
     })
@@ -54,7 +53,7 @@ class IndexingManager {
     taskQueue.add({
       steps: async () => {
         const unsourcedImages = await TaggableImage.findBy({ source: IsNull(), directory })
-        return unsourcedImages.map((i) => () => this.findAndAssociateSourceFile(i, directory))
+        return unsourcedImages.map((i) => () => findAndAssociateSourceFile(i, directory))
       },
       delayPerItem: 10,
       type: 'sourceAssociation'
@@ -72,7 +71,7 @@ class IndexingManager {
     }
   }
 
-  private async getAllIndexedFilesInDirectory(directory: Directory) {
+  async function getAllIndexedFilesInDirectory(directory: Directory) {
     const [images, files] = await Promise.all([
       TaggableImage.createQueryBuilder()
         .select('fileIndexFilename')
@@ -87,19 +86,19 @@ class IndexingManager {
     return images.map((i) => i.fileIndexFilename).concat(files.map((f) => f.fileIndexFilename))
   }
 
-  private async index(directory: Directory, fileName: string) {
+  async function index(directory: Directory, fileName: string) {
     const fullPath = `${directory.path}/${fileName}`
 
     const extension = path.extname(fullPath).toLocaleLowerCase()
 
     if (extension === '.jpg' || extension === '.jpeg' || extension === '.png') {
-      await this.indexImage(fullPath, directory)
+      await indexImage(fullPath, directory)
     } else {
-      await this.indexFile(fullPath, directory)
+      await indexFile(fullPath, directory)
     }
   }
 
-  private async indexImage(filePath: string, directory: Directory) {
+  async function indexImage(filePath: string, directory: Directory) {
     console.log('Indexing Image: ', filePath)
     const indexedImage = TaggableImage.create({
       fileIndex: {
@@ -114,7 +113,7 @@ class IndexingManager {
     await indexedImage.save()
   }
 
-  private async indexFile(filePath: string, directory: Directory) {
+  async function indexFile(filePath: string, directory: Directory) {
     console.log('Indexing File: ', filePath)
 
     const indexedFile = TaggableFile.create({
@@ -126,7 +125,7 @@ class IndexingManager {
     await indexedFile.save()
   }
 
-  private async findAndAssociateSourceFile(image: TaggableImage, directory: Directory) {
+  async function findAndAssociateSourceFile(image: TaggableImage, directory: Directory) {
     const possibleSourceFiles = await TaggableFile.findBy({
       fileIndex: { fileName: Like(`${path.parse(image.fileIndex.path).name}.%`) },
       directory
@@ -150,14 +149,14 @@ class IndexingManager {
     }
   }
 
-  public async openFile(taggableId: number) {
+  export async function openFile(taggableId: number) {
     const target = await Taggable.findOneByOrFail({ id: taggableId })
     if (isTaggableFile(target) || isTaggableImage(target)) {
       await shell.openPath(target.fileIndex.path)
     }
   }
 
-  public async openFileLocation(taggableId: number) {
+  export async function openFileLocation(taggableId: number) {
     const target = await Taggable.findOneByOrFail({ id: taggableId })
 
     if (isTaggableFile(target) || isTaggableImage(target)) {
@@ -165,5 +164,3 @@ class IndexingManager {
     }
   }
 }
-
-export const indexingManager = new IndexingManager()

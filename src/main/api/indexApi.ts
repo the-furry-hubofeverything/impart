@@ -1,10 +1,10 @@
 import { ipcMain } from 'electron'
-import { indexingManager } from '../indexables/indexingManager'
 import { DirectoryManager, directoryManager } from '../indexables/directoryManager'
 import { handleError } from '../common/handleError'
+import { IndexingManager } from '../indexables/indexingManager'
 
 export function setupIndexApi() {
-  ipcMain.handle('index/indexAll', () => indexingManager.indexAll())
+  ipcMain.handle('index/indexAll', () => IndexingManager.indexAll())
   ipcMain.handle('index/selectDirectory', () => directoryManager.selectDirectory())
   ipcMain.handle('index/getDirectories', () =>
     handleError(() => directoryManager.getIndexedDirectories())

@@ -1,11 +1,11 @@
 import { dialog } from 'electron'
 import { impartApp } from '..'
 import { Directory } from '../database/entities/Directory'
-import { indexingManager } from './indexingManager'
 import { Taggable } from '../database/entities/Taggable'
 import { In } from 'typeorm'
 import { Tag } from '../database/entities/Tag'
 import { TagManager } from '../tagging/tagManager'
+import { IndexingManager } from './indexingManager'
 
 interface DirectoryPayload {
   path: string
@@ -73,7 +73,7 @@ export class DirectoryManager {
     })
 
     await directory.save()
-    await indexingManager.indexFiles(directory)
+    await IndexingManager.indexFiles(directory)
 
     if (tags.length > 0) {
       TagManager.bulkTagTaggables(() => Taggable.findBy({ directory: directory }), tags)
