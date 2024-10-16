@@ -9,6 +9,7 @@
     "strictPropertyInitialization": false,
     "noImplicitReturns": false,
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "noImplicitOverride": true
   }
 }

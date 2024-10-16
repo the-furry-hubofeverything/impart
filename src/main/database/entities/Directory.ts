@@ -12,5 +12,5 @@ export class Directory extends BaseEntity {
 
   @ManyToMany(() => Tag, (t) => t.autoTagDirectories, { cascade: true })
   @JoinTable()
-  autoTags: Tag[]
+  autoTags?: Tag[]
 }

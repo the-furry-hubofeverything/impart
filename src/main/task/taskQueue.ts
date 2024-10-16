@@ -1,21 +1,12 @@
 import { delay } from '../common/sleep'
+import { ImpartTask } from './impartTask'
 import { taskMessenger } from './taskMessenger'
 
-export type TaskType = 'indexing' | 'sourceAssociation' | 'bulkTag'
-
-type Queueable = () => Promise<any>
-
-interface QueuedTask {
-  steps: Queueable[] | (() => Promise<Queueable[]>)
-  delayPerItem: number
-  type: TaskType
-}
-
 class TaskQueue {
-  private queue: QueuedTask[] = []
+  private queue: ImpartTask<any>[] = []
   private isProcessing = false
 
-  public add(task: QueuedTask) {
+  public add(task: ImpartTask<any>) {
     this.queue.push(task)
 
     if (!this.isProcessing) {
@@ -31,19 +22,7 @@ class TaskQueue {
     const task = this.queue.shift()
 
     if (task) {
-      const steps = typeof task.steps === 'function' ? await task.steps() : task.steps
-      taskMessenger.taskStarted(task.type, steps.length)
-
-      await Promise.all(
-        steps.map((func, index) =>
-          delay(async () => {
-            await func()
-            taskMessenger.stepTaken()
-          }, index * task.delayPerItem)
-        )
-      )
-
-      taskMessenger.taskFinished()
+      await task.perform()
     }
 
     if (this.queue.length > 0) {

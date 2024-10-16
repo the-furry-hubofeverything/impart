@@ -1,8 +1,12 @@
 import { Tag } from '../database/entities/Tag'
 import { TagGroup } from '../database/entities/TagGroup'
 import { Taggable } from '../database/entities/Taggable'
-import { In } from 'typeorm'
+import { FindOptionsWhere, In } from 'typeorm'
 import { taskQueue } from '../task/taskQueue'
+import { ImpartTask, TaskType } from '../task/impartTask'
+import { Directory } from '../database/entities/Directory'
+import { TaggableFile } from '../database/entities/TaggableFile'
+import { TaggableImage } from '../database/entities/TaggableImage'
 
 export namespace TagManager {
   export async function getTagGroups() {
@@ -30,32 +34,11 @@ export namespace TagManager {
   }
 
   export async function bulkTag(taggableIds: number[], tagIds: number[]) {
-    taskQueue.add({
-      steps: async () => {
-        const [taggables, tags] = await Promise.all([
-          Taggable.find({ where: { id: In(taggableIds) }, relations: { tags: true } }),
-          Tag.findBy({ id: In(tagIds) })
-        ])
-
-        return taggables.map((t) => () => addTagsToTaggable(t, tags))
-      },
-      delayPerItem: 10,
-      type: 'bulkTag'
-    })
+    taskQueue.add(new BulkTagByIdTask(taggableIds, tagIds))
   }
 
-  export async function bulkTagTaggables(
-    taggables: Taggable[] | (() => Promise<Taggable[]>),
-    tags: Tag[]
-  ) {
-    taskQueue.add({
-      steps: async () => {
-        const actualTaggables = typeof taggables === 'function' ? await taggables() : taggables
-        return actualTaggables.map((t) => () => addTagsToTaggable(t, tags))
-      },
-      delayPerItem: 10,
-      type: 'bulkTag'
-    })
+  export async function bulkTagDirectory(directory: Directory, fileNames?: string[]) {
+    taskQueue.add(new BulkTagDirectoryTask(directory.path, fileNames))
   }
 
   export async function addTags(taggableId: number, tagIds: number[]) {
@@ -146,5 +129,96 @@ export namespace TagManager {
     const tagEntity = await Tag.findOneByOrFail({ id })
     await tagEntity.remove()
     return true
+  }
+
+  abstract class BaseBulkTagTask extends ImpartTask<Taggable> {
+    protected readonly TYPE: TaskType = 'bulkTag'
+    protected readonly DELAY: number = 10
+
+    private tags?: Tag[]
+
+    protected abstract getTaggables(): Promise<Taggable[]>
+    protected abstract getTags(): Promise<Tag[]>
+
+    public async prepare(): Promise<void> {
+      ;[this.targets, this.tags] = await Promise.all([this.getTaggables(), this.getTags()])
+    }
+
+    protected async performStep(item: Taggable): Promise<void> {
+      if (!this.tags) {
+        throw new Error('Tried to bulk tag taggables before they were loaded')
+      }
+
+      await addTagsToTaggable(item, this.tags)
+    }
+  }
+
+  class BulkTagByIdTask extends BaseBulkTagTask {
+    private taggableIds: number[]
+    private tagIds: number[]
+
+    public constructor(taggableIds: number[], tagIds: number[]) {
+      super()
+
+      this.taggableIds = taggableIds
+      this.tagIds = tagIds
+    }
+
+    protected getTaggables(): Promise<Taggable[]> {
+      return Taggable.findBy({ id: In(this.taggableIds) })
+    }
+
+    protected getTags(): Promise<Tag[]> {
+      return Tag.findBy({ id: In(this.tagIds) })
+    }
+  }
+
+  class BulkTagDirectoryTask extends BaseBulkTagTask {
+    private path: string
+    private fileNames?: string[]
+
+    private directory?: Directory
+
+    public constructor(directoryPath: string, fileNames?: string[]) {
+      super()
+
+      this.path = directoryPath
+      this.fileNames = fileNames
+    }
+
+    public override async prepare(): Promise<void> {
+      this.directory = await Directory.findOneOrFail({
+        where: { path: this.path },
+        relations: { autoTags: true }
+      })
+      await super.prepare()
+    }
+
+    protected async getTaggables(): Promise<Taggable[]> {
+      if (!this.fileNames) {
+        return await Taggable.findBy({ directory: this.directory })
+      }
+
+      const [images, files] = await Promise.all([
+        TaggableImage.findBy({
+          directory: this.directory,
+          fileIndex: { fileName: In(this.fileNames) }
+        }),
+        TaggableFile.findBy({
+          directory: this.directory,
+          fileIndex: { fileName: In(this.fileNames) }
+        })
+      ])
+
+      return [...images, ...files]
+    }
+
+    protected async getTags(): Promise<Tag[]> {
+      if (!this.directory?.autoTags) {
+        throw new Error("Tried to fetch a directory's auto tags before it was loaded")
+      }
+
+      return this.directory.autoTags
+    }
   }
 }

@@ -74,38 +74,26 @@ export namespace DirectoryManager {
 
     await directory.save()
     await IndexingManager.indexFiles(directory)
-
-    if (tags.length > 0) {
-      TagManager.bulkTagTaggables(() => Taggable.findBy({ directory: directory }), tags)
-    }
   }
 
   async function updateDirectory(directory: Directory, payload: DirectoryPayload) {
-    const currentTagIds = directory.autoTags.map((t) => t.id)
-    let changed = false
+    if (!directory.autoTags) {
+      throw new Error('Auto tags were not loaded')
+    }
 
-    if (currentTagIds.sort().join(',') !== payload.autoTags?.sort().join(',')) {
+    const currentTagIds = directory.autoTags.map((t) => t.id)
+    const tagsChanged = currentTagIds.sort().join(',') !== payload.autoTags?.sort().join(',')
+
+    if (tagsChanged) {
       const nextTags =
         payload.autoTags == null || payload.autoTags.length == 0
           ? []
           : await Tag.findBy({ id: In(payload.autoTags) })
 
-      const addedTags = nextTags?.filter((t) => !currentTagIds.includes(t.id)) ?? []
-
-      if (addedTags.length > 0) {
-        const directoryTaggables = await Taggable.findBy({ directory })
-
-        if (directoryTaggables.length > 0) {
-          TagManager.bulkTagTaggables(directoryTaggables, addedTags)
-        }
-      }
-
       directory.autoTags = nextTags
-      changed = true
-    }
 
-    if (changed) {
       await directory.save()
+      TagManager.bulkTagDirectory(directory)
     }
   }
 }

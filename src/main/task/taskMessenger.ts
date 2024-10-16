@@ -1,5 +1,5 @@
 import { impartApp } from '..'
-import { TaskType } from './taskQueue'
+import { TaskType } from './impartTask'
 
 class TaskMessenger {
   public sequenceStarted() {

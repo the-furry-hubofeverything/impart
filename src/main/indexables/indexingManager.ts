@@ -10,6 +10,7 @@ import { imageSize } from 'image-size'
 import { taskQueue } from '../task/taskQueue'
 import dayjs from 'dayjs'
 import { TagManager } from '../tagging/tagManager'
+import { ImpartTask, TaskType } from '../task/impartTask'
 
 export namespace IndexingManager {
   let isIndexing = false
@@ -44,30 +45,11 @@ export namespace IndexingManager {
       return
     }
 
-    taskQueue.add({
-      steps: unindexedFiles.map((fileName) => () => index(directory, fileName)),
-      delayPerItem: 18,
-      type: 'indexing'
-    })
+    taskQueue.add(new IndexFilesTask(directory))
+    taskQueue.add(new SourceAssociationTask(directory))
 
-    taskQueue.add({
-      steps: async () => {
-        const unsourcedImages = await TaggableImage.findBy({ source: IsNull(), directory })
-        return unsourcedImages.map((i) => () => findAndAssociateSourceFile(i, directory))
-      },
-      delayPerItem: 10,
-      type: 'sourceAssociation'
-    })
-
-    if (directory.autoTags.length > 0) {
-      TagManager.bulkTagTaggables(async () => {
-        const [addedImages, addedFiles] = await Promise.all([
-          TaggableImage.findBy({ directory, fileIndex: { fileName: In(unindexedFiles) } }),
-          TaggableFile.findBy({ directory, fileIndex: { fileName: In(unindexedFiles) } })
-        ])
-
-        return [...addedImages, ...addedFiles]
-      }, directory.autoTags)
+    if ((directory.autoTags?.length ?? 0) > 0) {
+      TagManager.bulkTagDirectory(directory, unindexedFiles)
     }
   }
 
@@ -160,7 +142,48 @@ export namespace IndexingManager {
     const target = await Taggable.findOneByOrFail({ id: taggableId })
 
     if (isTaggableFile(target) || isTaggableImage(target)) {
-      await shell.showItemInFolder(target.fileIndex.path)
+      shell.showItemInFolder(target.fileIndex.path)
+    }
+  }
+
+  class IndexFilesTask extends ImpartTask<string> {
+    protected TYPE: TaskType = 'indexing'
+    protected DELAY: number = 18
+
+    private directory: Directory
+
+    public constructor(directory: Directory) {
+      super()
+      this.directory = directory
+    }
+
+    public async prepare(): Promise<void> {
+      const dirents = await readdir(this.directory.path, { withFileTypes: true })
+      this.targets = dirents.filter((dirent) => dirent.isFile()).map((dirent) => dirent.name)
+    }
+
+    protected performStep(item: string): Promise<void> {
+      return index(this.directory, item)
+    }
+  }
+
+  class SourceAssociationTask extends ImpartTask<TaggableImage> {
+    protected TYPE: TaskType = 'sourceAssociation'
+    protected DELAY: number = 10
+
+    private directory: Directory
+
+    public constructor(directory: Directory) {
+      super()
+      this.directory = directory
+    }
+
+    public async prepare(): Promise<void> {
+      this.targets = await TaggableImage.findBy({ source: IsNull(), directory: this.directory })
+    }
+
+    protected performStep(item: TaggableImage): Promise<void> {
+      return findAndAssociateSourceFile(item, this.directory)
     }
   }
 }
