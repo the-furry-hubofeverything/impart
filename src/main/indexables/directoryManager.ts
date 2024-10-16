@@ -12,8 +12,8 @@ interface DirectoryPayload {
   autoTags?: number[]
 }
 
-export class DirectoryManager {
-  public async getIndexedDirectories() {
+export namespace DirectoryManager {
+  export async function getIndexedDirectories() {
     const query = Directory.createQueryBuilder('directories')
 
     const result = await query
@@ -25,7 +25,7 @@ export class DirectoryManager {
     return result
   }
 
-  public async selectDirectory() {
+  export async function selectDirectory() {
     if (!impartApp.mainWindow) {
       throw new Error('Tried to open a file dialog without access to the window')
     }
@@ -37,7 +37,7 @@ export class DirectoryManager {
     return result.canceled ? undefined : result.filePaths[0]
   }
 
-  public async updateDirectories(directoryPayloads: DirectoryPayload[]) {
+  export async function updateDirectories(directoryPayloads: DirectoryPayload[]) {
     const directories = await Directory.find({ relations: { autoTags: true } })
 
     const unaddedDirectories = directoryPayloads.filter(
@@ -51,11 +51,11 @@ export class DirectoryManager {
     )
 
     for (const d of unaddedDirectories) {
-      await this.createDirectory(d)
+      await createDirectory(d)
     }
 
     for (const d of updatedDirectories) {
-      await this.updateDirectory(d.directory, d.payload!)
+      await updateDirectory(d.directory, d.payload!)
     }
 
     for (const d of removedDirectories) {
@@ -63,7 +63,7 @@ export class DirectoryManager {
     }
   }
 
-  private async createDirectory(payload: DirectoryPayload) {
+  async function createDirectory(payload: DirectoryPayload) {
     const tags =
       (payload.autoTags?.length ?? 0) > 0 ? await Tag.findBy({ id: In(payload.autoTags!) }) : []
 
@@ -80,7 +80,7 @@ export class DirectoryManager {
     }
   }
 
-  private async updateDirectory(directory: Directory, payload: DirectoryPayload) {
+  async function updateDirectory(directory: Directory, payload: DirectoryPayload) {
     const currentTagIds = directory.autoTags.map((t) => t.id)
     let changed = false
 
@@ -109,5 +109,3 @@ export class DirectoryManager {
     }
   }
 }
-
-export const directoryManager = new DirectoryManager()
