@@ -9,8 +9,8 @@ import { setupFileApi } from './api/fileApi'
 import { AppDataSource } from './database/database'
 import { setupTagApi } from './api/tagApi'
 import { setupIndexApi } from './api/indexApi'
-import { thumbnailManager } from './indexables/thumbnailManager'
 import { setupStackApi } from './api/stackApi'
+import { ThumbnailManager } from './indexables/thumbnailManager'
 
 interface ImpartApp {
   mainWindow?: BrowserWindow
@@ -68,7 +68,7 @@ app.whenReady().then(async () => {
   protocol.handle('thum', async (request) => {
     let taggableId = Number(request.url.slice('thum:///'.length))
 
-    return net.fetch(url.pathToFileURL(await thumbnailManager.getThumbnail(taggableId)).toString())
+    return net.fetch(url.pathToFileURL(await ThumbnailManager.getThumbnail(taggableId)).toString())
   })
 
   // Default open or close DevTools by F12 in development

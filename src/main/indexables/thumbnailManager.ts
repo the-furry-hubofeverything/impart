@@ -7,8 +7,8 @@ import { Thumbnail } from '../database/entities/Thumbnail'
 import { APP_DIR, DEV_DIR } from '../common/appDir'
 import { thumbnailMessenger } from './thumbnailMessenger'
 
-class ThumbnailManager {
-  public async getThumbnail(taggableImageId: number) {
+export namespace ThumbnailManager {
+  export async function getThumbnail(taggableImageId: number) {
     const image = await TaggableImage.findOneOrFail({
       where: { id: taggableImageId },
       relations: { thumbnail: true }
@@ -16,7 +16,7 @@ class ThumbnailManager {
 
     if (!image.thumbnail) {
       thumbnailMessenger.buildingThumbnail()
-      image.thumbnail = await this.buildThumbnail(image)
+      image.thumbnail = await buildThumbnail(image)
       await image.save()
       thumbnailMessenger.thumbnailBuilt()
     }
@@ -24,7 +24,7 @@ class ThumbnailManager {
     return image.thumbnail.path
   }
 
-  private async buildThumbnail(image: TaggableImage) {
+  async function buildThumbnail(image: TaggableImage) {
     const thumb = await nativeImage.createThumbnailFromPath(
       image.fileIndex.path.replaceAll('/', '\\').replaceAll('%20', ' '),
       {
@@ -51,5 +51,3 @@ class ThumbnailManager {
     })
   }
 }
-
-export const thumbnailManager = new ThumbnailManager()

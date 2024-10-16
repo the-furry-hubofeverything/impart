@@ -1,23 +1,23 @@
 import { ipcMain } from 'electron'
-import { TaggableManager, taggableManager } from '../tagging/taggableManager'
+import { TaggableManager } from '../tagging/taggableManager'
 import { handleError } from '../common/handleError'
 
 export function setupTaggableApi() {
   ipcMain.handle(
     'taggable/getTaggables',
-    (e, ...params: Parameters<InstanceType<typeof TaggableManager>['getTaggables']>) =>
-      handleError(() => taggableManager.getTaggables(...params))
+    (e, ...params: Parameters<typeof TaggableManager.getTaggables>) =>
+      handleError(() => TaggableManager.getTaggables(...params))
   )
 
   ipcMain.handle(
     'taggable/getAllTaggableYears',
-    (e, ...params: Parameters<InstanceType<typeof TaggableManager>['getAllTaggableYears']>) =>
-      handleError(() => taggableManager.getAllTaggableYears(...params))
+    (e, ...params: Parameters<typeof TaggableManager.getAllTaggableYears>) =>
+      handleError(() => TaggableManager.getAllTaggableYears(...params))
   )
 
   ipcMain.handle(
     'taggable/setHidden',
-    (e, ...params: Parameters<InstanceType<typeof TaggableManager>['setHidden']>) =>
-      handleError(() => taggableManager.setHidden(...params))
+    (e, ...params: Parameters<typeof TaggableManager.setHidden>) =>
+      handleError(() => TaggableManager.setHidden(...params))
   )
 }

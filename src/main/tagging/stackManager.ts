@@ -3,8 +3,8 @@ import { Taggable } from '../database/entities/Taggable'
 import { isTaggableImage } from '../database/entities/TaggableImage'
 import { TaggableStack } from '../database/entities/TaggableStack'
 
-export class StackManager {
-  public async create(
+export namespace StackManager {
+  export async function create(
     name: string,
     taggableIds: number[],
     coverId: number,
@@ -35,7 +35,7 @@ export class StackManager {
     await stack.save()
   }
 
-  public async addToStack(taggableIds: number[], stackId: number) {
+  export async function addToStack(taggableIds: number[], stackId: number) {
     const [childTaggables, stack] = await Promise.all([
       Taggable.find({
         where: { id: In(taggableIds) }
@@ -52,7 +52,7 @@ export class StackManager {
     await stack.save()
   }
 
-  public async moveTaggablesToHome(taggableIds: number[], currentStackId: number) {
+  export async function moveTaggablesToHome(taggableIds: number[], currentStackId: number) {
     const stack = await TaggableStack.findOneOrFail({
       where: { id: currentStackId },
       relations: { taggables: true }
@@ -63,5 +63,3 @@ export class StackManager {
     await stack.save()
   }
 }
-
-export const stackManager = new StackManager()

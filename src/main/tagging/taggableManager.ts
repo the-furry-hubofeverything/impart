@@ -10,8 +10,8 @@ export interface FetchTaggablesOptions {
   onlyHidden?: boolean
 }
 
-export class TaggableManager {
-  public async getTaggables(options?: FetchTaggablesOptions) {
+export namespace TaggableManager {
+  export async function getTaggables(options?: FetchTaggablesOptions) {
     let query = Taggable.createQueryBuilder('files').setFindOptions({
       loadEagerRelations: true
     })
@@ -19,19 +19,19 @@ export class TaggableManager {
     if (options) {
       const { tagIds, order, search, year } = options
       if (tagIds && tagIds.length > 0) {
-        this.applyTags(query, tagIds)
+        applyTags(query, tagIds)
       }
 
       if (order) {
-        this.applyOrder(query, order)
+        applyOrder(query, order)
       }
 
       if (search && search != '') {
-        this.applySearch(query, search)
+        applySearch(query, search)
       }
 
       if (year) {
-        this.applyYear(query, year)
+        applyYear(query, year)
       }
     }
 
@@ -52,7 +52,7 @@ export class TaggableManager {
     return result
   }
 
-  private applyTags(query: SelectQueryBuilder<Taggable>, tagIds: number[]) {
+  function applyTags(query: SelectQueryBuilder<Taggable>, tagIds: number[]) {
     Array.from(tagIds).forEach((t, index) => {
       const alias = `tags${index}`
       const variable = `id${index}`
@@ -62,7 +62,7 @@ export class TaggableManager {
     })
   }
 
-  private applyOrder(query: SelectQueryBuilder<Taggable>, order: 'alpha' | 'date') {
+  function applyOrder(query: SelectQueryBuilder<Taggable>, order: 'alpha' | 'date') {
     switch (order) {
       case 'alpha':
         query.orderBy('COALESCE(files.fileIndex.fileName, files.name) COLLATE NOCASE')
@@ -73,7 +73,7 @@ export class TaggableManager {
     }
   }
 
-  private applySearch(query: SelectQueryBuilder<Taggable>, search: string) {
+  function applySearch(query: SelectQueryBuilder<Taggable>, search: string) {
     const terms = search.split(' ')
 
     terms.forEach((t, index) => {
@@ -84,11 +84,11 @@ export class TaggableManager {
     })
   }
 
-  private applyYear(query: SelectQueryBuilder<Taggable>, year: number) {
+  function applyYear(query: SelectQueryBuilder<Taggable>, year: number) {
     query.andWhere("strftime('%Y', files.dateModified) = :year", { year: year.toString() })
   }
 
-  public async getAllTaggableYears() {
+  export async function getAllTaggableYears() {
     const query = Taggable.createQueryBuilder()
       .select("strftime('%Y', dateModified) AS taggableYear")
       .groupBy('taggableYear')
@@ -98,7 +98,7 @@ export class TaggableManager {
     return result.map((r) => Number(r.taggableYear)).reverse()
   }
 
-  public async setHidden(ids: number[], hidden: boolean) {
+  export async function setHidden(ids: number[], hidden: boolean) {
     const taggables = await Taggable.findBy({ id: In(ids) })
 
     await Promise.all(
@@ -109,5 +109,3 @@ export class TaggableManager {
     )
   }
 }
-
-export const taggableManager = new TaggableManager()
