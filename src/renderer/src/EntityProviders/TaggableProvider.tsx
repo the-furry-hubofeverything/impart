@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { usePartialState } from '@renderer/Common/Hooks/usePartialState'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
 import { useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
@@ -9,6 +9,8 @@ interface TaggableData {
   reload: () => Promise<void>
   fetchOptions: Impart.FetchTaggablesOptions
   setFetchOptions: (options: Partial<Impart.FetchTaggablesOptions>) => void
+  stackTrail: Impart.TaggableStack[]
+  setStackTrail: (stackTrail: Impart.TaggableStack[]) => void
 }
 
 const TaggableContext = createContext<TaggableData | null>(null)
@@ -22,9 +24,16 @@ const DEFAULT_ORDER_KEY = 'defaultOrder'
 export function TaggableProvider({ children }: TaggableProviderProps) {
   const { isTaskRunning } = useTaskStatus()
 
+  const [stackTrail, setStackTrail] = useState<Impart.TaggableStack[]>([])
   const [fetchOptions, setFetchOptions] = usePartialState<Impart.FetchTaggablesOptions>(() => ({
     order: (localStorage.getItem(DEFAULT_ORDER_KEY) as 'alpha' | 'date' | null) ?? 'alpha'
   }))
+
+  useEffect(() => {
+    setFetchOptions({
+      stackId: stackTrail.length > 0 ? stackTrail[stackTrail.length - 1].id : undefined
+    })
+  }, [stackTrail])
 
   const {
     data: taggables,
@@ -55,7 +64,9 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
         isLoading,
         reload,
         fetchOptions,
-        setFetchOptions
+        setFetchOptions,
+        stackTrail,
+        setStackTrail
       }}
     >
       {children}

@@ -37,21 +37,35 @@ export namespace StackManager {
     await stack.save()
   }
 
-  export async function addToStack(taggableIds: number[], stackId: number) {
-    const [childTaggables, stack] = await Promise.all([
-      Taggable.find({
-        where: { id: In(taggableIds) }
-      }),
-      TaggableStack.findOneOrFail({ where: { id: stackId }, relations: { taggables: true } })
-    ])
-
-    childTaggables.forEach((t) => {
-      if (!stack.taggables!.some((st) => st.id === t.id)) {
-        stack.taggables!.push(t)
-      }
+  export async function addToStack(
+    taggableIds: number[],
+    stackId: number,
+    currentStackId?: number
+  ) {
+    const childTaggables = await Taggable.find({
+      where: { id: In(taggableIds) }
     })
 
-    await stack.save()
+    await Promise.all(
+      childTaggables.map(async (t) => {
+        t.parentId = stackId
+        await t.save()
+      })
+    )
+
+    if (currentStackId) {
+      const oldStack = await TaggableStack.findOneOrFail({
+        where: { id: currentStackId },
+        relations: { taggables: true }
+      })
+
+      if ((oldStack.taggables?.length ?? 0) <= 1) {
+        await removeLoadedStack(oldStack)
+        return true
+      }
+    }
+
+    return false
   }
 
   export async function moveTaggablesToHome(taggableIds: number[], currentStackId: number) {
@@ -63,6 +77,13 @@ export namespace StackManager {
     //Remove all target taggables from this stack (which will send them to the home stack)
     stack.taggables = stack.taggables!.filter((t) => !taggableIds.some((id) => t.id === id))
     await stack.save()
+
+    if (stack.taggables.length <= 1) {
+      await removeLoadedStack(stack)
+      return true
+    }
+
+    return false
   }
 
   export async function removeAllEmptyStacks() {
@@ -75,10 +96,10 @@ export namespace StackManager {
       relations: { taggables: true }
     })
 
-    await removeTaggableStack(stack)
+    await removeLoadedStack(stack)
   }
 
-  async function removeTaggableStack(stack: TaggableStack) {
+  async function removeLoadedStack(stack: TaggableStack) {
     if (stack.taggables == null) {
       throw new Error('The stack taggables were not loaded')
     }
@@ -115,7 +136,7 @@ export namespace StackManager {
       })
     }
     protected override async performStep(item: TaggableStack): Promise<void> {
-      await removeTaggableStack(item)
+      await removeLoadedStack(item)
     }
   }
 }

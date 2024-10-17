@@ -17,7 +17,13 @@ export interface BrowserPanelProps extends Omit<TaggableGridEvents, 'onHide' | '
 
 export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
   const { onBulkTag, onCreateStack, onEditTags } = gridEvents
-  const { taggables, setFetchOptions, reload: fetchTaggables } = useTaggables()
+  const {
+    taggables,
+    setFetchOptions,
+    reload: fetchTaggables,
+    stackTrail,
+    setStackTrail
+  } = useTaggables()
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
@@ -38,25 +44,15 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
     [selectItem, itemIsSelected]
   )
 
-  const [stack, setStack] = useState<Impart.TaggableStack[]>([])
-
   const editState = useEditTags()
 
   useEffect(() => {
     editState && editState.editTarget && editState.saveAndClose()
   }, [selection])
 
-  useEffect(() => {
-    if (stack.length > 0) {
-      setFetchOptions({ stackId: stack[stack.length - 1].id })
-    } else {
-      setFetchOptions({ stackId: undefined })
-    }
-  }, [stack])
-
   const options = useTaggableContextMenuOptions(selection, {
     ...gridEvents,
-    onOpenStack: (t) => setStack(stack.concat([t])),
+    onOpenStack: (t) => setStackTrail(stackTrail.concat([t])),
     onHide: async (taggables) => {
       await window.taggableApi.setHidden(
         taggables.map((t) => t.id),
@@ -87,7 +83,7 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
           <Box mt={1} pl={1}>
             <Card>
               <CardActions>
-                <GridActions stack={stack} onStackChange={setStack} />
+                <GridActions stack={stackTrail} onStackChange={setStackTrail} />
               </CardActions>
             </Card>
           </Box>
@@ -105,7 +101,7 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
               rightClickSelect(item)
               open(e)
             }}
-            onDoubleClick={(t) => isTaggableStack(t) && setStack(stack.concat([t]))}
+            onDoubleClick={(t) => isTaggableStack(t) && setStackTrail(stackTrail.concat([t]))}
           />
 
           <Fade in={selection.length > 0}>

@@ -17,10 +17,9 @@ export function useDropEvents() {
   const { callIpc: moveToHome } = useImpartIpcCall(window.stackApi.moveToHome, [])
 
   const { reload: reloadTags } = useTagGroups()
-  const {
-    reload: reloadTaggables,
-    fetchOptions: { stackId }
-  } = useTaggables()
+  const { reload: reloadTaggables, stackTrail, setStackTrail } = useTaggables()
+
+  const endOfStack = stackTrail.length > 0 ? stackTrail[stackTrail.length - 1] : undefined
 
   const dropEvents = useMemo<DropEvent[]>(
     () => [
@@ -47,8 +46,13 @@ export function useDropEvents() {
             return
           }
 
-          await addToStack([draggable.id], droppable.id)
-          reloadTaggables()
+          const deleted = await addToStack([draggable.id], droppable.id, endOfStack?.id)
+
+          if (!deleted) {
+            reloadTaggables()
+          } else {
+            setStackTrail(stackTrail.slice(0, -1))
+          }
         }
       },
 
@@ -58,16 +62,21 @@ export function useDropEvents() {
         dragType: 'taggable',
         dropType: 'home',
         action: async (draggable, droppable) => {
-          if (!stackId) {
+          if (!endOfStack) {
             throw new Error('Tried to move taggables from home to home')
           }
 
-          await moveToHome([draggable.id], stackId)
-          reloadTaggables()
+          const deleted = await moveToHome([draggable.id], endOfStack.id)
+
+          if (!deleted) {
+            reloadTaggables()
+          } else {
+            setStackTrail(stackTrail.slice(0, -1))
+          }
         }
       }
     ],
-    [reloadTags, reloadTaggables, stackId]
+    [reloadTags, reloadTaggables, stackTrail, endOfStack]
   )
 
   const isValidDrop = useCallback(
