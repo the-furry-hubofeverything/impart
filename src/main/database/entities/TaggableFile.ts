@@ -9,7 +9,7 @@ export class TaggableFile extends Taggable {
   fileIndex: FileIndex
 
   @OneToMany(() => TaggableImage, (t) => t.source)
-  images: TaggableImage[]
+  images?: TaggableImage[]
 
   @BeforeInsert()
   checkDirectory() {

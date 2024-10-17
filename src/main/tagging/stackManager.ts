@@ -44,8 +44,8 @@ export namespace StackManager {
     ])
 
     childTaggables.forEach((t) => {
-      if (!stack.taggables.some((st) => st.id === t.id)) {
-        stack.taggables.push(t)
+      if (!stack.taggables!.some((st) => st.id === t.id)) {
+        stack.taggables!.push(t)
       }
     })
 
@@ -59,7 +59,7 @@ export namespace StackManager {
     })
 
     //Remove all target taggables from this stack (which will send them to the home stack)
-    stack.taggables = stack.taggables.filter((t) => !taggableIds.some((id) => t.id === id))
+    stack.taggables = stack.taggables!.filter((t) => !taggableIds.some((id) => t.id === id))
     await stack.save()
   }
 
@@ -71,7 +71,7 @@ export namespace StackManager {
 
     if (stack.parentId != null) {
       await Promise.all(
-        stack.taggables.map(async (t) => {
+        stack.taggables!.map(async (t) => {
           t.parentId = stack.parentId
           await t.save()
         })

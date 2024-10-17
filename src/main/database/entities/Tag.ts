@@ -19,11 +19,11 @@ export class Tag extends BaseEntity {
   color?: string
 
   @ManyToOne(() => TagGroup, (g) => g.tags, { nullable: false, onDelete: 'CASCADE' })
-  group: TagGroup
+  group?: TagGroup
 
   @ManyToMany(() => Taggable, (i) => i.tags)
-  images: Taggable[]
+  images?: Taggable[]
 
   @ManyToMany(() => Directory, (d) => d.autoTags)
-  autoTagDirectories: Directory[]
+  autoTagDirectories?: Directory[]
 }

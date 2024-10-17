@@ -13,7 +13,7 @@ import { TaggableImage } from './TaggableImage'
 @ChildEntity()
 export class TaggableStack extends Taggable {
   @OneToMany(() => Taggable, (t) => t.parent, { cascade: true })
-  taggables: Taggable[]
+  taggables?: Taggable[]
 
   @Column({ nullable: true })
   name: string
