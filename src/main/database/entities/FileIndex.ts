@@ -1,7 +1,7 @@
-import { Column, Index } from 'typeorm'
+import { Column, Index, Unique } from 'typeorm'
 
 export class FileIndex {
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   path: string
 
   @Column({ nullable: false })

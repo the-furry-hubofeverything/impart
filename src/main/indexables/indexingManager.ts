@@ -45,7 +45,7 @@ export namespace IndexingManager {
       return
     }
 
-    taskQueue.add(new IndexFilesTask(directory))
+    taskQueue.add(new IndexFilesTask(directory, unindexedFiles))
     taskQueue.add(new SourceAssociationTask(directory))
 
     if ((directory.autoTags?.length ?? 0) > 0) {
@@ -152,15 +152,13 @@ export namespace IndexingManager {
 
     private directory: Directory
 
-    public constructor(directory: Directory) {
+    public constructor(directory: Directory, unindexedFiles: string[]) {
       super()
       this.directory = directory
+      this.targets = unindexedFiles
     }
 
-    public async prepare(): Promise<void> {
-      const dirents = await readdir(this.directory.path, { withFileTypes: true })
-      this.targets = dirents.filter((dirent) => dirent.isFile()).map((dirent) => dirent.name)
-    }
+    public async prepare(): Promise<void> {}
 
     protected performStep(item: string): Promise<void> {
       return index(this.directory, item)
