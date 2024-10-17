@@ -26,19 +26,9 @@ export namespace IndexingManager {
       isIndexing = true
       const directories = await Directory.find({ relations: { autoTags: true } })
 
-      let deletingFiles = false
-
       for (const directory of directories) {
         console.log('Indexing:', directory.path)
-        const willDeleteFiles = await indexFiles(directory)
-
-        if (willDeleteFiles) {
-          deletingFiles = true
-        }
-      }
-
-      if (deletingFiles) {
-        StackManager.removeAllEmptyStacks()
+        await indexFiles(directory)
       }
     } finally {
       isIndexing = false
@@ -67,10 +57,7 @@ export namespace IndexingManager {
 
     if (danglingFiles.length !== 0) {
       taskQueue.add(new RemoveIndexedFilesTask(danglingFiles))
-      return true
     }
-
-    return false
   }
 
   async function getAllIndexedFilesInDirectory(directory: Directory) {

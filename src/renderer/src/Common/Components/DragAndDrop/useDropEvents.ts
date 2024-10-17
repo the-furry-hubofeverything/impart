@@ -46,13 +46,7 @@ export function useDropEvents() {
             return
           }
 
-          const deleted = await addToStack([draggable.id], droppable.id, endOfStack?.id)
-
-          if (!deleted) {
-            reloadTaggables()
-          } else {
-            setStackTrail(stackTrail.slice(0, -1))
-          }
+          await addToStack([draggable.id], droppable.id)
         }
       },
 
@@ -66,13 +60,7 @@ export function useDropEvents() {
             throw new Error('Tried to move taggables from home to home')
           }
 
-          const deleted = await moveToHome([draggable.id], endOfStack.id)
-
-          if (!deleted) {
-            reloadTaggables()
-          } else {
-            setStackTrail(stackTrail.slice(0, -1))
-          }
+          await moveToHome([draggable.id], endOfStack.id)
         }
       }
     ],

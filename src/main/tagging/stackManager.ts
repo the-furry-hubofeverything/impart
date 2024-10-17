@@ -37,11 +37,7 @@ export namespace StackManager {
     await stack.save()
   }
 
-  export async function addToStack(
-    taggableIds: number[],
-    stackId: number,
-    currentStackId?: number
-  ) {
+  export async function addToStack(taggableIds: number[], stackId: number) {
     const childTaggables = await Taggable.find({
       where: { id: In(taggableIds) }
     })
@@ -52,20 +48,6 @@ export namespace StackManager {
         await t.save()
       })
     )
-
-    if (currentStackId) {
-      const oldStack = await TaggableStack.findOneOrFail({
-        where: { id: currentStackId },
-        relations: { taggables: true }
-      })
-
-      if ((oldStack.taggables?.length ?? 0) <= 1) {
-        await removeLoadedStack(oldStack)
-        return true
-      }
-    }
-
-    return false
   }
 
   export async function moveTaggablesToHome(taggableIds: number[], currentStackId: number) {
@@ -77,13 +59,6 @@ export namespace StackManager {
     //Remove all target taggables from this stack (which will send them to the home stack)
     stack.taggables = stack.taggables!.filter((t) => !taggableIds.some((id) => t.id === id))
     await stack.save()
-
-    if (stack.taggables.length <= 1) {
-      await removeLoadedStack(stack)
-      return true
-    }
-
-    return false
   }
 
   export async function removeAllEmptyStacks() {
@@ -116,6 +91,7 @@ export namespace StackManager {
     await stack.remove()
   }
 
+  //CURRENTLY UNUSED. Finds all stacks with 0 or 1 items and removes them
   class RemoveEmptyStacksTask extends ImpartTask<TaggableStack> {
     protected override TYPE: TaskType = 'stackRemoval'
     protected override DELAY: number = 8
