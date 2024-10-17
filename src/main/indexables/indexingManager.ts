@@ -11,6 +11,7 @@ import { taskQueue } from '../task/taskQueue'
 import dayjs from 'dayjs'
 import { TagManager } from '../tagging/tagManager'
 import { ImpartTask, TaskType } from '../task/impartTask'
+import { StackManager } from '../tagging/stackManager'
 
 export namespace IndexingManager {
   let isIndexing = false
@@ -25,9 +26,19 @@ export namespace IndexingManager {
       isIndexing = true
       const directories = await Directory.find({ relations: { autoTags: true } })
 
+      let deletingFiles = false
+
       for (const directory of directories) {
         console.log('Indexing:', directory.path)
-        await indexFiles(directory)
+        const willDeleteFiles = await indexFiles(directory)
+
+        if (willDeleteFiles) {
+          deletingFiles = true
+        }
+      }
+
+      if (deletingFiles) {
+        StackManager.removeAllEmptyStacks()
       }
     } finally {
       isIndexing = false
@@ -56,7 +67,10 @@ export namespace IndexingManager {
 
     if (danglingFiles.length !== 0) {
       taskQueue.add(new RemoveIndexedFilesTask(danglingFiles))
+      return true
     }
+
+    return false
   }
 
   async function getAllIndexedFilesInDirectory(directory: Directory) {
