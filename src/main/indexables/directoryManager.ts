@@ -6,6 +6,7 @@ import { In } from 'typeorm'
 import { Tag } from '../database/entities/Tag'
 import { TagManager } from '../tagging/tagManager'
 import { IndexingManager } from './indexingManager'
+import { zap } from '../common/zap'
 
 interface DirectoryPayload {
   path: string
@@ -40,26 +41,20 @@ export namespace DirectoryManager {
   export async function updateDirectories(directoryPayloads: DirectoryPayload[]) {
     const directories = await Directory.find({ relations: { autoTags: true } })
 
-    const unaddedDirectories = directoryPayloads.filter(
-      (p) => !directories.some((d) => d.path === p.path)
-    )
-    const updatedDirectories = directories
-      .map((d) => ({ directory: d, payload: directoryPayloads.find((p) => p.path === d.path) }))
-      .filter((d) => d.payload != null)
-    const removedDirectories = directories.filter(
-      (d) => !directoryPayloads.some((p) => p.path === d.path)
+    const zappedDirectories = zap(
+      directories,
+      directoryPayloads,
+      (first, second) => first.path === second.path
     )
 
-    for (const d of unaddedDirectories) {
-      await createDirectory(d)
-    }
-
-    for (const d of updatedDirectories) {
-      await updateDirectory(d.directory, d.payload!)
-    }
-
-    for (const d of removedDirectories) {
-      await d.remove()
+    for (const { first: directory, second: payload } of zappedDirectories) {
+      if (!directory && payload) {
+        await createDirectory(payload)
+      } else if (directory && payload) {
+        await updateDirectory(directory, payload)
+      } else if (directory && !payload) {
+        await directory.remove()
+      }
     }
   }
 
