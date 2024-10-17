@@ -68,7 +68,9 @@ app.whenReady().then(async () => {
   protocol.handle('thum', async (request) => {
     let taggableId = Number(request.url.slice('thum:///'.length))
 
-    return net.fetch(url.pathToFileURL(await ThumbnailManager.getThumbnail(taggableId)).toString())
+    return net.fetch(
+      url.pathToFileURL((await ThumbnailManager.getThumbnail(taggableId)) ?? '').toString()
+    )
   })
 
   // Default open or close DevTools by F12 in development

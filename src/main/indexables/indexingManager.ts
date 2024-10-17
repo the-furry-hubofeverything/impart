@@ -39,33 +39,33 @@ export namespace IndexingManager {
     const files = dirents.filter((dirent) => dirent.isFile()).map((dirent) => dirent.name)
 
     const indexedTaggables = await getAllIndexedFilesInDirectory(directory)
-    const unindexedFiles = files.filter((f) => !indexedTaggables.includes(f))
+    const unindexedFiles = files.filter(
+      (f) => !indexedTaggables.some((t) => t.fileIndex.fileName === f)
+    )
 
-    if (unindexedFiles.length === 0) {
-      return
+    if (unindexedFiles.length !== 0) {
+      taskQueue.add(new IndexFilesTask(directory, unindexedFiles))
+      taskQueue.add(new SourceAssociationTask(directory))
+
+      if ((directory.autoTags?.length ?? 0) > 0) {
+        TagManager.bulkTagDirectory(directory, unindexedFiles)
+      }
     }
 
-    taskQueue.add(new IndexFilesTask(directory, unindexedFiles))
-    taskQueue.add(new SourceAssociationTask(directory))
+    const danglingFiles = indexedTaggables.filter((t) => !files.includes(t.fileIndex.fileName))
 
-    if ((directory.autoTags?.length ?? 0) > 0) {
-      TagManager.bulkTagDirectory(directory, unindexedFiles)
+    if (danglingFiles.length !== 0) {
+      taskQueue.add(new RemoveIndexedFilesTask(danglingFiles))
     }
   }
 
   async function getAllIndexedFilesInDirectory(directory: Directory) {
     const [images, files] = await Promise.all([
-      TaggableImage.createQueryBuilder()
-        .select('fileIndexFilename')
-        .where('directoryPath = :dir AND fileIndexFilename IS NOT NULL', { dir: directory.path })
-        .getRawMany<{ fileIndexFilename: string }>(),
-      TaggableFile.createQueryBuilder()
-        .select('fileIndexFilename')
-        .where('directoryPath = :dir AND fileIndexFilename IS NOT NULL', { dir: directory.path })
-        .getRawMany<{ fileIndexFilename: string }>()
+      TaggableImage.findBy({ directory }),
+      TaggableFile.findBy({ directory })
     ])
 
-    return images.map((i) => i.fileIndexFilename).concat(files.map((f) => f.fileIndexFilename))
+    return [...images, ...files]
   }
 
   async function index(directory: Directory, fileName: string) {
@@ -182,6 +182,22 @@ export namespace IndexingManager {
 
     protected performStep(item: TaggableImage): Promise<void> {
       return findAndAssociateSourceFile(item, this.directory)
+    }
+  }
+
+  class RemoveIndexedFilesTask extends ImpartTask<Taggable> {
+    protected TYPE: TaskType = 'removing'
+    protected DELAY: number = 5
+
+    public constructor(taggables: Taggable[]) {
+      super()
+      this.targets = taggables
+    }
+
+    public async prepare(): Promise<void> {}
+
+    protected async performStep(item: Taggable): Promise<void> {
+      await item.remove()
     }
   }
 }

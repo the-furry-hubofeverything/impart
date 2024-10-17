@@ -9,10 +9,14 @@ import { thumbnailMessenger } from './thumbnailMessenger'
 
 export namespace ThumbnailManager {
   export async function getThumbnail(taggableImageId: number) {
-    const image = await TaggableImage.findOneOrFail({
+    const image = await TaggableImage.findOne({
       where: { id: taggableImageId },
       relations: { thumbnail: true }
     })
+
+    if (!image) {
+      return null
+    }
 
     if (!image.thumbnail) {
       thumbnailMessenger.buildingThumbnail()

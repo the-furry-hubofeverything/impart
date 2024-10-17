@@ -1,7 +1,7 @@
 import { delay } from '../common/sleep'
 import { taskMessenger } from './taskMessenger'
 
-export type TaskType = 'indexing' | 'sourceAssociation' | 'bulkTag'
+export type TaskType = 'indexing' | 'sourceAssociation' | 'bulkTag' | 'removing'
 
 export abstract class ImpartTask<T> {
   protected abstract readonly TYPE: TaskType
