@@ -1,6 +1,7 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
 
 type CallbackFunc<Payload> = (callback: (values: Payload) => void) => () => void
+type Result<Payload> = Promise<Payload | Impart.Error>
 
 declare global {
   namespace Impart {
@@ -101,12 +102,10 @@ declare global {
     }
 
     taggableApi: {
-      getTaggables: (
-        options?: Impart.FetchTaggablesOptions
-      ) => Promise<Impart.Taggable[] | Impart.Error>
-      getAllTaggableYears: () => Promise<number[] | Impart.Error>
+      getTaggables: (options?: Impart.FetchTaggablesOptions) => Result<Impart.Taggable[]>
+      getAllTaggableYears: () => Result<number[]>
 
-      setHidden: (ids: number[], hidden: boolean) => Promise<void | Impart.Error>
+      setHidden: (ids: number[], hidden: boolean) => Result<void>
     }
 
     stackApi: {
@@ -115,9 +114,10 @@ declare global {
         taggableIds: number[],
         coverId: number,
         parentStackId?: number
-      ) => Promise<void | Impart.Error>
-      addToStack: (taggableIds: number[], stackId: number) => Promise<void | Impart.Error>
-      moveToHome: (taggableIds: number[], currentStackId: number) => Promise<void | Impart.Error>
+      ) => Result<void>
+      addToStack: (taggableIds: number[], stackId: number) => Result<void>
+      moveToHome: (taggableIds: number[], currentStackId: number) => Result<void>
+      remove: (stackId: number) => Result<void>
     }
 
     taskApi: {
@@ -130,29 +130,25 @@ declare global {
     }
 
     tagApi: {
-      getGroups: () => Promise<Impart.TagGroup[] | Impart.Error>
-      editFileTags: (taggableId: number, tagIds: number[]) => Promise<void | Impart.Error>
-      bulkTag: (taggableIds: number[], tagIds: number[]) => Promise<void | Impart.Error>
-      addTags: (taggableId: number, tagIds: number[]) => Promise<void | Impart.Error>
+      getGroups: () => Result<Impart.TagGroup[]>
+      editFileTags: (taggableId: number, tagIds: number[]) => Result<void>
+      bulkTag: (taggableIds: number[], tagIds: number[]) => Result<void>
+      addTags: (taggableId: number, tagIds: number[]) => Result<void>
 
-      createGroup: () => Promise<Impart.TagGroup | Impart.Error>
-      editGroup: (
-        id: number,
-        label?: string,
-        defaultTagColor?: string
-      ) => Promise<Impart.TagGroup | Impart.Error>
-      deleteGroup: (id: number) => Promise<true | Impart.Error>
+      createGroup: () => Result<Impart.TagGroup>
+      editGroup: (id: number, label?: string, defaultTagColor?: string) => Result<Impart.TagGroup>
+      deleteGroup: (id: number) => Result<true>
 
-      createTag: (groupId: number) => Promise<Impart.Tag | Impart.Error>
-      editTag: (tagId: number, label?: string, color?: string) => Promise<Impart.Tag | Impart.Error>
-      deleteTag: (id: number) => Promise<true | Impart.Error>
+      createTag: (groupId: number) => Result<Impart.Tag>
+      editTag: (tagId: number, label?: string, color?: string) => Result<Impart.Tag>
+      deleteTag: (id: number) => Result<true>
     }
 
     indexApi: {
       indexAll: () => Promise<void>
       selectDirectory: () => Promise<string | undefined>
-      updateDirectories: (payload: Impart.Directory[]) => Promise<void | Impart.Error>
-      getDirectories: () => Promise<Impart.CountedDirectory[] | Impart.Error>
+      updateDirectories: (payload: Impart.Directory[]) => Result<void>
+      getDirectories: () => Result<Impart.CountedDirectory[]>
     }
 
     thumbnailApi: {

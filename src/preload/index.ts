@@ -42,7 +42,8 @@ contextBridge.exposeInMainWorld('taggableApi', {
 contextBridge.exposeInMainWorld('stackApi', {
   create: generateEndpoint('stack/create'),
   addToStack: generateEndpoint('stack/addToStack'),
-  moveToHome: generateEndpoint('stack/moveToHome')
+  moveToHome: generateEndpoint('stack/moveToHome'),
+  remove: generateEndpoint('stack/remove')
 })
 
 contextBridge.exposeInMainWorld('tagApi', {

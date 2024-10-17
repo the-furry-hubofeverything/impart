@@ -26,9 +26,13 @@ export class Taggable extends BaseEntity {
   @ManyToOne(() => Directory, (d) => d.taggables, { nullable: true, onDelete: 'CASCADE' })
   directory?: Directory
 
+  @Column({ nullable: true })
+  parentId?: number
+
   //This should only be pointing to TaggableStacks, but we can't set that because of weird
   // circular dependency issues ("can't load Taggable before it's instantiated" or some such)
-  @ManyToOne(() => Taggable, { nullable: true })
+  @ManyToOne(() => Taggable, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'parentId' })
   parent?: Taggable
 
   @Column({ nullable: false })

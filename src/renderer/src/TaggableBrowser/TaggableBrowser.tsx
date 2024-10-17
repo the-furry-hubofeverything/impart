@@ -1,7 +1,7 @@
 import { Stack, Box, Collapse, Card, CardContent } from '@mui/material'
 import { SettingsPanel } from './SettingsPanel'
 import { TaskStatus } from '../Common/Components/TaskStatus'
-import { TaggableGridEvents } from './BrowserPanel/taggableContextMenuOptions'
+import { TaggableGridEvents } from './BrowserPanel/useTaggableContextMenuOptions'
 import { useShowIndexingPanel } from './useShowIndexingPanel'
 import { BrowserPanel } from './BrowserPanel'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'

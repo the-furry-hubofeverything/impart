@@ -62,4 +62,22 @@ export namespace StackManager {
     stack.taggables = stack.taggables.filter((t) => !taggableIds.some((id) => t.id === id))
     await stack.save()
   }
+
+  export async function removeStack(stackId: number) {
+    const stack = await TaggableStack.findOneOrFail({
+      where: { id: stackId },
+      relations: { taggables: true }
+    })
+
+    if (stack.parentId != null) {
+      await Promise.all(
+        stack.taggables.map(async (t) => {
+          t.parentId = stack.parentId
+          await t.save()
+        })
+      )
+    }
+
+    await stack.remove()
+  }
 }

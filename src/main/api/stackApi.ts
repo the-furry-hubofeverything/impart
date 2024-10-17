@@ -16,4 +16,8 @@ export function setupStackApi() {
     (e, ...params: Parameters<typeof StackManager.moveTaggablesToHome>) =>
       handleError(() => StackManager.moveTaggablesToHome(...params))
   )
+
+  ipcMain.handle('stack/remove', (e, ...params: Parameters<typeof StackManager.removeStack>) =>
+    handleError(() => StackManager.removeStack(...params))
+  )
 }

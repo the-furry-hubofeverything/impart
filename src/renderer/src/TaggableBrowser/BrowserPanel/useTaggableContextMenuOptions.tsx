@@ -7,6 +7,10 @@ import { isTaggableImage, isTaggableStack } from '@renderer/Common/taggable'
 import BookmarksIcon from '@mui/icons-material/Bookmarks'
 import BurstModeIcon from '@mui/icons-material/BurstMode'
 import HideImageIcon from '@mui/icons-material/HideImage'
+import { useConfirmationDialog } from '@renderer/Common/Components/ConfirmationDialogProvider'
+import { useImpartIpcCall } from '@renderer/Common/Hooks/useImpartIpc'
+import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
+import CancelIcon from '@mui/icons-material/Cancel'
 
 export interface TaggableGridEvents {
   onEditTags?: (taggable: Impart.Taggable) => void
@@ -16,10 +20,15 @@ export interface TaggableGridEvents {
   onHide?: (taggable: Impart.Taggable[]) => void
 }
 
-export function getTaggableContextMenuOptions(
+export function useTaggableContextMenuOptions(
   selection: Impart.Taggable[],
   { onEditTags, onBulkTag, onCreateStack, onOpenStack, onHide }: TaggableGridEvents
 ): (ContextMenuOption | 'divider')[] {
+  const confirm = useConfirmationDialog()
+  const { callIpc: removeStack } = useImpartIpcCall(window.stackApi.remove, [])
+
+  const { reload } = useTaggables()
+
   let selectedImage: Impart.TaggableImage | undefined = undefined
 
   if (selection.length > 0 && isTaggableImage(selection[0])) {
@@ -68,6 +77,27 @@ export function getTaggableContextMenuOptions(
       label: 'Create Stack',
       hide: selection.length < 2,
       onClick: () => onCreateStack && onCreateStack(selection)
+    },
+    {
+      icon: <CancelIcon />,
+      label: 'Explode Stack',
+      hide: selection.length !== 1 || !isTaggableStack(selection[0]),
+      onClick: () =>
+        confirm(
+          {
+            title: 'Explode Stack?',
+            body: 'All items within the stack will be merged into the current view.',
+            confirmIcon: <CancelIcon />,
+            danger: true,
+            confirmText: 'Explode'
+          },
+          async () => {
+            if (selection.length === 1) {
+              await removeStack(selection[0].id)
+              reload()
+            }
+          }
+        )
     },
     'divider',
     {

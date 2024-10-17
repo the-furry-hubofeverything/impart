@@ -4,12 +4,14 @@ import { VirtualTaggableGrid } from '@renderer/Common/Components/TaggableGrid'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { GridActions } from './GridActions/GridActions'
 import { SelectionIndicator } from './SelectionIndicator'
-import { TaggableGridEvents, getTaggableContextMenuOptions } from './taggableContextMenuOptions'
+import { TaggableGridEvents, useTaggableContextMenuOptions } from './useTaggableContextMenuOptions'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { useMultiSelection } from '@renderer/Common/Hooks/useMultiSelection'
 import { isTaggableStack } from '@renderer/Common/taggable'
 import { GeneratingThumbnailIndicator } from './GeneratingThumbnailIndicator'
 import { useEditTags } from '../EditTagsProvider'
+import { useConfirmationDialog } from '@renderer/Common/Components/ConfirmationDialogProvider'
+import CallSplitIcon from '@mui/icons-material/CallSplit'
 
 export interface BrowserPanelProps extends Omit<TaggableGridEvents, 'onHide' | 'onOpenStack'> {}
 
@@ -52,19 +54,21 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
     }
   }, [stack])
 
+  const options = useTaggableContextMenuOptions(selection, {
+    ...gridEvents,
+    onOpenStack: (t) => setStack(stack.concat([t])),
+    onHide: async (taggables) => {
+      await window.taggableApi.setHidden(
+        taggables.map((t) => t.id),
+        true
+      )
+      fetchTaggables()
+    }
+  })
+
   return (
     <ContextMenu
-      options={getTaggableContextMenuOptions(selection, {
-        ...gridEvents,
-        onOpenStack: (t) => setStack(stack.concat([t])),
-        onHide: async (taggables) => {
-          await window.taggableApi.setHidden(
-            taggables.map((t) => t.id),
-            true
-          )
-          fetchTaggables()
-        }
-      })}
+      options={options}
       render={({ open }) => (
         <Stack
           position={'relative'}
