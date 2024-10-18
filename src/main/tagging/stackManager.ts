@@ -27,10 +27,21 @@ export namespace StackManager {
       cover: cover && isTaggableImage(cover) ? cover : undefined,
       taggables: childTaggables,
       dateModified: new Date(Math.max(...childTaggables.map((t) => t.dateModified.getTime()))),
-      parent
+      parent,
+      tags: findCommonTags(childTaggables)
     })
 
     await stack.save()
+  }
+
+  function findCommonTags(items: Taggable[]) {
+    let tags = items[0].tags
+
+    for (const item of items.slice(1)) {
+      tags = tags.filter((t) => item.tags.some((it) => it.id === t.id))
+    }
+
+    return tags
   }
 
   export async function addToStack(
