@@ -86,6 +86,8 @@ export function ContextMenu({ options, render, disabled, ...boxProps }: ContextM
             >
               {options
                 ?.filter((o) => o === 'divider' || !o.hide)
+                //Filter out all sequential dividers
+                .filter((o, index, all) => o !== 'divider' || all[index + 1] !== 'divider')
                 .map((o, index) =>
                   o === 'divider' ? (
                     <Divider key={index} sx={{ margin: 0 }} />

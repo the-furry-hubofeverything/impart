@@ -11,6 +11,14 @@ export function setupStackApi() {
     handleError(() => StackManager.addToStack(...params))
   )
 
+  ipcMain.handle('stack/rename', (e, ...params: Parameters<typeof StackManager.rename>) =>
+    handleError(() => StackManager.rename(...params))
+  )
+
+  ipcMain.handle('stack/setCover', (e, ...params: Parameters<typeof StackManager.setCover>) =>
+    handleError(() => StackManager.setCover(...params))
+  )
+
   ipcMain.handle(
     'stack/moveToHome',
     (e, ...params: Parameters<typeof StackManager.moveTaggablesToHome>) =>

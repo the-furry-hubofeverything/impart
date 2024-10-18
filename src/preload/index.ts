@@ -41,6 +41,8 @@ contextBridge.exposeInMainWorld('taggableApi', {
 
 contextBridge.exposeInMainWorld('stackApi', {
   create: generateEndpoint('stack/create'),
+  rename: generateEndpoint('stack/rename'),
+  setCover: generateEndpoint('stack/setCover'),
   addToStack: generateEndpoint('stack/addToStack'),
   moveToHome: generateEndpoint('stack/moveToHome'),
   remove: generateEndpoint('stack/remove')

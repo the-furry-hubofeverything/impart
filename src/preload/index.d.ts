@@ -115,6 +115,8 @@ declare global {
         coverId: number,
         parentStackId?: number
       ) => Result<void>
+      rename: (stackId: number, name: string) => Result<void>
+      setCover: (stackId: number, coverId: number) => Result<void>
       addToStack: (taggableIds: number[], stackId: number, currentStackId?: number) => Result<void>
       moveToHome: (taggableIds: number[], currentStackId: number) => Result<void>
       remove: (stackId: number) => Result<void>

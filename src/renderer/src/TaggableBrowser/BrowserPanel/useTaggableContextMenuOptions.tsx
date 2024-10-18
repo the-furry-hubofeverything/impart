@@ -7,6 +7,7 @@ import { isTaggableImage, isTaggableStack } from '@renderer/Common/taggable'
 import BookmarksIcon from '@mui/icons-material/Bookmarks'
 import BurstModeIcon from '@mui/icons-material/BurstMode'
 import HideImageIcon from '@mui/icons-material/HideImage'
+import ImageIcon from '@mui/icons-material/Image'
 import { useConfirmationDialog } from '@renderer/Common/Components/ConfirmationDialogProvider'
 import { useImpartIpcCall } from '@renderer/Common/Hooks/useImpartIpc'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
@@ -26,8 +27,9 @@ export function useTaggableContextMenuOptions(
 ): (ContextMenuOption | 'divider')[] {
   const confirm = useConfirmationDialog()
   const { callIpc: removeStack } = useImpartIpcCall(window.stackApi.remove, [])
+  const { callIpc: setCover } = useImpartIpcCall(window.stackApi.setCover, [])
 
-  const { reload } = useTaggables()
+  const { reload, stackTrail } = useTaggables()
 
   let selectedImage: Impart.TaggableImage | undefined = undefined
 
@@ -72,6 +74,7 @@ export function useTaggableContextMenuOptions(
       hide: selection.length < 2,
       onClick: () => onBulkTag && onBulkTag(selection)
     },
+    'divider',
     {
       icon: <BurstModeIcon />,
       label: 'Create Stack',
@@ -79,9 +82,17 @@ export function useTaggableContextMenuOptions(
       onClick: () => onCreateStack && onCreateStack(selection)
     },
     {
+      icon: <ImageIcon />,
+      label: 'Set as Stack Cover',
+      disabled: selection.length > 0 && !isTaggableImage(selection[0]),
+      hide: selection.length !== 1 || stackTrail.length === 0,
+      onClick: () => setCover(stackTrail[stackTrail.length - 1].id, selection[0].id)
+    },
+    {
       icon: <CancelIcon />,
       label: 'Explode Stack',
       hide: selection.length !== 1 || !isTaggableStack(selection[0]),
+      danger: true,
       onClick: () =>
         confirm(
           {

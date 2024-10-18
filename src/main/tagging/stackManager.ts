@@ -1,6 +1,6 @@
 import { In } from 'typeorm'
 import { Taggable } from '../database/entities/Taggable'
-import { isTaggableImage } from '../database/entities/TaggableImage'
+import { TaggableImage, isTaggableImage } from '../database/entities/TaggableImage'
 import { TaggableStack } from '../database/entities/TaggableStack'
 import { ImpartTask, TaskType } from '../task/impartTask'
 import { taskQueue } from '../task/taskQueue'
@@ -63,6 +63,26 @@ export namespace StackManager {
     if (currentStackId) {
       await validateStackCover(currentStackId)
     }
+  }
+
+  export async function rename(stackId: number, name: string) {
+    const stack = await TaggableStack.findOneByOrFail({ id: stackId })
+    stack.name = name
+    await stack.save()
+  }
+
+  export async function setCover(stackId: number, coverId: number) {
+    const [stack, cover] = await Promise.all([
+      TaggableStack.findOneOrFail({ where: { id: stackId }, relations: { taggables: true } }),
+      TaggableImage.findOneByOrFail({ id: coverId })
+    ])
+
+    if (!stack.taggables?.some((t) => t.id === cover.id)) {
+      throw new Error('The cover image needs to be a direct child of the stack')
+    }
+
+    stack.cover = cover
+    await stack.save()
   }
 
   export async function moveTaggablesToHome(taggableIds: number[], currentStackId: number) {
