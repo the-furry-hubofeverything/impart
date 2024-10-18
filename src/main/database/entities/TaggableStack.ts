@@ -20,7 +20,7 @@ export class TaggableStack extends Taggable {
 
   @OneToOne(() => TaggableImage, { nullable: true, eager: true })
   @JoinColumn()
-  cover?: TaggableImage
+  cover: TaggableImage | null
 
   @BeforeInsert()
   checkDirectory() {

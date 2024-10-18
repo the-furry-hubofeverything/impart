@@ -46,7 +46,8 @@ export function useDropEvents() {
             return
           }
 
-          await addToStack([draggable.id], droppable.id)
+          await addToStack([draggable.id], droppable.id, endOfStack?.id)
+          reloadTaggables()
         }
       },
 
@@ -61,6 +62,7 @@ export function useDropEvents() {
           }
 
           await moveToHome([draggable.id], endOfStack.id)
+          reloadTaggables()
         }
       }
     ],

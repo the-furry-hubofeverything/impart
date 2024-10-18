@@ -115,7 +115,7 @@ declare global {
         coverId: number,
         parentStackId?: number
       ) => Result<void>
-      addToStack: (taggableIds: number[], stackId: number) => Result<void>
+      addToStack: (taggableIds: number[], stackId: number, currentStackId?: number) => Result<void>
       moveToHome: (taggableIds: number[], currentStackId: number) => Result<void>
       remove: (stackId: number) => Result<void>
     }

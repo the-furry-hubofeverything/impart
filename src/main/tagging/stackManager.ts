@@ -37,7 +37,11 @@ export namespace StackManager {
     await stack.save()
   }
 
-  export async function addToStack(taggableIds: number[], stackId: number) {
+  export async function addToStack(
+    taggableIds: number[],
+    stackId: number,
+    currentStackId?: number
+  ) {
     const childTaggables = await Taggable.find({
       where: { id: In(taggableIds) }
     })
@@ -48,6 +52,10 @@ export namespace StackManager {
         await t.save()
       })
     )
+
+    if (currentStackId) {
+      await validateStackCover(currentStackId)
+    }
   }
 
   export async function moveTaggablesToHome(taggableIds: number[], currentStackId: number) {
@@ -59,6 +67,20 @@ export namespace StackManager {
     //Remove all target taggables from this stack (which will send them to the home stack)
     stack.taggables = stack.taggables!.filter((t) => !taggableIds.some((id) => t.id === id))
     await stack.save()
+
+    await validateStackCover(currentStackId)
+  }
+
+  async function validateStackCover(stackId: number) {
+    const stack = await TaggableStack.findOneOrFail({
+      where: { id: stackId },
+      relations: { taggables: true }
+    })
+
+    if (!stack.taggables?.some((t) => t.id === stack.cover?.id)) {
+      stack.cover = stack.taggables?.find(isTaggableImage) ?? null
+      await stack.save()
+    }
   }
 
   export async function removeAllEmptyStacks() {

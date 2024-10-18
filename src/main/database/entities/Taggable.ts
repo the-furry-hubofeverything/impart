@@ -27,13 +27,13 @@ export class Taggable extends BaseEntity {
   directory?: Directory
 
   @Column({ nullable: true })
-  parentId?: number
+  parentId: number | null
 
   //This should only be pointing to TaggableStacks, but we can't set that because of weird
   // circular dependency issues ("can't load Taggable before it's instantiated" or some such)
   @ManyToOne(() => Taggable, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'parentId' })
-  parent?: Taggable
+  parent?: Taggable | null
 
   @Column({ nullable: false })
   @Index()
