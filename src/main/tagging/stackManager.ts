@@ -9,7 +9,7 @@ export namespace StackManager {
   export async function create(
     name: string,
     taggableIds: number[],
-    coverId: number,
+    coverId?: number,
     parentStackId?: number
   ) {
     const childTaggables = await Taggable.find({
@@ -22,15 +22,11 @@ export namespace StackManager {
       parent = await TaggableStack.findOneByOrFail({ id: parentStackId })
     }
 
-    if (!cover) {
-      throw new Error('Cover taggable must be one of the items in the stack')
-    }
-
     const stack = TaggableStack.create({
       name,
-      cover: isTaggableImage(cover) ? cover : undefined,
+      cover: cover && isTaggableImage(cover) ? cover : undefined,
       taggables: childTaggables,
-      dateModified: cover.dateModified,
+      dateModified: new Date(Math.max(...childTaggables.map((t) => t.dateModified.getTime()))),
       parent
     })
 

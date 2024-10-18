@@ -15,6 +15,7 @@ import CheckIcon from '@mui/icons-material/Check'
 import { TaggableDisplay } from './Common/Components/TaggableDisplay'
 import { useImpartIpcCall } from './Common/Hooks/useImpartIpc'
 import { useTaggables } from './EntityProviders/TaggableProvider'
+import { isTaggableImage } from './Common/taggable'
 
 export interface CreateStackProps {
   items: Impart.Taggable[]
@@ -22,7 +23,7 @@ export interface CreateStackProps {
 }
 
 export function CreateStack({ onFinish, items }: CreateStackProps) {
-  const [coverImage, setCoverImage] = useState<Impart.Taggable>()
+  const [coverImage, setCoverImage] = useState(items.find(isTaggableImage))
   const [name, setName] = useState('')
   const {
     fetchOptions: { stackId }
@@ -46,7 +47,10 @@ export function CreateStack({ onFinish, items }: CreateStackProps) {
           <Typography variant="h2">Create Stack</Typography>
           <Stack flex={1} justifyContent="center" alignItems="center" gap={2}>
             <Box flex="1 1 0" width="100%" overflow="auto">
-              <TaggableGrid taggables={items} onMouseDown={(e, item) => setCoverImage(item)} />
+              <TaggableGrid
+                taggables={items}
+                onMouseDown={(e, item) => isTaggableImage(item) && setCoverImage(item)}
+              />
             </Box>
           </Stack>
         </Stack>
@@ -62,14 +66,25 @@ export function CreateStack({ onFinish, items }: CreateStackProps) {
                 />
                 <Box flex={1}>
                   <Typography fontSize={32}>Cover:</Typography>
-                  {!coverImage && <Typography fontStyle="italic">None Selected</Typography>}
-                  {coverImage && <TaggableDisplay taggable={coverImage} />}
+                  {!coverImage && (
+                    <Box textAlign="center">
+                      <Typography>None Selected!</Typography>
+                      <Typography variant="body2" fontStyle="italic" fontSize={12}>
+                        Select an image to set it as the cover of this stack.
+                      </Typography>
+                    </Box>
+                  )}
+                  {coverImage && (
+                    <Box onClick={() => setCoverImage(undefined)}>
+                      <TaggableDisplay taggable={coverImage} />
+                    </Box>
+                  )}
                 </Box>
                 {!isLoading && (
                   <Button
                     variant="contained"
                     color="success"
-                    disabled={!name || !coverImage}
+                    disabled={!name}
                     startIcon={<CheckIcon />}
                     onClick={async () => {
                       await save()
