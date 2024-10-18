@@ -7,7 +7,7 @@ import { BrowserPanel } from './BrowserPanel'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TagSelector } from '@renderer/Common/Components/TagSelector'
 import { useState, useEffect, useCallback } from 'react'
-import { EditTagsProvider } from './EditTagsProvider'
+import { EditTaggableProvider } from './EditTaggableProvider'
 
 export interface TaggableBrowserProps extends Omit<TaggableGridEvents, 'onEditTags'> {
   onSettingsPressed?: () => void
@@ -18,6 +18,7 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
   const { reload: fetchTaggables } = useTaggables()
 
   const [editTarget, setEditTarget] = useState<Impart.Taggable>()
+  const [renameTarget, setRenameTarget] = useState<Impart.TaggableStack>()
   const [editTagSelection, setEditTagSelection] = useState<Impart.Tag[]>([])
 
   const [fetchByTagSelection, setFetchByTagSelection] = useState<Impart.Tag[]>([])
@@ -29,8 +30,9 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
 
   return (
     <Stack direction="row" gap={1} height="100vh">
-      <EditTagsProvider
+      <EditTaggableProvider
         editTarget={editTarget}
+        renameTarget={renameTarget}
         tags={editTagSelection}
         onRemoveTag={(t) => {
           const copy = editTagSelection.slice()
@@ -44,6 +46,7 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
         onFinish={() => {
           fetchTaggables()
           setEditTarget(undefined)
+          setRenameTarget(undefined)
         }}
       >
         <BrowserPanel
@@ -52,6 +55,7 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
             setEditTarget(t)
             setEditTagSelection(t.tags)
           }}
+          onRenameStack={setRenameTarget}
         />
         <Box minWidth={360} flex={0.25} py={1} pr={1}>
           <Stack width="100%" height="100%">
@@ -77,7 +81,7 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
             </Box>
           </Stack>
         </Box>
-      </EditTagsProvider>
+      </EditTaggableProvider>
     </Stack>
   )
 }

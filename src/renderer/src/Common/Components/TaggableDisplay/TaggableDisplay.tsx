@@ -17,9 +17,10 @@ import { useRef } from 'react'
 import BurstModeIcon from '@mui/icons-material/BurstMode'
 import { Tag } from '../Tag'
 import { PaperStack } from './PaperStack'
-import { useEditTags } from '@renderer/TaggableBrowser/EditTagsProvider'
+import { useEditTaggable } from '@renderer/TaggableBrowser/EditTaggableProvider'
 import { BetterPopper } from '../BetterPopper'
 import { EditTags } from './EditTags'
+import { RenameStack } from './RenameStack'
 
 export const BOX_WIDTH = 220
 export const BOX_HEIGHT = 190
@@ -33,7 +34,7 @@ export interface TaggableDisplayProps {
 export function TaggableDisplay({ taggable, isSelected, showTags }: TaggableDisplayProps) {
   const anchorRef = useRef<HTMLDivElement | null>(null)
 
-  const editState = useEditTags()
+  const editState = useEditTaggable()
 
   return (
     <>
@@ -82,9 +83,20 @@ export function TaggableDisplay({ taggable, isSelected, showTags }: TaggableDisp
         </Box>
       </Stack>
       {editState !== false && (
-        <BetterPopper open={editState.editTarget?.id === taggable.id} anchorEl={anchorRef.current}>
+        <BetterPopper
+          open={
+            editState.editTarget?.id === taggable.id || editState.renameTarget?.id === taggable.id
+          }
+          anchorEl={anchorRef.current}
+        >
           <Paper elevation={8}>
-            <EditTags tags={editState.tags} removeTag={editState.removeTag} />
+            {editState.editTarget?.id === taggable.id && (
+              <EditTags tags={editState.tags} removeTag={editState.removeTag} />
+            )}
+
+            {editState.renameTarget?.id === taggable.id && isTaggableStack(taggable) && (
+              <RenameStack stack={taggable} />
+            )}
           </Paper>
         </BetterPopper>
       )}

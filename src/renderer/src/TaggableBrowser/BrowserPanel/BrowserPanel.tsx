@@ -9,7 +9,7 @@ import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { useMultiSelection } from '@renderer/Common/Hooks/useMultiSelection'
 import { isTaggableStack } from '@renderer/Common/taggable'
 import { GeneratingThumbnailIndicator } from './GeneratingThumbnailIndicator'
-import { useEditTags } from '../EditTagsProvider'
+import { useEditTaggable } from '../EditTaggableProvider'
 import { useConfirmationDialog } from '@renderer/Common/Components/ConfirmationDialogProvider'
 import CallSplitIcon from '@mui/icons-material/CallSplit'
 
@@ -44,10 +44,10 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
     [selectItem, itemIsSelected]
   )
 
-  const editState = useEditTags()
+  const editState = useEditTaggable()
 
   useEffect(() => {
-    editState && editState.editTarget && editState.saveAndClose()
+    editState && editState.editTarget && editState.saveTagsAndClose()
   }, [selection])
 
   const options = useTaggableContextMenuOptions(selection, {

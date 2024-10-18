@@ -12,18 +12,20 @@ import { useConfirmationDialog } from '@renderer/Common/Components/ConfirmationD
 import { useImpartIpcCall } from '@renderer/Common/Hooks/useImpartIpc'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import CancelIcon from '@mui/icons-material/Cancel'
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'
 
 export interface TaggableGridEvents {
   onEditTags?: (taggable: Impart.Taggable) => void
   onBulkTag?: (taggables: Impart.Taggable[]) => void
   onCreateStack?: (taggables: Impart.Taggable[]) => void
   onOpenStack?: (taggable: Impart.TaggableStack) => void
+  onRenameStack?: (taggable: Impart.TaggableStack) => void
   onHide?: (taggable: Impart.Taggable[]) => void
 }
 
 export function useTaggableContextMenuOptions(
   selection: Impart.Taggable[],
-  { onEditTags, onBulkTag, onCreateStack, onOpenStack, onHide }: TaggableGridEvents
+  { onEditTags, onBulkTag, onCreateStack, onOpenStack, onHide, onRenameStack }: TaggableGridEvents
 ): (ContextMenuOption | 'divider')[] {
   const confirm = useConfirmationDialog()
   const { callIpc: removeStack } = useImpartIpcCall(window.stackApi.remove, [])
@@ -80,6 +82,12 @@ export function useTaggableContextMenuOptions(
       label: 'Create Stack',
       hide: selection.length < 2,
       onClick: () => onCreateStack && onCreateStack(selection)
+    },
+    {
+      icon: <DriveFileRenameOutlineIcon />,
+      label: 'Rename Stack',
+      hide: selection.length !== 1 || !isTaggableStack(selection[0]),
+      onClick: () => onRenameStack && isTaggableStack(selection[0]) && onRenameStack(selection[0])
     },
     {
       icon: <ImageIcon />,
