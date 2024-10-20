@@ -1,10 +1,12 @@
-import { Stack, Typography, Button } from '@mui/material'
+import { Stack, Typography, Button, Box, Collapse, Divider, Grid2 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { useMultiSelection } from '../../Hooks/useMultiSelection'
 import { useCallback, useMemo } from 'react'
 import SparkleIcon from '@mui/icons-material/AutoAwesome'
 import { TagGroup } from './TagGroup'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
+import { Tag } from '../Tag'
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff'
 
 export interface TagSelectorProps {
   selection?: Impart.Tag[]
@@ -43,31 +45,56 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
   }
 
   return (
-    <Stack
-      gap={2}
-      height="100%"
-      sx={{
-        '& .MuiButton-root': {
-          opacity: 0,
-          transition: '0.2s'
-        },
-        '&:hover .MuiButton-root': {
-          opacity: 1
-        }
-      }}
-    >
-      {groups?.map((g) => (
-        <TagGroup key={g.id} group={g} selectedTags={selection} onSelect={selectItem} />
-      ))}
-
-      <Button
-        onClick={async () => {
-          await window.tagApi.createGroup()
-          reload()
+    <Stack height="100%" gap={2} justifyContent="space-between">
+      <Stack
+        gap={2}
+        sx={{
+          '& .MuiButton-root': {
+            opacity: 0,
+            transition: '0.2s'
+          },
+          '&:hover .MuiButton-root': {
+            opacity: 1
+          }
         }}
       >
-        <AddIcon />
-      </Button>
+        {groups?.map((g) => (
+          <TagGroup key={g.id} group={g} selectedTags={selection} onSelect={selectItem} />
+        ))}
+
+        <Button
+          onClick={async () => {
+            await window.tagApi.createGroup()
+            reload()
+          }}
+        >
+          <AddIcon />
+        </Button>
+      </Stack>
+      {(selection?.length ?? 0) > 0 && (
+        <>
+          <Divider />
+          <Box pt={1}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Typography variant="h6">Selected Tags</Typography>
+              <Button
+                startIcon={<FilterAltOffIcon />}
+                size="small"
+                onClick={() => onChange && onChange([])}
+              >
+                Clear all
+              </Button>
+            </Stack>
+            <Grid2 container spacing={2} pt={1}>
+              {selection?.map((t) => (
+                <Grid2 key={t.id}>
+                  <Tag tag={t} onClick={() => selectItem(t)} />
+                </Grid2>
+              ))}
+            </Grid2>
+          </Box>
+        </>
+      )}
     </Stack>
   )
 }
