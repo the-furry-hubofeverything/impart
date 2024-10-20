@@ -16,9 +16,10 @@ import FolderIcon from '@mui/icons-material/Folder'
 import { YearSelector } from './YearSelector'
 import { StyledToggleButtonGroup } from './StyledToggleButtonGroup'
 import { SortButtons } from './SortButtons'
-import { SearchBar } from './SearchBar'
+import { SearchBar } from '../../../Common/Components/SearchBar'
 import HomeIcon from '@mui/icons-material/Home'
 import { Droppable } from '@renderer/Common/Components/DragAndDrop/Droppable'
+import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 
 const ToolbarIconButton = styled(IconButton)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -51,6 +52,11 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 }) as typeof Chip // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 
 export function GridActions({ stack, onStackChange }: GridActionsProps) {
+  const {
+    fetchOptions: { search },
+    setFetchOptions
+  } = useTaggables()
+
   return (
     <Box width="100%">
       <Stack
@@ -62,7 +68,7 @@ export function GridActions({ stack, onStackChange }: GridActionsProps) {
         divider={<Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />}
       >
         <Box flex={1}>
-          <SearchBar />
+          <SearchBar value={search} onChange={(v) => setFetchOptions({ search: v })} />
         </Box>
         <YearSelector />
         <SortButtons />

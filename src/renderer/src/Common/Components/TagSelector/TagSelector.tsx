@@ -1,12 +1,13 @@
-import { Stack, Typography, Button, Box, Collapse, Divider, Grid2 } from '@mui/material'
+import { Stack, Typography, Button, Box, Collapse, Divider, Grid2, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { useMultiSelection } from '../../Hooks/useMultiSelection'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import SparkleIcon from '@mui/icons-material/AutoAwesome'
 import { TagGroup } from './TagGroup'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import { Tag } from '../Tag'
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff'
+import { SearchBar } from '../SearchBar'
 
 export interface TagSelectorProps {
   selection?: Impart.Tag[]
@@ -24,6 +25,8 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
     useCallback((a, b) => a.id === b.id, []),
     { toggleMode: true }
   )
+
+  const [filter, setFilter] = useState<string>()
 
   if (groups?.length === 0) {
     return (
@@ -58,8 +61,15 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
           }
         }}
       >
+        <SearchBar value={filter} onChange={setFilter} />
         {groups?.map((g) => (
-          <TagGroup key={g.id} group={g} selectedTags={selection} onSelect={selectItem} />
+          <TagGroup
+            key={g.id}
+            group={g}
+            selectedTags={selection}
+            filter={filter}
+            onSelect={selectItem}
+          />
         ))}
 
         <Button

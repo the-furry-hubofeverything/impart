@@ -8,13 +8,19 @@ import { EditTagGroup } from './EditTagGroup'
 import { Draggable } from '../DragAndDrop/Draggable'
 import { useConfirmationDialog } from '../ConfirmationDialogProvider'
 
+function fitsFilter(filter: string, tag: Impart.Tag) {
+  const terms = filter.split(' ')
+  return filter.split(' ').every((term) => tag.label?.includes(term))
+}
+
 export interface TagGroupProps {
   group: Impart.TagGroup
+  filter?: string
   selectedTags?: Impart.Tag[]
   onSelect?: (tag: Impart.Tag) => void
 }
 
-export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
+export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProps) {
   const [editMode, setEditMode] = useState(false)
   const { reload } = useTagGroups()
 
@@ -72,6 +78,7 @@ export function TagGroup({ group, selectedTags, onSelect }: TagGroupProps) {
       <Grid container py={1} spacing={2}>
         {group.tags
           ?.slice()
+          .filter((t) => !filter || filter.split(' ').every((term) => t.label?.includes(term)))
           .sort((a, b) => a.tagOrder - b.tagOrder)
           .map((t) => (
             <Grid key={t.id}>

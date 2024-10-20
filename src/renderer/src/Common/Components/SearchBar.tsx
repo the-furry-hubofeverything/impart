@@ -1,24 +1,20 @@
 import { TextField, Box, IconButton } from '@mui/material'
-import React from 'react'
 import SearchIcon from '@mui/icons-material/Search'
 import ClearIcon from '@mui/icons-material/Clear'
-import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 
-export interface SearchBarProps {}
+export interface SearchBarProps {
+  value?: string
+  onChange?: (value?: string) => void
+}
 
-export function SearchBar({}: SearchBarProps) {
-  const {
-    fetchOptions: { search },
-    setFetchOptions
-  } = useTaggables()
-
+export function SearchBar({ value, onChange }: SearchBarProps) {
   return (
     <TextField
       placeholder="Search"
       size="small"
       fullWidth
-      value={search}
-      onChange={(e) => setFetchOptions({ search: e.currentTarget.value })}
+      value={value ?? ''}
+      onChange={(e) => onChange && onChange(e.currentTarget.value)}
       slotProps={{
         input: {
           startAdornment: (
@@ -27,7 +23,7 @@ export function SearchBar({}: SearchBarProps) {
             </Box>
           ),
           endAdornment: (
-            <IconButton size="small" onClick={() => setFetchOptions({ search: '' })}>
+            <IconButton size="small" onClick={() => onChange && onChange(undefined)}>
               <ClearIcon fontSize="inherit" />
             </IconButton>
           )
