@@ -10,6 +10,7 @@ import { zap } from '../common/zap'
 
 interface DirectoryPayload {
   path: string
+  recursive: boolean
   autoTags?: number[]
 }
 
@@ -64,6 +65,7 @@ export namespace DirectoryManager {
 
     const directory = Directory.create({
       path: payload.path,
+      recursive: payload.recursive,
       autoTags: tags
     })
 

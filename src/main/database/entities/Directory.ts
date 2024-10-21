@@ -1,4 +1,12 @@
-import { BaseEntity, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn } from 'typeorm'
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryColumn
+} from 'typeorm'
 import { Taggable } from './Taggable'
 import { Tag } from './Tag'
 
@@ -6,6 +14,9 @@ import { Tag } from './Tag'
 export class Directory extends BaseEntity {
   @PrimaryColumn()
   path: string
+
+  @Column({ nullable: false, default: false })
+  recursive: boolean
 
   @OneToMany(() => Taggable, (t) => t.directory, { onDelete: 'CASCADE' })
   taggables: Taggable[]

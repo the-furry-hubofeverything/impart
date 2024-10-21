@@ -39,7 +39,7 @@ export function IndexedDirectoriesSettings({}: IndexedDirectoriesSettingsProps) 
     if (folder != null) {
       setDirectoryState(
         produce(directoryState, (next) => {
-          next.push({ path: folder, autoTags: [] })
+          next.push({ path: folder, autoTags: [], recursive: false })
         })
       )
     }

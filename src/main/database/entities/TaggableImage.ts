@@ -21,7 +21,11 @@ export class TaggableImage extends Taggable {
   @Column(() => Dimensions)
   dimensions: Dimensions
 
-  @ManyToOne(() => TaggableFile, (t) => t.images, { nullable: true, eager: true })
+  @ManyToOne(() => TaggableFile, (t) => t.images, {
+    nullable: true,
+    eager: true,
+    onDelete: 'SET NULL'
+  })
   source?: TaggableFile
 
   @OneToOne(() => Thumbnail, { nullable: true, cascade: true })

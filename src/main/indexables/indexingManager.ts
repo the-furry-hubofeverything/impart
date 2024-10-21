@@ -36,12 +36,20 @@ export namespace IndexingManager {
   }
 
   export async function indexFiles(directory: Directory) {
-    const dirents = await readdir(directory.path, { withFileTypes: true })
-    const files = dirents.filter((dirent) => dirent.isFile()).map((dirent) => dirent.name)
+    const dirents = await readdir(directory.path, {
+      withFileTypes: true,
+      recursive: directory.recursive
+    })
+    const files = dirents
+      .filter((dirent) => dirent.isFile())
+      .map((dirent) => (dirent.parentPath + '\\' + dirent.name).replace(directory.path + '\\', ''))
 
     const indexedTaggables = await getAllIndexedFilesInDirectory(directory)
     const unindexedFiles = files.filter(
-      (f) => !indexedTaggables.some((t) => t.fileIndex.fileName === f)
+      (f) =>
+        !indexedTaggables.some((t) =>
+          isSameFile(t.fileIndex.path, { dir: directory.path, name: f })
+        )
     )
 
     if (unindexedFiles.length !== 0) {
@@ -53,11 +61,26 @@ export namespace IndexingManager {
       }
     }
 
-    const danglingFiles = indexedTaggables.filter((t) => !files.includes(t.fileIndex.fileName))
+    const danglingFiles = indexedTaggables.filter(
+      (t) => !files.some((f) => isSameFile(t.fileIndex.path, { dir: directory.path, name: f }))
+    )
 
     if (danglingFiles.length !== 0) {
       taskQueue.add(new RemoveIndexedFilesTask(danglingFiles))
     }
+  }
+
+  type FilePath = { dir: string; name: string } | string
+
+  function isSameFile(first: FilePath, second: FilePath) {
+    const firstNormalized = (
+      typeof first === 'string' ? first : `${first.dir}\\${first.name}`
+    ).replace('/', '\\')
+    const secondNormalized = (
+      typeof second === 'string' ? second : `${second.dir}\\${second.name}`
+    ).replace('/', '\\')
+
+    return firstNormalized === secondNormalized
   }
 
   async function getAllIndexedFilesInDirectory(directory: Directory) {
@@ -108,10 +131,12 @@ export namespace IndexingManager {
     await indexedFile.save()
   }
 
-  async function findAndAssociateSourceFile(image: TaggableImage, directory: Directory) {
+  async function findAndAssociateSourceFile(image: TaggableImage) {
     const possibleSourceFiles = await TaggableFile.findBy({
-      fileIndex: { fileName: Like(`${path.parse(image.fileIndex.path).name}.%`) },
-      directory
+      fileIndex: {
+        fileName: Like(`${path.parse(image.fileIndex.path).name}.%`),
+        path: Like(`${path.parse(image.fileIndex.path).dir}%`)
+      }
     })
 
     if (possibleSourceFiles.length > 0) {
@@ -182,7 +207,7 @@ export namespace IndexingManager {
     }
 
     protected performStep(item: TaggableImage): Promise<void> {
-      return findAndAssociateSourceFile(item, this.directory)
+      return findAndAssociateSourceFile(item)
     }
   }
 

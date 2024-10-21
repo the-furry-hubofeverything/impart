@@ -1,4 +1,13 @@
-import { Card, CardContent, CardHeader, IconButton, Tooltip } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  FormControlLabel,
+  Grid2,
+  IconButton,
+  Switch,
+  Tooltip
+} from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import { DeletedDirectory } from './DeletedDirectory'
@@ -7,7 +16,10 @@ import UndoIcon from '@mui/icons-material/Undo'
 import { TagMultiSelect } from './TagMultiSelect'
 
 function isDifferent(first: Impart.Directory, second: Impart.Directory) {
-  return first.autoTags.slice().sort().join(',') !== second.autoTags.slice().sort().join(',')
+  return (
+    first.autoTags.slice().sort().join(',') !== second.autoTags.slice().sort().join(',') ||
+    first.recursive !== second.recursive
+  )
 }
 
 export interface DirectoryEditorProps {
@@ -63,10 +75,25 @@ export function DirectoryEditor({
         }
       />
       <CardContent>
-        <TagMultiSelect
-          selection={directoryState.autoTags}
-          onChange={(s) => onChange && onChange({ autoTags: s })}
-        />
+        <Grid2 container spacing={4} alignItems="center">
+          <Grid2>
+            <TagMultiSelect
+              selection={directoryState.autoTags}
+              onChange={(s) => onChange && onChange({ autoTags: s })}
+            />
+          </Grid2>
+          <Grid2>
+            <FormControlLabel
+              control={
+                <Switch
+                  value={directoryState.recursive}
+                  onChange={(e, checked) => onChange && onChange({ recursive: checked })}
+                />
+              }
+              label="Recursive"
+            />
+          </Grid2>
+        </Grid2>
       </CardContent>
     </Card>
   )

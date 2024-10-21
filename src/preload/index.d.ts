@@ -21,6 +21,7 @@ declare global {
 
     interface Directory {
       path: string
+      recursive: boolean
       autoTags: number[]
     }
 
