@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   CardContent,
   CardHeader,
@@ -6,7 +7,8 @@ import {
   Grid2,
   IconButton,
   Switch,
-  Tooltip
+  Tooltip,
+  Typography
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
@@ -14,6 +16,7 @@ import { DeletedDirectory } from './DeletedDirectory'
 import EmergencyIcon from '@mui/icons-material/Emergency'
 import UndoIcon from '@mui/icons-material/Undo'
 import { TagMultiSelect } from './TagMultiSelect'
+import HelpIcon from '@mui/icons-material/Help'
 
 function isDifferent(first: Impart.Directory, second: Impart.Directory) {
   return (
@@ -25,6 +28,7 @@ function isDifferent(first: Impart.Directory, second: Impart.Directory) {
 export interface DirectoryEditorProps {
   directoryState?: Impart.Directory
   originalDirectory?: Impart.Directory
+  subDirectories?: Impart.Directory[]
   onChange?: (state: Partial<Impart.Directory>) => void
   onDelete?: () => void
   onRestore?: () => void
@@ -33,6 +37,7 @@ export interface DirectoryEditorProps {
 export function DirectoryEditor({
   directoryState,
   originalDirectory,
+  subDirectories,
   onChange,
   onDelete,
   onRestore
@@ -87,10 +92,36 @@ export function DirectoryEditor({
               control={
                 <Switch
                   value={directoryState.recursive}
+                  disabled={subDirectories && subDirectories.length != 0}
                   onChange={(e, checked) => onChange && onChange({ recursive: checked })}
                 />
               }
-              label="Recursive"
+              label={
+                <>
+                  Recursive{' '}
+                  {subDirectories && subDirectories.length != 0 && (
+                    <Tooltip
+                      title={
+                        <Box>
+                          <Typography variant="caption">
+                            This directory cannot be made recursive because some of its
+                            sub-directories are already indexed:
+                          </Typography>
+                          <ul>
+                            {subDirectories.map((d) => (
+                              <Typography key={d.path} component="li" variant="caption">
+                                {d.path}
+                              </Typography>
+                            ))}
+                          </ul>
+                        </Box>
+                      }
+                    >
+                      <HelpIcon sx={{ verticalAlign: 'text-bottom' }} />
+                    </Tooltip>
+                  )}
+                </>
+              }
             />
           </Grid2>
         </Grid2>

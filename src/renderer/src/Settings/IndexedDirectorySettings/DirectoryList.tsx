@@ -56,24 +56,31 @@ export function DirectoryList({
 
   return (
     <>
-      {originalDirectories?.map((od) => (
+      {originalDirectories?.map((original) => (
         <DirectoryEditor
-          key={od.path}
-          directoryState={directoryState.find((ds) => ds.path === od.path)}
-          originalDirectory={od}
-          onChange={(state) => updateDirectory(od.path, state)}
-          onDelete={() => onChange(removeDir(od))}
-          onRestore={() => onChange(restoreDir(od))}
+          key={original.path}
+          directoryState={directoryState.find((state) => state.path === original.path)}
+          originalDirectory={original}
+          subDirectories={directoryState.filter(
+            (ds) => ds.path != original.path && ds.path.startsWith(original.path)
+          )}
+          onChange={(updatedState) => updateDirectory(original.path, updatedState)}
+          onDelete={() => onChange(removeDir(original))}
+          onRestore={() => onChange(restoreDir(original))}
         />
       ))}
       {directoryState
-        .filter((ds) => !originalDirectories?.some((od) => od.path === ds.path))
-        .map((ds) => (
+        .filter((state) => !originalDirectories?.some((original) => original.path === state.path))
+        .map((state) => (
           <DirectoryEditor
-            key={ds.path}
-            directoryState={ds}
-            onChange={(state) => updateDirectory(ds.path, state)}
-            onDelete={() => onChange(removeDir(ds))}
+            key={state.path}
+            directoryState={state}
+            subDirectories={directoryState.filter(
+              (otherState) =>
+                state.path != otherState.path && otherState.path.startsWith(state.path)
+            )}
+            onChange={(updatedState) => updateDirectory(state.path, updatedState)}
+            onDelete={() => onChange(removeDir(state))}
           />
         ))}
     </>
