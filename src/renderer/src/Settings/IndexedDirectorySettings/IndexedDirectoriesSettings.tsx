@@ -5,10 +5,12 @@ import {
   CardContent,
   CircularProgress,
   Collapse,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Stack,
   Typography
 } from '@mui/material'
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import { useDirectories } from '../../EntityProviders/DirectoryProvider'
 import { useEffect, useState } from 'react'
 import { DirectoryList } from './DirectoryList'
@@ -17,6 +19,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TaskStatus } from '@renderer/Common/Components/TaskStatus'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
+import { AddDirectory } from './AddDirectory'
 
 export interface IndexedDirectoriesSettingsProps {}
 
@@ -32,18 +35,6 @@ export function IndexedDirectoriesSettings({}: IndexedDirectoriesSettingsProps) 
   useEffect(() => {
     setDirectoryState(originalDirectories ?? [])
   }, [originalDirectories])
-
-  const addDirectory = async () => {
-    const folder = await window.indexApi.selectDirectory()
-
-    if (folder != null) {
-      setDirectoryState(
-        produce(directoryState, (next) => {
-          next.push({ path: folder, autoTags: [], recursive: false })
-        })
-      )
-    }
-  }
 
   const saveChanges = async () => {
     setSaving(true)
@@ -64,14 +55,16 @@ export function IndexedDirectoriesSettings({}: IndexedDirectoriesSettingsProps) 
           originalDirectories={originalDirectories}
           onChange={(s) => setDirectoryState(s)}
         />
-        <Button
-          startIcon={<CreateNewFolderIcon />}
-          variant="outlined"
-          size="large"
-          onClick={addDirectory}
-        >
-          Add Directory
-        </Button>
+        <AddDirectory
+          directoryState={directoryState}
+          onAdd={(folder) =>
+            setDirectoryState(
+              produce(directoryState, (next) => {
+                next.push({ path: folder, autoTags: [], recursive: false })
+              })
+            )
+          }
+        />
       </Stack>
       <Stack pt={2} direction="row" alignItems="center" justifyContent="flex-end" gap={2}>
         {isTaskRunning && (
