@@ -28,7 +28,7 @@ export class TaggableImage extends Taggable {
   })
   source?: TaggableFile
 
-  @OneToOne(() => Thumbnail, { nullable: true, cascade: true })
+  @OneToOne(() => Thumbnail, { nullable: true, cascade: true, onDelete: 'SET NULL' })
   @JoinColumn()
   thumbnail?: Thumbnail
 

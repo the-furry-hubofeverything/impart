@@ -18,6 +18,11 @@ export namespace ThumbnailManager {
       return null
     }
 
+    if (image.thumbnail && !existsSync(image.thumbnail.path)) {
+      await image.thumbnail.remove()
+      image.thumbnail = undefined
+    }
+
     if (!image.thumbnail) {
       thumbnailMessenger.buildingThumbnail()
       image.thumbnail = await buildThumbnail(image)
