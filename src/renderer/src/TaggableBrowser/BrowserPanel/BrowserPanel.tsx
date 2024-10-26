@@ -41,7 +41,8 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
     taggables,
     selection,
     setSelection,
-    useCallback((a, b) => a.id === b.id, [])
+    useCallback((a, b) => a.id === b.id, []),
+    { selectionActionOnItemChange: 'reset' }
   )
   const rightClickSelect = useCallback(
     (item: Impart.Taggable) => {

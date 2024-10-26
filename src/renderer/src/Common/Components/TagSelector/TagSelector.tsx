@@ -1,7 +1,7 @@
 import { Stack, Typography, Button, Box, Collapse, Divider, Grid2, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { useMultiSelection } from '../../Hooks/useMultiSelection'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import SparkleIcon from '@mui/icons-material/AutoAwesome'
 import { TagGroup } from './TagGroup'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
@@ -15,15 +15,14 @@ export interface TagSelectorProps {
 }
 
 export function TagSelector({ selection, onChange }: TagSelectorProps) {
-  const { groups, reload } = useTagGroups()
-  const tags = useMemo(() => groups?.flatMap((g) => g.tags ?? []) ?? [], [groups])
+  const { groups, reload, tags } = useTagGroups()
 
   const { selectItem } = useMultiSelection(
-    tags,
+    tags ?? [],
     selection ?? [],
     onChange,
     useCallback((a, b) => a.id === b.id, []),
-    { toggleMode: true }
+    { toggleMode: true, resetSelectionCondition: 'invalid' }
   )
 
   const [filter, setFilter] = useState<string>()

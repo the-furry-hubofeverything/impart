@@ -7,13 +7,27 @@ export function useMultiSelection<Item>(
   isEqual: (first: Item, second: Item) => boolean,
   options?: {
     toggleMode?: boolean
+    selectionActionOnItemChange: 'reset' | 'invalidate' | 'update' | 'nothing'
   }
 ) {
   const [previousSelection, setPreviousSelection] = useState<Item>()
 
   useEffect(() => {
-    onChange && onChange([])
-  }, [items])
+    if (
+      options?.selectionActionOnItemChange == null ||
+      options.selectionActionOnItemChange === 'update'
+    ) {
+      onChange && onChange(selection.filter((s) => items.some((i) => isEqual(s, i))))
+    }
+
+    if (
+      options?.selectionActionOnItemChange === 'reset' ||
+      (options?.selectionActionOnItemChange === 'invalidate' &&
+        selection.some((s) => !items.some((i) => isEqual(s, i))))
+    ) {
+      onChange && onChange([])
+    }
+  }, [items, options?.selectionActionOnItemChange])
 
   const itemIsSelected = useCallback(
     (item: Item) => {
