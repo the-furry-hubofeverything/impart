@@ -1,4 +1,4 @@
-import { Box, Typography, Divider, Grid2 as Grid, IconButton, Stack } from '@mui/material'
+import { Box, Typography, Divider, Grid2 as Grid, IconButton, Stack, darken } from '@mui/material'
 import { useState } from 'react'
 import { Tag } from '../Tag'
 import AddIcon from '@mui/icons-material/Add'
@@ -7,6 +7,8 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { EditTagGroup } from './EditTagGroup'
 import { Draggable } from '../DragAndDrop/Draggable'
 import { useConfirmationDialog } from '../ConfirmationDialogProvider'
+import { useDraggableHandle } from '../DragAndDrop/DraggableHandleProvider'
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 
 function fitsFilter(filter: string, tag: Impart.Tag) {
   const terms = filter.split(' ')
@@ -47,6 +49,8 @@ export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProp
     }
   }
 
+  const dragHandle = useDraggableHandle()
+
   return (
     <Box
       key={group.id}
@@ -62,17 +66,30 @@ export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProp
     >
       <EditTagGroup group={group} show={editMode} onClose={() => setEditMode(false)} />
       {!editMode && (
-        <>
-          <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Typography variant="h5" onClick={() => setEditMode(true)}>
-              {group.label ?? 'Unnamed Group'}
-            </Typography>
-            <IconButton className="fade-in-button" color="error" onClick={remove}>
-              <DeleteIcon />
-            </IconButton>
+        <Stack direction="row" gap={1}>
+          <Stack
+            justifyContent="center"
+            borderRadius={2}
+            sx={(theme) => ({
+              transition: '0.2s',
+              '&:hover': { bgcolor: darken(theme.palette.background.paper, 0.1) }
+            })}
+            {...dragHandle}
+          >
+            <DragIndicatorIcon />
           </Stack>
-          <Divider />
-        </>
+          <Box flex={1}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Typography variant="h5" onClick={() => setEditMode(true)}>
+                {group.label ?? 'Unnamed Group'}
+              </Typography>
+              <IconButton className="fade-in-button" color="error" onClick={remove}>
+                <DeleteIcon />
+              </IconButton>
+            </Stack>
+            <Divider />
+          </Box>
+        </Stack>
       )}
 
       <Grid container py={1} spacing={2}>

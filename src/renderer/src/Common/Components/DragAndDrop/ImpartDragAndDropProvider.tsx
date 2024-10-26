@@ -18,16 +18,8 @@ import { DroppableData, DroppableType } from './Droppable'
 import { useDropEvents } from './useDropEvents'
 import { createContext, useContext } from 'react'
 import { Box } from '@mui/material'
-
-function findTag(tagId: number, groups?: Impart.TagGroup[]) {
-  for (const group of groups ?? []) {
-    const tag = group.tags?.find((t) => t.id === tagId)
-
-    if (tag) {
-      return tag
-    }
-  }
-}
+import { TagGroup } from '../TagSelector/TagGroup'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 
 export interface ImpartDragAndDropData {
   isValidDrop: (dragType: DraggableType, dropType: DroppableType | DroppableType[]) => boolean
@@ -46,10 +38,11 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
   const { handle, isValidDrop } = useDropEvents()
 
   const { taggables } = useTaggables()
-  const { groups } = useTagGroups()
+  const { groups, tags } = useTagGroups()
 
   const draggedTaggable = current?.type === 'taggable' && taggables.find((t) => t.id === current.id)
-  const draggedTag = current?.type === 'tag' && findTag(current.id, groups)
+  const draggedTag = current?.type === 'tag' && tags?.find((t) => t.id === current.id)
+  const draggedGroup = current?.type === 'tagGroup' && groups?.find((t) => t.id === current.id)
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -93,10 +86,14 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
         }}
       >
         {children}
-        <DragOverlay dropAnimation={successfulDrop ? null : undefined}>
+        <DragOverlay
+          dropAnimation={successfulDrop ? null : undefined}
+          modifiers={draggedGroup ? [restrictToVerticalAxis] : undefined}
+        >
           <Box sx={{ opacity: 0.8 }}>
             {draggedTaggable && <TaggableDisplay taggable={draggedTaggable} />}
             {draggedTag && <Tag tag={draggedTag} />}
+            {draggedGroup && <TagGroup group={draggedGroup} />}
           </Box>
         </DragOverlay>
       </DndContext>

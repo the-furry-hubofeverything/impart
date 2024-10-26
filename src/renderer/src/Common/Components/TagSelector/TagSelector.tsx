@@ -8,6 +8,7 @@ import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import { Tag } from '../Tag'
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff'
 import { SearchBar } from '../SearchBar'
+import { Draggable } from '../DragAndDrop'
 
 export interface TagSelectorProps {
   selection?: Impart.Tag[]
@@ -62,13 +63,9 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
       >
         <SearchBar value={filter} onChange={setFilter} />
         {groups?.map((g) => (
-          <TagGroup
-            key={g.id}
-            group={g}
-            selectedTags={selection}
-            filter={filter}
-            onSelect={selectItem}
-          />
+          <Draggable key={g.id} type="tagGroup" id={g.id} exposeHandle>
+            <TagGroup group={g} selectedTags={selection} filter={filter} onSelect={selectItem} />
+          </Draggable>
         ))}
 
         <Button
