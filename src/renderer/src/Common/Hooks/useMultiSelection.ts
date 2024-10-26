@@ -7,7 +7,7 @@ export function useMultiSelection<Item>(
   isEqual: (first: Item, second: Item) => boolean,
   options?: {
     toggleMode?: boolean
-    selectionActionOnItemChange: 'reset' | 'invalidate' | 'update' | 'nothing'
+    selectionActionOnItemChange?: 'reset' | 'invalidate' | 'update' | 'nothing'
   }
 ) {
   const [previousSelection, setPreviousSelection] = useState<Item>()

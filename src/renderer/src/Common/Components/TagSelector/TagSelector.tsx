@@ -22,7 +22,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
     selection ?? [],
     onChange,
     useCallback((a, b) => a.id === b.id, []),
-    { toggleMode: true, resetSelectionCondition: 'invalid' }
+    { toggleMode: true }
   )
 
   const [filter, setFilter] = useState<string>()
