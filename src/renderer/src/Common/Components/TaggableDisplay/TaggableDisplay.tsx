@@ -56,7 +56,11 @@ export function TaggableDisplay({ taggable, isSelected, showTags }: TaggableDisp
           },
           transition: 'opacity 0.2s',
           opacity:
-            editState && editState.editTarget && editState.editTarget.id != taggable.id ? 0.5 : 1
+            editState &&
+            ((editState.editTarget && editState.editTarget.id != taggable.id) ||
+              (editState.renameTarget && editState.renameTarget.id !== taggable.id))
+              ? 0.5
+              : 1
         }}
       >
         {isTaggableImage(taggable) && <ImageDisplay image={taggable} />}

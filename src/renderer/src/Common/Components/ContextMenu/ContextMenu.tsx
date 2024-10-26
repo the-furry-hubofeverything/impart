@@ -15,6 +15,7 @@ import React, { useId, useState } from 'react'
 import { useContextMenu } from './useContextMenu'
 import { BetterPopper } from '../BetterPopper'
 import { v4 } from 'uuid'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 export interface ContextMenuOption {
   label: React.ReactNode
@@ -42,6 +43,8 @@ export function ContextMenu({ options, render, disabled, ...boxProps }: ContextM
   const { anchorPosition, closeMenu, handleContextMenu, open } = useContextMenu()
 
   const { left = 0, top = 0 } = { ...anchorPosition }
+
+  useHotkeys('escape', closeMenu)
 
   return (
     <>

@@ -8,6 +8,7 @@ import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TagSelector } from '@renderer/Common/Components/TagSelector'
 import { useState, useEffect, useCallback } from 'react'
 import { EditTaggableProvider } from './EditTaggableProvider'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 export interface TaggableBrowserProps extends Omit<TaggableGridEvents, 'onEditTags'> {
   onSettingsPressed?: () => void
@@ -20,6 +21,14 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
   const [editTarget, setEditTarget] = useState<Impart.Taggable>()
   const [renameTarget, setRenameTarget] = useState<Impart.TaggableStack>()
   const [editTagSelection, setEditTagSelection] = useState<Impart.Tag[]>([])
+
+  useHotkeys('escape', () => {
+    if (editTarget || renameTarget) {
+      setEditTarget(undefined)
+      setRenameTarget(undefined)
+      setEditTagSelection([])
+    }
+  })
 
   const [fetchByTagSelection, setFetchByTagSelection] = useState<Impart.Tag[]>([])
   const { setFetchOptions } = useTaggables()

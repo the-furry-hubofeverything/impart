@@ -13,6 +13,7 @@ import { BetaWarning } from './BetaWarning/BetaWarning'
 import { DndContext, DragOverlay, MouseSensor, useSensor } from '@dnd-kit/core'
 import { TaggableDisplay } from './Common/Components/TaggableDisplay'
 import { ImpartDragAndDropProvider } from './Common/Components/DragAndDrop/ImpartDragAndDropProvider'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 const SHOW_BETA_WARNING_KEY = 'showBetaWarning'
 
@@ -28,6 +29,8 @@ export function Impart({}: ImpartProps) {
   const [currentModal, setCurrentModal] = useState<ImpartModal | null>(null)
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
   const [showBetaWarning, setShowBetaWarning] = useLocalStorage(SHOW_BETA_WARNING_KEY, true)
+
+  useHotkeys('escape', () => setCurrentModal(null))
 
   const { reload: fetchTaggables } = useTaggables()
 
