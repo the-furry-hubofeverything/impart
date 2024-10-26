@@ -62,7 +62,7 @@ export namespace IndexingManager {
           ({
             taggable,
             fileName,
-            date: taggable ? (await stat(taggable.fileIndex.path)).mtime : undefined
+            date: fileName && taggable ? (await stat(taggable.fileIndex.path)).mtime : undefined
           }) satisfies Indexable
       )
     )
