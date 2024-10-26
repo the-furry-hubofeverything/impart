@@ -2,7 +2,7 @@ import { Box, CssBaseline, Dialog, DialogContent, ThemeProvider } from '@mui/mat
 import { theme } from './theme'
 import { useEffect, useState } from 'react'
 import { useTaggables } from './EntityProviders/TaggableProvider'
-import { FileBrowser } from './TaggableBrowser'
+import { TaggableBrowser } from './TaggableBrowser'
 import { IntroSetup } from './IntroSetup'
 import { useDirectories } from './EntityProviders/DirectoryProvider'
 import { Settings } from './Settings'
@@ -66,7 +66,7 @@ export function Impart({}: ImpartProps) {
   return (
     <ImpartDragAndDropProvider>
       <Box>
-        <FileBrowser
+        <TaggableBrowser
           onSettingsPressed={() => setCurrentModal('settings')}
           onBulkTag={(files) => {
             setSelection(files)

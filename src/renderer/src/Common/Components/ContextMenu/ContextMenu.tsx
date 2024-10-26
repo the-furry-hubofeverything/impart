@@ -113,12 +113,14 @@ export function ContextMenu({ options, render, disabled, ...boxProps }: ContextM
                         {o.label}
                       </ListItemText>
                       {o.shortcut && (
-                        <Typography
-                          variant="body2"
-                          sx={{ color: o.danger ? 'error.light' : 'text.secondary' }}
-                        >
-                          {o.shortcut}
-                        </Typography>
+                        <Box pt={0.25} pl={2} sx={{ opacity: 0.6 }}>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: o.danger ? 'error.light' : 'text.secondary' }}
+                          >
+                            {o.shortcut}
+                          </Typography>
+                        </Box>
                       )}
                     </MenuItem>
                   )

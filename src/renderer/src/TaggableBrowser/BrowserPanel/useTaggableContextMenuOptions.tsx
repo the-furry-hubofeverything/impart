@@ -68,12 +68,14 @@ export function useTaggableContextMenuOptions(
       icon: <TagIcon />,
       label: 'Edit Tags',
       hide: selection.length > 1,
+      shortcut: 'Ctrl + E',
       onClick: () => onEditTags && onEditTags(selection[0])
     },
     {
       icon: <BookmarksIcon />,
       label: 'Bulk Tag',
       hide: selection.length < 2,
+      shortcut: 'Ctrl + E',
       onClick: () => onBulkTag && onBulkTag(selection)
     },
     'divider',

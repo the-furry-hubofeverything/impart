@@ -1,1 +1,1 @@
-export { TaggableBrowser as FileBrowser } from './TaggableBrowser'
+export { TaggableBrowser } from './TaggableBrowser'

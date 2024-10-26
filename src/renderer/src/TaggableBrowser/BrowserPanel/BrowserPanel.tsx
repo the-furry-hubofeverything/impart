@@ -12,20 +12,28 @@ import { GeneratingThumbnailIndicator } from './GeneratingThumbnailIndicator'
 import { useEditTaggable } from '../EditTaggableProvider'
 import { useConfirmationDialog } from '@renderer/Common/Components/ConfirmationDialogProvider'
 import CallSplitIcon from '@mui/icons-material/CallSplit'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 export interface BrowserPanelProps extends Omit<TaggableGridEvents, 'onHide' | 'onOpenStack'> {}
 
 export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
   const { onBulkTag, onCreateStack, onEditTags } = gridEvents
-  const {
-    taggables,
-    setFetchOptions,
-    reload: fetchTaggables,
-    stackTrail,
-    setStackTrail
-  } = useTaggables()
+  const { taggables, reload: fetchTaggables, stackTrail, setStackTrail } = useTaggables()
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
+
+  useHotkeys('ctrl+a', (e) => {
+    e.preventDefault()
+    setSelection(taggables)
+  })
+  useHotkeys('ctrl+d', () => setSelection([]))
+  useHotkeys('ctrl+e', () => {
+    if (selection.length === 1) {
+      onEditTags && onEditTags(selection[0])
+    } else if (selection.length > 1) {
+      onBulkTag && onBulkTag(selection)
+    }
+  })
 
   const selectedItemRef = useRef(false)
 
