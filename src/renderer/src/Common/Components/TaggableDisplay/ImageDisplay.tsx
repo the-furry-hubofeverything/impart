@@ -20,7 +20,7 @@ export function ImageDisplay({ image, shrink }: ImageDisplayProps) {
   return (
     <Box
       component={'img'}
-      src={`thum:///${image.id}`}
+      src={`thum:///${image.id}/${image.dateModified.getTime()}`}
       alt={image.fileIndex.fileName}
       borderRadius={2}
       width={targetWidth}

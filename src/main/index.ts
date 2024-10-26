@@ -66,10 +66,12 @@ app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.electron')
 
   protocol.handle('thum', async (request) => {
-    let taggableId = Number(request.url.slice('thum:///'.length))
+    let params = request.url.slice('thum:///'.length)
+
+    const [taggableId] = params.split('/')
 
     return net.fetch(
-      url.pathToFileURL((await ThumbnailManager.getThumbnail(taggableId)) ?? '').toString()
+      url.pathToFileURL((await ThumbnailManager.getThumbnail(Number(taggableId))) ?? '').toString()
     )
   })
 
