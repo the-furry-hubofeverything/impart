@@ -48,7 +48,7 @@ export namespace DirectoryManager {
       (first, second) => first.path === second.path
     )
 
-    for (const { first: directory, second: payload } of zappedDirectories) {
+    for (const [directory, payload] of zappedDirectories) {
       if (!directory && payload) {
         await createDirectory(payload)
       } else if (directory && payload) {

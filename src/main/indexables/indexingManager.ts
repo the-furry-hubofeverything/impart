@@ -4,17 +4,25 @@ import path from 'path'
 import { TaggableImage, isTaggableImage } from '../database/entities/TaggableImage'
 import { TaggableFile, isTaggableFile } from '../database/entities/TaggableFile'
 import { Taggable } from '../database/entities/Taggable'
-import { In, IsNull, Like } from 'typeorm'
+import { IsNull, Like } from 'typeorm'
 import { Directory } from '../database/entities/Directory'
 import { imageSize } from 'image-size'
 import { taskQueue } from '../task/taskQueue'
 import dayjs from 'dayjs'
 import { TagManager } from '../tagging/tagManager'
 import { ImpartTask, TaskType } from '../task/impartTask'
-import { StackManager } from '../tagging/stackManager'
+import { ThumbnailManager } from './thumbnailManager'
+import { Dirent } from 'fs'
+import { zap } from '../common/zap'
 
 export namespace IndexingManager {
   let isIndexing = false
+
+  interface Indexable {
+    taggable?: TaggableImage | TaggableFile
+    fileName?: string
+    date?: Date
+  }
 
   export async function indexAll() {
     if (isIndexing) {
@@ -45,28 +53,42 @@ export namespace IndexingManager {
       .map((dirent) => (dirent.parentPath + '\\' + dirent.name).replace(directory.path + '\\', ''))
 
     const indexedTaggables = await getAllIndexedFilesInDirectory(directory)
-    const unindexedFiles = files.filter(
-      (f) =>
-        !indexedTaggables.some((t) =>
-          isSameFile(t.fileIndex.path, { dir: directory.path, name: f })
-        )
+
+    const combined = await Promise.all(
+      zap(files, indexedTaggables, (filePath, taggable) =>
+        isSameFile({ dir: directory.path, name: filePath }, taggable.fileIndex.path)
+      ).map(
+        async ([fileName, taggable]) =>
+          ({
+            taggable,
+            fileName,
+            date: taggable ? (await stat(taggable.fileIndex.path)).mtime : undefined
+          }) satisfies Indexable
+      )
     )
 
-    if (unindexedFiles.length !== 0) {
-      taskQueue.add(new IndexFilesTask(directory, unindexedFiles))
-      taskQueue.add(new SourceAssociationTask(directory))
+    const indexables = combined.filter(
+      ({ taggable, fileName, date }) =>
+        (fileName && !taggable) ||
+        (taggable && !fileName) ||
+        (taggable && date && taggable.dateModified.getTime() != date.getTime())
+    )
 
-      if ((directory.autoTags?.length ?? 0) > 0) {
-        TagManager.bulkTagDirectory(directory, unindexedFiles)
+    if (indexables.length !== 0) {
+      taskQueue.add(new IndexFilesTask(directory, indexables))
+
+      const unindexedFiles = indexables.filter(({ taggable, fileName }) => fileName && !taggable)
+
+      if (unindexedFiles.length > 0) {
+        taskQueue.add(new SourceAssociationTask(directory))
+
+        if ((directory.autoTags?.length ?? 0) > 0) {
+          TagManager.bulkTagDirectory(
+            directory,
+            unindexedFiles.map(({ fileName }) => fileName!)
+          )
+        }
       }
-    }
-
-    const danglingFiles = indexedTaggables.filter(
-      (t) => !files.some((f) => isSameFile(t.fileIndex.path, { dir: directory.path, name: f }))
-    )
-
-    if (danglingFiles.length !== 0) {
-      taskQueue.add(new RemoveIndexedFilesTask(danglingFiles))
     }
   }
 
@@ -85,14 +107,24 @@ export namespace IndexingManager {
 
   async function getAllIndexedFilesInDirectory(directory: Directory) {
     const [images, files] = await Promise.all([
-      TaggableImage.findBy({ directory }),
-      TaggableFile.findBy({ directory })
+      TaggableImage.find({ where: { directory }, relations: { thumbnail: true } }),
+      TaggableFile.find({ where: { directory } })
     ])
 
     return [...images, ...files]
   }
 
-  async function index(directory: Directory, fileName: string) {
+  async function index(directory: Directory, item: Indexable) {
+    if (item.fileName && !item.taggable) {
+      await createIndex(directory, item.fileName)
+    } else if (item.taggable && item.fileName && item.date) {
+      await updateIndex(item.taggable, item.date)
+    } else if (item.taggable && !item.fileName) {
+      await item.taggable.remove()
+    }
+  }
+
+  async function createIndex(directory: Directory, fileName: string) {
     const fullPath = `${directory.path}/${fileName}`
 
     const extension = path.extname(fullPath).toLocaleLowerCase()
@@ -129,6 +161,15 @@ export namespace IndexingManager {
     })
 
     await indexedFile.save()
+  }
+
+  async function updateIndex(item: TaggableImage | TaggableFile, date: Date) {
+    if (isTaggableImage(item)) {
+      await ThumbnailManager.regenerateThumbnail(item)
+    }
+
+    item.dateModified = date
+    await item.save()
   }
 
   async function findAndAssociateSourceFile(image: TaggableImage) {
@@ -172,21 +213,21 @@ export namespace IndexingManager {
     }
   }
 
-  class IndexFilesTask extends ImpartTask<string> {
+  class IndexFilesTask extends ImpartTask<Indexable> {
     protected TYPE: TaskType = 'indexing'
     protected DELAY: number = 18
 
     private directory: Directory
 
-    public constructor(directory: Directory, unindexedFiles: string[]) {
+    public constructor(directory: Directory, indexables: Indexable[]) {
       super()
       this.directory = directory
-      this.targets = unindexedFiles
+      this.targets = indexables
     }
 
     public async prepare(): Promise<void> {}
 
-    protected performStep(item: string): Promise<void> {
+    protected performStep(item: Indexable): Promise<void> {
       return index(this.directory, item)
     }
   }
@@ -208,22 +249,6 @@ export namespace IndexingManager {
 
     protected performStep(item: TaggableImage): Promise<void> {
       return findAndAssociateSourceFile(item)
-    }
-  }
-
-  class RemoveIndexedFilesTask extends ImpartTask<Taggable> {
-    protected TYPE: TaskType = 'removing'
-    protected DELAY: number = 5
-
-    public constructor(taggables: Taggable[]) {
-      super()
-      this.targets = taggables
-    }
-
-    public async prepare(): Promise<void> {}
-
-    protected async performStep(item: Taggable): Promise<void> {
-      await item.remove()
     }
   }
 }

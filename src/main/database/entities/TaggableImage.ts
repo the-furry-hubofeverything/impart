@@ -30,7 +30,7 @@ export class TaggableImage extends Taggable {
 
   @OneToOne(() => Thumbnail, { nullable: true, cascade: true, onDelete: 'SET NULL' })
   @JoinColumn()
-  thumbnail?: Thumbnail
+  thumbnail?: Thumbnail | null
 
   @BeforeInsert()
   checkDirectory() {

@@ -1,6 +1,6 @@
 import { app, nativeImage } from 'electron'
 import { TaggableImage } from '../database/entities/TaggableImage'
-import { writeFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir, unlink } from 'fs/promises'
 import { existsSync } from 'fs'
 import { v4 } from 'uuid'
 import { Thumbnail } from '../database/entities/Thumbnail'
@@ -19,8 +19,10 @@ export namespace ThumbnailManager {
     }
 
     if (image.thumbnail && !existsSync(image.thumbnail.path)) {
+      //Since the thumbnail is no longer valid, we want to delete it altogether
+      // rather than just remove it from the image
       await image.thumbnail.remove()
-      image.thumbnail = undefined
+      image.thumbnail = null
     }
 
     if (!image.thumbnail) {
@@ -58,5 +60,26 @@ export namespace ThumbnailManager {
       path,
       dimensions: thumb.getSize()
     })
+  }
+
+  export async function regenerateThumbnail(image: TaggableImage) {
+    if (image.thumbnail === undefined) {
+      throw new Error('The thumbnail relation was not loaded')
+    }
+
+    if (!image.thumbnail) {
+      return
+    }
+
+    const danglingThumbnail = image.thumbnail
+
+    image.thumbnail = await buildThumbnail(image)
+    await image.save()
+
+    if (existsSync(image.thumbnail.path)) {
+      await unlink(image.thumbnail.path)
+    }
+
+    await danglingThumbnail.remove()
   }
 }

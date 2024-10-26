@@ -18,8 +18,6 @@ export function TaskStatus({}: TaskStatusProps) {
         return 'Indexing...'
       case 'sourceAssociation':
         return 'Associating images with source files...'
-      case 'removing':
-        return 'Removing deleted files...'
     }
   }
 

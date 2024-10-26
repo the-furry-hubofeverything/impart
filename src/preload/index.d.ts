@@ -85,7 +85,7 @@ declare global {
     //MISC
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
 
-    type TaskType = 'indexing' | 'sourceAssociation' | 'bulkTag' | 'removing'
+    type TaskType = 'indexing' | 'sourceAssociation' | 'bulkTag'
 
     interface Error {
       message: string
