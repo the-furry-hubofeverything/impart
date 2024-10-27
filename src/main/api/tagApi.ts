@@ -20,6 +20,9 @@ export function setupTagApi() {
   ipcMain.handle('tag/editGroup', (e, ...params: Parameters<typeof TagManager.editGroup>) =>
     handleError(() => TagManager.editGroup(...params))
   )
+  ipcMain.handle('tag/reorderGroups', (e, ...params: Parameters<typeof TagManager.reorderGroups>) =>
+    handleError(() => TagManager.reorderGroups(...params))
+  )
   ipcMain.handle('tag/deleteGroup', (e, ...params: Parameters<typeof TagManager.deleteGroup>) =>
     handleError(() => TagManager.deleteGroup(...params))
   )

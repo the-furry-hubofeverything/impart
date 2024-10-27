@@ -1,12 +1,5 @@
 import { Tag } from '../database/entities/Tag'
 import { TagGroup } from '../database/entities/TagGroup'
-import { Taggable } from '../database/entities/Taggable'
-import { FindOptionsWhere, In } from 'typeorm'
-import { taskQueue } from '../task/taskQueue'
-import { ImpartTask, TaskType } from '../task/impartTask'
-import { Directory } from '../database/entities/Directory'
-import { TaggableFile } from '../database/entities/TaggableFile'
-import { TaggableImage } from '../database/entities/TaggableImage'
 
 export namespace TagManager {
   export async function getTagGroups() {
@@ -39,6 +32,61 @@ export namespace TagManager {
     await groupEntity.save()
 
     return groupEntity
+  }
+
+  export async function reorderGroups(moveId: number, beforeId: number | 'end') {
+    const groups = await TagGroup.find({ order: { groupOrder: 'ASC' } })
+    const targetIndex = groups.findIndex((g) => g.id === moveId)
+    let beforeIndex = beforeId === 'end' ? -1 : groups.findIndex((g) => g.id === beforeId)
+
+    //
+    if (targetIndex === beforeIndex || targetIndex === beforeIndex - 1) {
+      return
+    }
+
+    //When moving a group up the list, the move function removes it and then re-adds it
+    // to the list at the new spot, but the removal step actually brings all the items
+    // one index back, resulting it in getting injected one ahead. To compensate for this,
+    // if we're moving up the list, we subtract the target index
+    if (targetIndex < beforeIndex) {
+      beforeIndex--
+    }
+
+    if (targetIndex == -1) {
+      throw new Error(`Could not find tag group with id ${moveId}`)
+    }
+
+    if (beforeId !== 'end' && beforeIndex === -1) {
+      throw new Error(`Could not find tag group with id ${beforeId}`)
+    }
+
+    const updatedOrder = arrayMoveImmutable(groups, targetIndex, beforeIndex)
+
+    await Promise.all(
+      updatedOrder.map(async (group, index) => {
+        group.groupOrder = index
+        await group.save()
+      })
+    )
+  }
+
+  //Copied from https://github.com/sindresorhus/array-move/blob/main/index.js
+  // since the package wasn't working for some reason
+  function arrayMoveMutable<T>(array: T[], fromIndex: number, toIndex: number) {
+    const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex
+
+    if (startIndex >= 0 && startIndex < array.length) {
+      const endIndex = toIndex < 0 ? array.length + toIndex : toIndex
+
+      const [item] = array.splice(fromIndex, 1)
+      array.splice(endIndex, 0, item)
+    }
+  }
+
+  function arrayMoveImmutable<T>(array: T[], fromIndex: number, toIndex: number) {
+    const newArray = [...array]
+    arrayMoveMutable(newArray, fromIndex, toIndex)
+    return newArray
   }
 
   export async function deleteGroup(id: number) {

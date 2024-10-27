@@ -13,6 +13,7 @@ interface DropEvent {
 
 export function useDropEvents() {
   const { callIpc: addTags } = useImpartIpcCall(window.tagApi.addTags, [])
+  const { callIpc: reorderGroups } = useImpartIpcCall(window.tagApi.reorderGroups, [])
   const { callIpc: addToStack } = useImpartIpcCall(window.stackApi.addToStack, [])
   const { callIpc: moveToHome } = useImpartIpcCall(window.stackApi.moveToHome, [])
 
@@ -72,7 +73,8 @@ export function useDropEvents() {
         dragType: 'tagGroup',
         dropType: 'tagGroup',
         action: async (draggable, droppable) => {
-          //Registering action
+          await reorderGroups(draggable.id, droppable.id !== -1 ? droppable.id : 'end')
+          reloadTags()
         }
       }
     ],

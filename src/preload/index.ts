@@ -56,6 +56,7 @@ contextBridge.exposeInMainWorld('tagApi', {
 
   createGroup: generateEndpoint('tag/createGroup'),
   editGroup: generateEndpoint('tag/editGroup'),
+  reorderGroups: generateEndpoint('tag/reorderGroups'),
   deleteGroup: generateEndpoint('tag/deleteGroup'),
 
   createTag: generateEndpoint('tag/createTag'),

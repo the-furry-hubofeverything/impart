@@ -140,6 +140,7 @@ declare global {
 
       createGroup: () => Result<Impart.TagGroup>
       editGroup: (id: number, label?: string, defaultTagColor?: string) => Result<Impart.TagGroup>
+      reorderGroups: (moveId: number, beforeId: number | 'end') => Result<void>
       deleteGroup: (id: number) => Result<true>
 
       createTag: (groupId: number) => Result<Impart.Tag>
