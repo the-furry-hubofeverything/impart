@@ -1,6 +1,6 @@
 import { useDroppable } from '@dnd-kit/core'
 import { Box } from '@mui/material'
-import React from 'react'
+import React, { useId } from 'react'
 import { DraggableType } from './Draggable'
 import { useImpartDragAndDrop } from './ImpartDragAndDropProvider'
 
@@ -18,8 +18,10 @@ export interface DroppableProps {
 }
 
 export function Droppable({ type, id, render }: DroppableProps) {
+  const droppableId = useId()
+
   const { setNodeRef, active, isOver } = useDroppable({
-    id: `drop-${type}-${id}`,
+    id: droppableId,
     data: {
       type,
       id

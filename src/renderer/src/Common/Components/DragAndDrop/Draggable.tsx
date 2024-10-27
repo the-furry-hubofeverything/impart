@@ -1,6 +1,6 @@
 import { useDraggable } from '@dnd-kit/core'
 import { Box } from '@mui/material'
-import React from 'react'
+import React, { useId } from 'react'
 import { DraggableHandleProvider } from './DraggableHandleProvider'
 
 export type DraggableType = 'taggable' | 'tag' | 'tagGroup'
@@ -18,8 +18,10 @@ export interface DraggableProps {
 }
 
 export function Draggable({ children, id, type, exposeHandle }: DraggableProps) {
+  const draggableId = useId()
+
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id: `${type}-${id}`,
+    id: draggableId,
     data: {
       id,
       type
