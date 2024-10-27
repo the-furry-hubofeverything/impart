@@ -4,7 +4,7 @@ import React, { useId } from 'react'
 import { DraggableType } from './Draggable'
 import { useImpartDragAndDrop } from './ImpartDragAndDropProvider'
 
-export type DroppableType = 'taggable' | 'stack' | 'home'
+export type DroppableType = 'taggable' | 'stack' | 'home' | 'tagGroup'
 
 export interface DroppableData {
   type: DroppableType | DroppableType[]

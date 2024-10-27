@@ -1,4 +1,15 @@
-import { Stack, Typography, Button, Box, Collapse, Divider, Grid2, TextField } from '@mui/material'
+import {
+  Stack,
+  Typography,
+  Button,
+  Box,
+  Collapse,
+  Divider,
+  Grid2,
+  TextField,
+  styled,
+  BoxProps
+} from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { useMultiSelection } from '../../Hooks/useMultiSelection'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -9,6 +20,18 @@ import { Tag } from '../Tag'
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff'
 import { SearchBar } from '../SearchBar'
 import { Draggable } from '../DragAndDrop'
+import { Droppable } from '../DragAndDrop/Droppable'
+
+const DropIndicator = styled(Box)<BoxProps & { showIndicator: boolean }>(
+  ({ showIndicator, theme }) =>
+    showIndicator
+      ? {
+          borderTop: `3px solid ${theme.palette.primary.main}`,
+          marginTop: '-6px',
+          paddingTop: '3px'
+        }
+      : {}
+)
 
 export interface TagSelectorProps {
   selection?: Impart.Tag[]
@@ -63,19 +86,41 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
       >
         <SearchBar value={filter} onChange={setFilter} />
         {groups?.map((g) => (
-          <Draggable key={g.id} type="tagGroup" id={g.id} exposeHandle>
-            <TagGroup group={g} selectedTags={selection} filter={filter} onSelect={selectItem} />
-          </Draggable>
+          <Droppable
+            key={g.id}
+            id={g.id}
+            type="tagGroup"
+            render={({ overType }) => (
+              <DropIndicator showIndicator={overType != null}>
+                <Draggable type="tagGroup" id={g.id} exposeHandle>
+                  <TagGroup
+                    group={g}
+                    selectedTags={selection}
+                    filter={filter}
+                    onSelect={selectItem}
+                  />
+                </Draggable>
+              </DropIndicator>
+            )}
+          />
         ))}
 
-        <Button
-          onClick={async () => {
-            await window.tagApi.createGroup()
-            reload()
-          }}
-        >
-          <AddIcon />
-        </Button>
+        <Droppable
+          type="tagGroup"
+          id={-1}
+          render={({ overType }) => (
+            <DropIndicator showIndicator={overType != null}>
+              <Button
+                onClick={async () => {
+                  await window.tagApi.createGroup()
+                  reload()
+                }}
+              >
+                <AddIcon />
+              </Button>
+            </DropIndicator>
+          )}
+        />
       </Stack>
       {(selection?.length ?? 0) > 0 && (
         <>

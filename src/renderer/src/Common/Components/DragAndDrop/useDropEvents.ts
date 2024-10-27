@@ -64,9 +64,19 @@ export function useDropEvents() {
           await moveToHome([draggable.id], endOfStack.id)
           reloadTaggables()
         }
+      },
+
+      //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+      //Reorder tag groups
+      {
+        dragType: 'tagGroup',
+        dropType: 'tagGroup',
+        action: async (draggable, droppable) => {
+          //Registering action
+        }
       }
     ],
-    [reloadTags, reloadTaggables, stackTrail, endOfStack]
+    [reloadTags, reloadTaggables, endOfStack]
   )
 
   const isValidDrop = useCallback(
