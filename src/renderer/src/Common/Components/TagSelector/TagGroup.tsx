@@ -1,4 +1,14 @@
-import { Box, Typography, Divider, Grid2 as Grid, IconButton, Stack, darken } from '@mui/material'
+import {
+  Box,
+  Typography,
+  Divider,
+  Grid2 as Grid,
+  IconButton,
+  Stack,
+  darken,
+  BoxProps,
+  styled
+} from '@mui/material'
 import { useState } from 'react'
 import { Tag } from '../Tag'
 import AddIcon from '@mui/icons-material/Add'
@@ -9,11 +19,18 @@ import { Draggable } from '../DragAndDrop/Draggable'
 import { useConfirmationDialog } from '../ConfirmationDialogProvider'
 import { useDraggableHandle } from '../DragAndDrop/DraggableHandleProvider'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
+import { Droppable } from '../DragAndDrop/Droppable'
 
-function fitsFilter(filter: string, tag: Impart.Tag) {
-  const terms = filter.split(' ')
-  return filter.split(' ').every((term) => tag.label?.includes(term))
-}
+const DropIndicator = styled(Box)<BoxProps & { showIndicator: boolean }>(
+  ({ showIndicator, theme }) =>
+    showIndicator
+      ? {
+          borderLeft: `3px solid ${theme.palette.primary.main}`,
+          marginLeft: '-6px',
+          paddingLeft: '3px'
+        }
+      : {}
+)
 
 export interface TagGroupProps {
   group: Impart.TagGroup
@@ -99,27 +116,43 @@ export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProp
           .sort((a, b) => a.tagOrder - b.tagOrder)
           .map((t) => (
             <Grid key={t.id}>
-              <Draggable id={t.id} type="tag">
-                <Tag
-                  tag={t}
-                  editable
-                  onClick={() => onSelect && onSelect(t)}
-                  selected={selectedTags?.some((s) => s.id === t.id)}
-                />
-              </Draggable>
+              <Droppable
+                type="tag"
+                id={t.id}
+                render={({ overType }) => (
+                  <DropIndicator showIndicator={overType != null}>
+                    <Draggable id={t.id} type="tag">
+                      <Tag
+                        tag={t}
+                        editable
+                        onClick={() => onSelect && onSelect(t)}
+                        selected={selectedTags?.some((s) => s.id === t.id)}
+                      />
+                    </Draggable>
+                  </DropIndicator>
+                )}
+              />
             </Grid>
           ))}
         <Grid>
-          <IconButton
-            size="small"
-            onClick={async () => {
-              await window.tagApi.createTag(group.id)
-              reload()
-            }}
-            className="fade-in-button"
-          >
-            <AddIcon />
-          </IconButton>
+          <Droppable
+            type="tagGroupEnd"
+            id={group.id}
+            render={({ overType }) => (
+              <DropIndicator showIndicator={overType != null}>
+                <IconButton
+                  size="small"
+                  onClick={async () => {
+                    await window.tagApi.createTag(group.id)
+                    reload()
+                  }}
+                  className="fade-in-button"
+                >
+                  <AddIcon />
+                </IconButton>
+              </DropIndicator>
+            )}
+          />
         </Grid>
       </Grid>
     </Box>

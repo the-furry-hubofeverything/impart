@@ -14,10 +14,11 @@ interface DropEvent {
 export function useDropEvents() {
   const { callIpc: addTags } = useImpartIpcCall(window.tagApi.addTags, [])
   const { callIpc: reorderGroups } = useImpartIpcCall(window.tagApi.reorderGroups, [])
+  const { callIpc: reorderTags } = useImpartIpcCall(window.tagApi.reorderTags, [])
   const { callIpc: addToStack } = useImpartIpcCall(window.stackApi.addToStack, [])
   const { callIpc: moveToHome } = useImpartIpcCall(window.stackApi.moveToHome, [])
 
-  const { reload: reloadTags } = useTagGroups()
+  const { reload: reloadTags, groups } = useTagGroups()
   const { reload: reloadTaggables, stackTrail, setStackTrail } = useTaggables()
 
   const endOfStack = stackTrail.length > 0 ? stackTrail[stackTrail.length - 1] : undefined
@@ -76,9 +77,35 @@ export function useDropEvents() {
           await reorderGroups(draggable.id, droppable.id !== -1 ? droppable.id : 'end')
           reloadTags()
         }
+      },
+
+      //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+      //Reorder tags
+      {
+        dragType: 'tag',
+        dropType: 'tag',
+        action: async (draggable, droppable) => {
+          await reorderTags(
+            draggable.id,
+            groups?.find((g) => g.tags?.some((t) => t.id === droppable.id))?.id ?? -1,
+            droppable.id
+          )
+          reloadTags()
+        }
+      },
+
+      //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
+      //Reorder tags
+      {
+        dragType: 'tag',
+        dropType: 'tagGroupEnd',
+        action: async (draggable, droppable) => {
+          await reorderTags(draggable.id, droppable.id, 'end')
+          reloadTags()
+        }
       }
     ],
-    [reloadTags, reloadTaggables, endOfStack]
+    [reloadTags, reloadTaggables, endOfStack, groups]
   )
 
   const isValidDrop = useCallback(

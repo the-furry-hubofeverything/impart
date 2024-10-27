@@ -33,6 +33,9 @@ export function setupTagApi() {
   ipcMain.handle('tag/editTag', (e, ...params: Parameters<typeof TagManager.editTag>) =>
     handleError(() => TagManager.editTag(...params))
   )
+  ipcMain.handle('tag/reorderTags', (e, ...params: Parameters<typeof TagManager.reorderTags>) =>
+    handleError(() => TagManager.reorderTags(...params))
+  )
   ipcMain.handle('tag/deleteTag', (e, ...params: Parameters<typeof TagManager.deleteTag>) =>
     handleError(() => TagManager.deleteTag(...params))
   )

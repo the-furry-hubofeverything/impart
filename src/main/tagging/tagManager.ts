@@ -1,3 +1,4 @@
+import { arrayMoveImmutable } from '../common/arrayMove'
 import { Tag } from '../database/entities/Tag'
 import { TagGroup } from '../database/entities/TagGroup'
 
@@ -39,7 +40,6 @@ export namespace TagManager {
     const targetIndex = groups.findIndex((g) => g.id === moveId)
     let beforeIndex = beforeId === 'end' ? -1 : groups.findIndex((g) => g.id === beforeId)
 
-    //
     if (targetIndex === beforeIndex || targetIndex === beforeIndex - 1) {
       return
     }
@@ -68,25 +68,6 @@ export namespace TagManager {
         await group.save()
       })
     )
-  }
-
-  //Copied from https://github.com/sindresorhus/array-move/blob/main/index.js
-  // since the package wasn't working for some reason
-  function arrayMoveMutable<T>(array: T[], fromIndex: number, toIndex: number) {
-    const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex
-
-    if (startIndex >= 0 && startIndex < array.length) {
-      const endIndex = toIndex < 0 ? array.length + toIndex : toIndex
-
-      const [item] = array.splice(fromIndex, 1)
-      array.splice(endIndex, 0, item)
-    }
-  }
-
-  function arrayMoveImmutable<T>(array: T[], fromIndex: number, toIndex: number) {
-    const newArray = [...array]
-    arrayMoveMutable(newArray, fromIndex, toIndex)
-    return newArray
   }
 
   export async function deleteGroup(id: number) {
@@ -125,6 +106,81 @@ export namespace TagManager {
     await tagEntity.save()
 
     return tagEntity
+  }
+
+  export async function reorderTags(
+    moveId: number,
+    toGroupId: number,
+    beforeTagId: number | 'end'
+  ) {
+    const [tag, nextGroup] = await Promise.all([
+      Tag.findOneOrFail({ where: { id: moveId }, relations: { group: true } }),
+      TagGroup.findOneByOrFail({ id: toGroupId })
+    ])
+
+    const oldGroup = tag.group!
+
+    await insertTagIntoGroup(tag, nextGroup, beforeTagId)
+
+    if (oldGroup.id != nextGroup.id) {
+      await rejigTagOrder(oldGroup.id)
+    }
+  }
+
+  async function insertTagIntoGroup(tag: Tag, group: TagGroup, beforeId: number | 'end') {
+    group.tags.sort((a, b) => a.tagOrder - b.tagOrder)
+
+    const targetIndex = group.tags.findIndex((g) => g.id === tag.id)
+    let beforeIndex = beforeId === 'end' ? -1 : group.tags.findIndex((g) => g.id === beforeId)
+
+    let updatedOrder: Tag[]
+
+    //If we found the target
+    if (targetIndex !== -1) {
+      if (targetIndex === beforeIndex || targetIndex === beforeIndex - 1) {
+        return
+      }
+
+      //When moving a group up the list, the move function removes it and then re-adds it
+      // to the list at the new spot, but the removal step actually brings all the items
+      // one index back, resulting it in getting injected one ahead. To compensate for this,
+      // if we're moving up the list, we subtract the target index
+      if (targetIndex < beforeIndex) {
+        beforeIndex--
+      }
+
+      if (beforeId !== 'end' && beforeIndex === -1) {
+        throw new Error(`Could not find tag group with id ${beforeId}`)
+      }
+
+      updatedOrder = arrayMoveImmutable(group.tags, targetIndex, beforeIndex)
+    } else if (beforeId === 'end') {
+      updatedOrder = group.tags.slice()
+      updatedOrder.push(tag)
+    } else {
+      updatedOrder = group.tags.slice()
+      updatedOrder.splice(beforeIndex, 0, tag)
+    }
+
+    updatedOrder.forEach((t, index) => {
+      t.tagOrder = index
+    })
+
+    group.tags = updatedOrder
+    await group.save()
+  }
+
+  async function rejigTagOrder(groupId: number) {
+    const group = await TagGroup.findOneByOrFail({ id: groupId })
+
+    await Promise.all(
+      group.tags
+        .sort((a, b) => a.tagOrder - b.tagOrder)
+        .map(async (tag, index) => {
+          tag.tagOrder = index
+          await tag.save()
+        })
+    )
   }
 
   export async function deleteTag(id: number) {

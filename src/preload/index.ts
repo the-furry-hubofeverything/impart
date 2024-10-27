@@ -61,6 +61,7 @@ contextBridge.exposeInMainWorld('tagApi', {
 
   createTag: generateEndpoint('tag/createTag'),
   editTag: generateEndpoint('tag/editTag'),
+  reorderTags: generateEndpoint('tag/reorderTags'),
   deleteTag: generateEndpoint('tag/deleteTag')
 })
 
