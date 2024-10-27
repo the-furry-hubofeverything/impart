@@ -1,5 +1,7 @@
 import { In, SelectQueryBuilder } from 'typeorm'
 import { Taggable } from '../database/entities/Taggable'
+import { TaggableImage } from '../database/entities/TaggableImage'
+import { TaggableFile } from '../database/entities/TaggableFile'
 
 export interface FetchTaggablesOptions {
   tagIds?: number[]
@@ -105,6 +107,20 @@ export namespace TaggableManager {
       taggables.map(async (t) => {
         t.hide = hidden
         await t.save()
+      })
+    )
+  }
+
+  export async function associateImageWithFile(imageIds: number[], fileId: number) {
+    const [images, file] = await Promise.all([
+      TaggableImage.findBy({ id: In(imageIds) }),
+      TaggableFile.findOneByOrFail({ id: fileId })
+    ])
+
+    await Promise.all(
+      images.map(async (i) => {
+        i.source = file
+        await i.save()
       })
     )
   }

@@ -3,17 +3,17 @@ import { Box } from '@mui/material'
 import React, { useId } from 'react'
 import { DraggableHandleProvider } from './DraggableHandleProvider'
 
-export type DraggableType = 'taggable' | 'tag' | 'tagGroup'
+export type DraggableType = 'taggable' | 'tag' | 'tagGroup' | 'image'
 
 export interface DraggableData {
-  type: DraggableType
+  type: DraggableType | DraggableType[]
   id: number
 }
 
 export interface DraggableProps {
   children: React.ReactNode
   id: number
-  type: DraggableType
+  type: DraggableType | DraggableType[]
   exposeHandle?: boolean
 }
 

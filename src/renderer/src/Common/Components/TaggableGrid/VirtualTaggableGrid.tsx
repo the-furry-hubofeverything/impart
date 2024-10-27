@@ -7,8 +7,8 @@ import { CommonTaggableGridProps } from './TaggableGrid'
 import { useEditTaggable } from '@renderer/TaggableBrowser/EditTaggableProvider'
 import { useScrollLock } from '../../Hooks/useScrollLock'
 import { Draggable } from '../DragAndDrop/Draggable'
-import { Droppable } from '../DragAndDrop/Droppable'
-import { isTaggableStack } from '@renderer/Common/taggable'
+import { Droppable, DroppableType } from '../DragAndDrop/Droppable'
+import { isTaggableFile, isTaggableImage, isTaggableStack } from '@renderer/Common/taggable'
 
 const gridComponents: GridComponents = {
   List: forwardRef(({ children, ...props }, ref) => (
@@ -21,6 +21,16 @@ const gridComponents: GridComponents = {
       {children}
     </Grid>
   ))
+}
+
+function buildDropType(taggable: Impart.Taggable): DroppableType | DroppableType[] {
+  if (isTaggableStack(taggable)) {
+    return ['taggable', 'stack']
+  } else if (isTaggableFile(taggable)) {
+    return ['taggable', 'file']
+  }
+
+  return 'taggable'
 }
 
 export function VirtualTaggableGrid({
@@ -47,10 +57,10 @@ export function VirtualTaggableGrid({
       itemContent={(index, f) => (
         <Stack width="100%" height="100%" alignItems="center" justifyContent="center">
           <Droppable
-            type={isTaggableStack(f) ? ['taggable', 'stack'] : 'taggable'}
+            type={buildDropType(f)}
             id={f.id}
             render={({ overType }) => (
-              <Draggable id={f.id} type="taggable">
+              <Draggable id={f.id} type={isTaggableImage(f) ? ['taggable', 'image'] : 'taggable'}>
                 <Box
                   onContextMenu={(e) => {
                     onRightClick && onRightClick(e, f)

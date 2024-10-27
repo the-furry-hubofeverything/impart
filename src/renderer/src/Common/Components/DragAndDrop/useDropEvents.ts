@@ -122,7 +122,9 @@ export function useDropEvents() {
     (draggable: DraggableData, droppable: DroppableData) => {
       const event = dropEvents.find(
         (e) =>
-          e.dragType === draggable.type &&
+          (Array.isArray(draggable.type)
+            ? draggable.type.includes(e.dragType)
+            : e.dragType === draggable.type) &&
           (Array.isArray(droppable.type)
             ? droppable.type.includes(e.dropType)
             : e.dropType === droppable.type)
