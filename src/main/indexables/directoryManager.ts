@@ -7,6 +7,7 @@ import { Tag } from '../database/entities/Tag'
 import { TagManager } from '../tagging/tagManager'
 import { IndexingManager } from './indexingManager'
 import { zap } from '../common/zap'
+import { TaggingManager } from '../tagging/taggingManager'
 
 interface DirectoryPayload {
   path: string
@@ -90,7 +91,7 @@ export namespace DirectoryManager {
       directory.autoTags = nextTags
 
       await directory.save()
-      TagManager.bulkTagDirectory(directory)
+      TaggingManager.bulkTagDirectory(directory)
     }
   }
 }

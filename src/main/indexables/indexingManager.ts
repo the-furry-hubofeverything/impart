@@ -14,6 +14,7 @@ import { ImpartTask, TaskType } from '../task/impartTask'
 import { ThumbnailManager } from './thumbnailManager'
 import { Dirent } from 'fs'
 import { zap } from '../common/zap'
+import { TaggingManager } from '../tagging/taggingManager'
 
 export namespace IndexingManager {
   let isIndexing = false
@@ -83,7 +84,7 @@ export namespace IndexingManager {
         taskQueue.add(new SourceAssociationTask(directory))
 
         if ((directory.autoTags?.length ?? 0) > 0) {
-          TagManager.bulkTagDirectory(
+          TaggingManager.bulkTagDirectory(
             directory,
             unindexedFiles.map(({ fileName }) => fileName!)
           )

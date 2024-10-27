@@ -1,18 +1,19 @@
 import { ipcMain } from 'electron'
 import { TagManager } from '../tagging/tagManager'
 import { handleError } from '../common/handleError'
+import { TaggingManager } from '../tagging/taggingManager'
 
 export function setupTagApi() {
   ipcMain.handle('tag/getGroups', () => handleError(() => TagManager.getTagGroups()))
 
   ipcMain.handle('tag/editFileTags', (e, fileId: number, tagIds: number[]) =>
-    handleError(() => TagManager.setFileTags(fileId, tagIds))
+    handleError(() => TaggingManager.setFileTags(fileId, tagIds))
   )
-  ipcMain.handle('tag/bulkTag', (e, ...params: Parameters<typeof TagManager.bulkTag>) =>
-    handleError(() => TagManager.bulkTag(...params))
+  ipcMain.handle('tag/bulkTag', (e, ...params: Parameters<typeof TaggingManager.bulkTag>) =>
+    handleError(() => TaggingManager.bulkTag(...params))
   )
-  ipcMain.handle('tag/addTags', (e, ...params: Parameters<typeof TagManager.addTags>) =>
-    handleError(() => TagManager.addTags(...params))
+  ipcMain.handle('tag/addTags', (e, ...params: Parameters<typeof TaggingManager.addTags>) =>
+    handleError(() => TaggingManager.addTags(...params))
   )
 
   ipcMain.handle('tag/createGroup', () => handleError(() => TagManager.createGroup()))
