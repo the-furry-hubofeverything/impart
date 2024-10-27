@@ -11,7 +11,7 @@ import CheckIcon from '@mui/icons-material/Check'
 
 export interface ConfirmProps {
   title?: string
-  body: React.ReactNode
+  body?: React.ReactNode
   danger?: boolean
   confirmText?: string
   confirmIcon?: React.ReactNode
@@ -44,7 +44,7 @@ function Confirm({
   return (
     <Dialog open={open} onClose={onClose}>
       {title && <DialogTitle>{title}</DialogTitle>}
-      <DialogContent>{body}</DialogContent>
+      {body && <DialogContent>{body}</DialogContent>}
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         {isConfirming && <CircularProgress />}

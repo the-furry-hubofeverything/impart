@@ -60,7 +60,7 @@ export function VirtualTaggableGrid({
             type={buildDropType(f)}
             id={f.id}
             render={({ overType }) => (
-              <Draggable id={f.id} type={isTaggableImage(f) ? ['taggable', 'image'] : 'taggable'}>
+              <Draggable id={f.id} type="taggable">
                 <Box
                   onContextMenu={(e) => {
                     onRightClick && onRightClick(e, f)

@@ -89,7 +89,7 @@ export function GridActions({ stack, onStackChange }: GridActionsProps) {
             />
             {stack.map((s, index) => (
               <Droppable
-                type="stack"
+                type="taggable"
                 id={s.id}
                 render={() => (
                   <StyledBreadcrumb

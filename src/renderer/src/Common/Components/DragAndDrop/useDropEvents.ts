@@ -4,6 +4,8 @@ import { DroppableData, DroppableType } from './Droppable'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import { useImpartIpcCall } from '../../Hooks/useImpartIpc'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
+import { useTaggableSelection } from '@renderer/TaggableSelectionProvider'
+import { useConfirmationDialog } from '../ConfirmationDialogProvider'
 
 interface DropEvent {
   dragType: DraggableType
@@ -12,14 +14,18 @@ interface DropEvent {
 }
 
 export function useDropEvents() {
+  const { callIpc: bulkTag } = useImpartIpcCall(window.tagApi.bulkTag, [])
   const { callIpc: addTags } = useImpartIpcCall(window.tagApi.addTags, [])
   const { callIpc: reorderGroups } = useImpartIpcCall(window.tagApi.reorderGroups, [])
   const { callIpc: reorderTags } = useImpartIpcCall(window.tagApi.reorderTags, [])
   const { callIpc: addToStack } = useImpartIpcCall(window.stackApi.addToStack, [])
   const { callIpc: moveToHome } = useImpartIpcCall(window.stackApi.moveToHome, [])
 
+  const confirm = useConfirmationDialog()
+
   const { reload: reloadTags, groups } = useTagGroups()
-  const { reload: reloadTaggables, stackTrail, setStackTrail } = useTaggables()
+  const { reload: reloadTaggables, stackTrail } = useTaggables()
+  const { selection } = useTaggableSelection()
 
   const endOfStack = stackTrail.length > 0 ? stackTrail[stackTrail.length - 1] : undefined
 
@@ -31,24 +37,44 @@ export function useDropEvents() {
         dragType: 'tag',
         dropType: 'taggable',
         action: async (draggable, droppable) => {
-          await addTags(droppable.id, [draggable.id])
-          reloadTags()
+          if (selection.length > 1 && selection.some((t) => t.id === droppable.id)) {
+            confirm(
+              {
+                title: `Tag ${selection.length} items?`,
+                confirmText: 'Tag'
+              },
+              async () => {
+                await bulkTag(
+                  selection.map((t) => t.id),
+                  [draggable.id]
+                )
+                reloadTaggables()
+              }
+            )
+          } else {
+            await addTags(droppable.id, [draggable.id])
+            reloadTaggables()
+          }
         }
       },
 
       //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
-      //Add item to stack
+      //Add taggables to stack
       {
         dragType: 'taggable',
         dropType: 'stack',
-        action: async (draggable, droppable) => {
+        action: async (_, droppable) => {
           //Learned this the hard way, we don't want to be able to add a stack
           // to itself
-          if (draggable.id === droppable.id) {
+          if (selection.some((t) => t.id === droppable.id)) {
             return
           }
 
-          await addToStack([draggable.id], droppable.id, endOfStack?.id)
+          await addToStack(
+            selection.map((t) => t.id),
+            droppable.id,
+            endOfStack?.id
+          )
           reloadTaggables()
         }
       },
@@ -63,7 +89,11 @@ export function useDropEvents() {
             throw new Error('Tried to move taggables from home to home')
           }
 
-          await moveToHome([draggable.id], endOfStack.id)
+          await moveToHome(
+            selection.map((t) => t.id),
+            endOfStack.id
+          )
+
           reloadTaggables()
         }
       },
@@ -105,7 +135,7 @@ export function useDropEvents() {
         }
       }
     ],
-    [reloadTags, reloadTaggables, endOfStack, groups]
+    [reloadTags, reloadTaggables, endOfStack, groups, selection]
   )
 
   const isValidDrop = useCallback(
