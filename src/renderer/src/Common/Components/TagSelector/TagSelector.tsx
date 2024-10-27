@@ -1,26 +1,14 @@
-import {
-  Stack,
-  Typography,
-  Button,
-  Box,
-  Collapse,
-  Divider,
-  Grid2,
-  TextField,
-  styled,
-  BoxProps
-} from '@mui/material'
+import { Stack, Typography, Button, Box, Divider, styled, BoxProps } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { useMultiSelection } from '../../Hooks/useMultiSelection'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import SparkleIcon from '@mui/icons-material/AutoAwesome'
+import { useCallback, useState } from 'react'
 import { TagGroup } from './TagGroup'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
-import { Tag } from '../Tag'
-import FilterAltOffIcon from '@mui/icons-material/FilterAltOff'
 import { SearchBar } from '../SearchBar'
 import { Draggable } from '../DragAndDrop'
 import { Droppable } from '../DragAndDrop/Droppable'
+import { TagSelection } from './TagSelection'
+import { EmptyTagGroups } from './EmptyTagGroups'
 
 const DropIndicator = styled(Box)<BoxProps & { showIndicator: boolean }>(
   ({ showIndicator, theme }) =>
@@ -52,22 +40,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
   const [filter, setFilter] = useState<string>()
 
   if (groups?.length === 0) {
-    return (
-      <Stack alignItems="center" gap={2} pt={5}>
-        <Typography>No tag groups have been created yet!</Typography>
-        <Button
-          variant="contained"
-          startIcon={<SparkleIcon />}
-          color="success"
-          onClick={async () => {
-            await window.tagApi.createGroup()
-            reload()
-          }}
-        >
-          Create New Group
-        </Button>
-      </Stack>
-    )
+    return <EmptyTagGroups />
   }
 
   return (
@@ -115,6 +88,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
                   await window.tagApi.createGroup()
                   reload()
                 }}
+                fullWidth
               >
                 <AddIcon />
               </Button>
@@ -125,25 +99,11 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
       {(selection?.length ?? 0) > 0 && (
         <>
           <Divider />
-          <Box pt={1}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Typography variant="h6">Selected Tags</Typography>
-              <Button
-                startIcon={<FilterAltOffIcon />}
-                size="small"
-                onClick={() => onChange && onChange([])}
-              >
-                Clear all
-              </Button>
-            </Stack>
-            <Grid2 container spacing={2} pt={1}>
-              {selection?.map((t) => (
-                <Grid2 key={t.id}>
-                  <Tag tag={t} onClick={() => selectItem(t)} />
-                </Grid2>
-              ))}
-            </Grid2>
-          </Box>
+          <TagSelection
+            selection={selection}
+            onClick={selectItem}
+            onClear={() => onChange && onChange([])}
+          />
         </>
       )}
     </Stack>
