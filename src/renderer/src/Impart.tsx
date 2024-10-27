@@ -14,6 +14,7 @@ import { DndContext, DragOverlay, MouseSensor, useSensor } from '@dnd-kit/core'
 import { TaggableDisplay } from './Common/Components/TaggableDisplay'
 import { ImpartDragAndDropProvider } from './Common/Components/DragAndDrop/ImpartDragAndDropProvider'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { TaggableSelectionProvider } from './TaggableSelectionProvider'
 
 const SHOW_BETA_WARNING_KEY = 'showBetaWarning'
 
@@ -67,25 +68,25 @@ export function Impart({}: ImpartProps) {
   }
 
   return (
-    <ImpartDragAndDropProvider>
-      <Box>
-        <TaggableBrowser
-          onSettingsPressed={() => setCurrentModal('settings')}
-          onBulkTag={(files) => {
-            setSelection(files)
-            setCurrentModal('bulkTag')
-          }}
-          onCreateStack={(files) => {
-            setSelection(files)
-            setCurrentModal('createStack')
-          }}
-        />
-        <Dialog open={currentModal != null} onClose={() => setCurrentModal(null)} fullScreen>
-          <DialogContent sx={(theme) => ({ bgcolor: theme.palette.background.default })}>
-            {renderContent()}
-          </DialogContent>
-        </Dialog>
-      </Box>
-    </ImpartDragAndDropProvider>
+    <TaggableSelectionProvider selection={selection} setSelection={setSelection}>
+      <ImpartDragAndDropProvider>
+        <Box>
+          <TaggableBrowser
+            onSettingsPressed={() => setCurrentModal('settings')}
+            onBulkTag={() => {
+              setCurrentModal('bulkTag')
+            }}
+            onCreateStack={() => {
+              setCurrentModal('createStack')
+            }}
+          />
+          <Dialog open={currentModal != null} onClose={() => setCurrentModal(null)} fullScreen>
+            <DialogContent sx={(theme) => ({ bgcolor: theme.palette.background.default })}>
+              {renderContent()}
+            </DialogContent>
+          </Dialog>
+        </Box>
+      </ImpartDragAndDropProvider>
+    </TaggableSelectionProvider>
   )
 }

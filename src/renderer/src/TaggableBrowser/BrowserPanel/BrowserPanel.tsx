@@ -13,6 +13,7 @@ import { useEditTaggable } from '../EditTaggableProvider'
 import { useConfirmationDialog } from '@renderer/Common/Components/ConfirmationDialogProvider'
 import CallSplitIcon from '@mui/icons-material/CallSplit'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { useTaggableSelection } from '@renderer/TaggableSelectionProvider'
 
 export interface BrowserPanelProps extends Omit<TaggableGridEvents, 'onHide' | 'onOpenStack'> {}
 
@@ -20,7 +21,7 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
   const { onBulkTag, onCreateStack, onEditTags } = gridEvents
   const { taggables, reload: fetchTaggables, stackTrail, setStackTrail } = useTaggables()
 
-  const [selection, setSelection] = useState<Impart.Taggable[]>([])
+  const { selection, setSelection } = useTaggableSelection()
 
   useHotkeys('ctrl+a', (e) => {
     e.preventDefault()
