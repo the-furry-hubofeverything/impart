@@ -7,6 +7,7 @@ export interface CommonTaggableGridProps {
   taggables?: Impart.Taggable[]
   selection?: Impart.Taggable[]
   onMouseDown?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, item: Impart.Taggable) => void
+  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, item: Impart.Taggable) => void
   onRightClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, item: Impart.Taggable) => void
   onDoubleClick?: (item: Impart.Taggable) => void
 }

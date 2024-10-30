@@ -102,8 +102,13 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
             taggables={taggables}
             selection={selection}
             onMouseDown={(e, t) => {
-              if (e.button === 0) {
+              if (e.button === 0 && !itemIsSelected(t)) {
                 selectedItemRef.current = true
+                selectItem(t, e.ctrlKey, e.shiftKey)
+              }
+            }}
+            onClick={(e, t) => {
+              if (itemIsSelected(t)) {
                 selectItem(t, e.ctrlKey, e.shiftKey)
               }
             }}

@@ -38,6 +38,7 @@ export function VirtualTaggableGrid({
   selection,
   onMouseDown,
   onRightClick,
+  onClick,
   onDoubleClick
 }: CommonTaggableGridProps) {
   if (!taggables) {
@@ -66,6 +67,7 @@ export function VirtualTaggableGrid({
                     onRightClick && onRightClick(e, f)
                   }}
                   onMouseDown={(e) => onMouseDown && onMouseDown(e, f)}
+                  onClick={(e) => onClick && onClick(e, f)}
                   onDoubleClick={() => onDoubleClick && onDoubleClick(f)}
                 >
                   <TaggableDisplay
