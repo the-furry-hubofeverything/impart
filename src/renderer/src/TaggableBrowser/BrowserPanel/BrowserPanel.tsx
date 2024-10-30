@@ -102,14 +102,15 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
             taggables={taggables}
             selection={selection}
             onMouseDown={(e, t) => {
-              if (e.button === 0 && !itemIsSelected(t)) {
+              if (e.button === 0 && (!itemIsSelected(t) || e.shiftKey || e.ctrlKey)) {
                 selectedItemRef.current = true
                 selectItem(t, e.ctrlKey, e.shiftKey)
               }
             }}
             onClick={(e, t) => {
-              if (itemIsSelected(t)) {
-                selectItem(t, e.ctrlKey, e.shiftKey)
+              if (itemIsSelected(t) && !selectedItemRef.current) {
+                selectedItemRef.current = true
+                selectItem(t)
               }
             }}
             onRightClick={(e, item) => {
