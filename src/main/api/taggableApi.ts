@@ -20,4 +20,10 @@ export function setupTaggableApi() {
     (e, ...params: Parameters<typeof TaggableManager.setHidden>) =>
       handleError(() => TaggableManager.setHidden(...params))
   )
+
+  ipcMain.handle(
+    'taggable/associateImageWithFile',
+    (e, ...params: Parameters<typeof TaggableManager.associateImageWithFile>) =>
+      handleError(() => TaggableManager.associateImageWithFile(...params))
+  )
 }

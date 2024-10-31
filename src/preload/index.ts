@@ -36,7 +36,8 @@ contextBridge.exposeInMainWorld('taskApi', {
 contextBridge.exposeInMainWorld('taggableApi', {
   getTaggables: generateEndpoint('taggable/getTaggables'),
   getAllTaggableYears: generateEndpoint('taggable/getAllTaggableYears'),
-  setHidden: generateEndpoint('taggable/setHidden')
+  setHidden: generateEndpoint('taggable/setHidden'),
+  associateImageWithFile: generateEndpoint('taggable/associateImageWithFile')
 })
 
 contextBridge.exposeInMainWorld('stackApi', {

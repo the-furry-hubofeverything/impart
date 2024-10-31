@@ -105,8 +105,8 @@ declare global {
     taggableApi: {
       getTaggables: (options?: Impart.FetchTaggablesOptions) => Result<Impart.Taggable[]>
       getAllTaggableYears: () => Result<number[]>
-
       setHidden: (ids: number[], hidden: boolean) => Result<void>
+      associateImageWithFile: (imageIds: number[], fileId: number) => Result<void>
     }
 
     stackApi: {
