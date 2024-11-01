@@ -60,6 +60,7 @@ declare global {
       year?: number
       stackId?: number
       onlyHidden?: boolean
+      onlyFiles?: boolean
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*

@@ -10,13 +10,16 @@ export interface FetchTaggablesOptions {
   year?: number
   stackId?: number
   onlyHidden?: boolean
+  onlyFiles?: boolean
 }
 
 export namespace TaggableManager {
   export async function getTaggables(options?: FetchTaggablesOptions) {
-    let query = Taggable.createQueryBuilder('files').setFindOptions({
-      loadEagerRelations: true
-    })
+    let query = (options?.onlyFiles ? TaggableFile : Taggable)
+      .createQueryBuilder('files')
+      .setFindOptions({
+        loadEagerRelations: true
+      })
 
     if (options) {
       const { tagIds, order, search, year } = options
@@ -37,11 +40,13 @@ export namespace TaggableManager {
       }
     }
 
-    query
-      .leftJoin('files.images', 'associatedImages')
-      .andWhere('associatedImages.id IS NULL AND files.hide = :hidden', {
-        hidden: options?.onlyHidden ? true : false
-      })
+    if (!options?.onlyFiles) {
+      query.leftJoin('files.images', 'associatedImages').andWhere('associatedImages.id IS NULL')
+    }
+
+    query.andWhere('files.hide = :hidden', {
+      hidden: options?.onlyHidden ? true : false
+    })
 
     if (!options?.stackId) {
       query.andWhere('files.parentId IS NULL')
