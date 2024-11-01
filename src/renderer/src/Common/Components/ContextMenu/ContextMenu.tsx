@@ -91,9 +91,10 @@ export function ContextMenu({ options, render, disabled, ...boxProps }: ContextM
                 ?.filter((o) => o === 'divider' || !o.hide)
                 //Filter out all sequential dividers
                 .filter((o, index, all) => o !== 'divider' || all[index + 1] !== 'divider')
-                .map((o, index) =>
+                .map((o, index, list) =>
                   o === 'divider' ? (
-                    <Divider key={index} sx={{ margin: 0 }} />
+                    index !== 0 &&
+                    index != list.length - 1 && <Divider key={index} sx={{ margin: 0 }} />
                   ) : (
                     <MenuItem
                       key={index}

@@ -13,8 +13,10 @@ import { useImpartIpcCall } from '@renderer/Common/Hooks/useImpartIpc'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import CancelIcon from '@mui/icons-material/Cancel'
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'
+import AddLinkIcon from '@mui/icons-material/AddLink'
 
 export interface TaggableGridEvents {
+  onAssociateWithSource?: (taggables: Impart.TaggableImage[]) => void
   onEditTags?: (taggable: Impart.Taggable) => void
   onBulkTag?: (taggables: Impart.Taggable[]) => void
   onCreateStack?: (taggables: Impart.Taggable[]) => void
@@ -25,7 +27,15 @@ export interface TaggableGridEvents {
 
 export function useTaggableContextMenuOptions(
   selection: Impart.Taggable[],
-  { onEditTags, onBulkTag, onCreateStack, onOpenStack, onHide, onRenameStack }: TaggableGridEvents
+  {
+    onEditTags,
+    onBulkTag,
+    onCreateStack,
+    onOpenStack,
+    onHide,
+    onRenameStack,
+    onAssociateWithSource
+  }: TaggableGridEvents
 ): (ContextMenuOption | 'divider')[] {
   const confirm = useConfirmationDialog()
   const { callIpc: removeStack } = useImpartIpcCall(window.stackApi.remove, [])
@@ -39,11 +49,15 @@ export function useTaggableContextMenuOptions(
     selectedImage = selection[0]
   }
 
+  if (selection.length === 0) {
+    return []
+  }
+
   return [
     {
       icon: <FileOpenIcon />,
       label: 'Open',
-      disabled: selection.length > 1,
+      hide: selection.length > 1,
       onClick: () =>
         selection.length == 1 && isTaggableStack(selection[0])
           ? onOpenStack && onOpenStack(selection[0])
@@ -52,15 +66,22 @@ export function useTaggableContextMenuOptions(
     {
       icon: <FolderIcon />,
       label: 'Open File Location',
-      disabled: selection.length > 1,
-      hide: selection.length != 0 && isTaggableStack(selection[0]),
+      hide: selection.length > 1 || isTaggableStack(selection[0]),
       onClick: () => window.fileApi.openFileLocation(selection[0].id)
+    },
+    {
+      icon: <AddLinkIcon />,
+      label: 'Associate With Source File',
+      hide: !selection.every((t) => isTaggableImage(t) && t.source == null),
+      onClick: () =>
+        onAssociateWithSource &&
+        selection.every(isTaggableImage) &&
+        onAssociateWithSource(selection)
     },
     {
       icon: <BrushIcon />,
       label: 'Open Source',
-      disabled: !selectedImage || selectedImage.source == null,
-      hide: selection.length != 0 && isTaggableStack(selection[0]),
+      hide: selection.length > 1 || !isTaggableImage(selection[0]) || selection[0].source == null,
       onClick: () => window.fileApi.openFile(selectedImage!.source!.id)
     },
     'divider',

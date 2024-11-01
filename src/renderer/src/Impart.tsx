@@ -15,10 +15,12 @@ import { TaggableDisplay } from './Common/Components/TaggableDisplay'
 import { ImpartDragAndDropProvider } from './Common/Components/DragAndDrop/ImpartDragAndDropProvider'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { TaggableSelectionProvider } from './TaggableSelectionProvider'
+import { AssociateWithSource } from './AssociateWithSource'
+import { isTaggableImage } from './Common/taggable'
 
 const SHOW_BETA_WARNING_KEY = 'showBetaWarning'
 
-type ImpartModal = 'bulkTag' | 'settings' | 'createStack'
+type ImpartModal = 'bulkTag' | 'settings' | 'createStack' | 'associateSource'
 
 export interface ImpartProps {}
 
@@ -52,6 +54,12 @@ export function Impart({}: ImpartProps) {
         return <BulkTag items={selection} onFinish={closeAndRefresh} />
       case 'createStack':
         return <CreateStack items={selection} onFinish={closeAndRefresh} />
+      case 'associateSource':
+        if (!selection.every(isTaggableImage)) {
+          throw new Error('Attempted to associate non-image items with source files')
+        }
+
+        return <AssociateWithSource items={selection} onFinish={closeAndRefresh} />
     }
   }
 
@@ -73,12 +81,9 @@ export function Impart({}: ImpartProps) {
         <Box>
           <TaggableBrowser
             onSettingsPressed={() => setCurrentModal('settings')}
-            onBulkTag={() => {
-              setCurrentModal('bulkTag')
-            }}
-            onCreateStack={() => {
-              setCurrentModal('createStack')
-            }}
+            onBulkTag={() => setCurrentModal('bulkTag')}
+            onCreateStack={() => setCurrentModal('createStack')}
+            onAssociateWithSource={() => setCurrentModal('associateSource')}
           />
           <Dialog open={currentModal != null} onClose={() => setCurrentModal(null)} fullScreen>
             <DialogContent sx={(theme) => ({ bgcolor: theme.palette.background.default })}>
