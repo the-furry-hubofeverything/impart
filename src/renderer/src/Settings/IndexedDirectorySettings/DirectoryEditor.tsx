@@ -91,7 +91,7 @@ export function DirectoryEditor({
             <FormControlLabel
               control={
                 <Switch
-                  value={directoryState.recursive}
+                  checked={directoryState.recursive}
                   disabled={subDirectories && subDirectories.length != 0}
                   onChange={(e, checked) => onChange && onChange({ recursive: checked })}
                 />
