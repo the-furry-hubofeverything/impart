@@ -1,4 +1,15 @@
-import { Box, Button, CircularProgress, Collapse, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  Typography
+} from '@mui/material'
 import { useDirectories } from '../../EntityProviders/DirectoryProvider'
 import { useEffect, useState } from 'react'
 import { DirectoryList } from './DirectoryList'
@@ -8,12 +19,16 @@ import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TaskStatus } from '@renderer/Common/Components/TaskStatus'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
 import { AddDirectory } from './AddDirectory'
+import { useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
+import { ConfirmDirectoryChanges } from './ConfirmDirectoryChanges'
+import ConfirmIcon from '@mui/icons-material/Check'
 
 export interface IndexedDirectoriesSettingsProps {}
 
 export function IndexedDirectoriesSettings({}: IndexedDirectoriesSettingsProps) {
   const { data: originalDirectories, reload: reloadDirectories } = useDirectories()
   const { reload: fetchTaggables } = useTaggables()
+  const [showSaveDialog, setShowSaveDialog] = useState(false)
   const [isSaving, setSaving] = useState(false)
 
   const { isTaskRunning } = useTaskStatus()
@@ -63,13 +78,13 @@ export function IndexedDirectoriesSettings({}: IndexedDirectoriesSettingsProps) 
         {isSaving && <CircularProgress />}
         {!isSaving && (
           <Button
-            startIcon={<SaveIcon />}
+            startIcon={<ConfirmIcon />}
             variant="contained"
             size="large"
-            onClick={saveChanges}
+            onClick={() => setShowSaveDialog(true)}
             disabled={isTaskRunning}
           >
-            Save
+            Confirm
           </Button>
         )}
       </Stack>
@@ -80,6 +95,15 @@ export function IndexedDirectoriesSettings({}: IndexedDirectoriesSettingsProps) 
           </Box>
         </Stack>
       </Collapse>
+      <Dialog open={showSaveDialog} onClose={() => setShowSaveDialog(false)}>
+        <ConfirmDirectoryChanges
+          directoryState={directoryState}
+          onSave={() => {
+            saveChanges()
+            setShowSaveDialog(false)
+          }}
+        />
+      </Dialog>
     </Box>
   )
 }

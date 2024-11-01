@@ -4,10 +4,10 @@ import { Directory } from '../database/entities/Directory'
 import { Taggable } from '../database/entities/Taggable'
 import { In } from 'typeorm'
 import { Tag } from '../database/entities/Tag'
-import { TagManager } from '../tagging/tagManager'
 import { IndexingManager } from './indexingManager'
 import { zap } from '../common/zap'
 import { TaggingManager } from '../tagging/taggingManager'
+import { readdir } from 'fs/promises'
 
 interface DirectoryPayload {
   path: string
@@ -93,5 +93,67 @@ export namespace DirectoryManager {
       await directory.save()
       TaggingManager.bulkTagDirectory(directory)
     }
+  }
+
+  export async function calculateTotalIndexChanges(directoryPayloads: DirectoryPayload[]) {
+    const directories = await Directory.find()
+    const zappedDirectories = zap(
+      directories,
+      directoryPayloads,
+      (first, second) => first.path === second.path
+    )
+
+    const directoryResults = await Promise.all(
+      zappedDirectories.map(async ([directory, payload]) =>
+        calculateIndexChange(directory, payload)
+      )
+    )
+
+    return directoryResults.reduce((current, next) => ({
+      additions: current.additions + next.additions,
+      removals: current.removals + next.removals
+    }))
+  }
+
+  async function calculateIndexChange(directory?: Directory, payload?: DirectoryPayload) {
+    if (directory && !payload) {
+      return {
+        additions: 0,
+        removals: await Taggable.countBy({ directory })
+      }
+    } else if (!directory && payload) {
+      const dirents = await readdir(payload.path, {
+        withFileTypes: true,
+        recursive: payload.recursive
+      })
+
+      const files = dirents.filter((dirent) => dirent.isFile())
+
+      return {
+        additions: files.length,
+        removals: 0
+      }
+    } else if (directory && payload) {
+      if (directory.recursive === payload.recursive) {
+        return { additions: 0, removals: 0 }
+      }
+
+      const [taggableCount, resultingSearch] = await Promise.all([
+        Taggable.countBy({ directory }),
+        readdir(payload.path, {
+          withFileTypes: true,
+          recursive: payload.recursive
+        })
+      ])
+
+      const resultingLength = resultingSearch.length
+
+      return {
+        additions: Math.max(0, resultingLength - taggableCount),
+        removals: Math.max(0, taggableCount - resultingLength)
+      }
+    }
+
+    throw new Error('Found a completely empty zap item')
   }
 }

@@ -70,6 +70,7 @@ contextBridge.exposeInMainWorld('indexApi', {
   indexAll: generateEndpoint('index/indexAll'),
   selectDirectory: generateEndpoint('index/selectDirectory'),
   updateDirectories: generateEndpoint('index/updateDirectories'),
+  calculateTotalIndexChanges: generateEndpoint('index/calculateTotalIndexChanges'),
   getDirectories: generateEndpoint('index/getDirectories')
 })
 

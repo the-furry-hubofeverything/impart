@@ -14,4 +14,9 @@ export function setupIndexApi() {
     (e, ...params: Parameters<typeof DirectoryManager.updateDirectories>) =>
       handleError(() => DirectoryManager.updateDirectories(...params))
   )
+  ipcMain.handle(
+    'index/calculateTotalIndexChanges',
+    (e, ...params: Parameters<typeof DirectoryManager.calculateTotalIndexChanges>) =>
+      handleError(() => DirectoryManager.calculateTotalIndexChanges(...params))
+  )
 }

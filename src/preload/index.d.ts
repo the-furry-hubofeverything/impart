@@ -154,6 +154,9 @@ declare global {
       indexAll: () => Promise<void>
       selectDirectory: () => Promise<string | undefined>
       updateDirectories: (payload: Impart.Directory[]) => Result<void>
+      calculateTotalIndexChanges: (
+        payload: Impart.Directory[]
+      ) => Result<{ additions: number; removals: number }>
       getDirectories: () => Result<Impart.CountedDirectory[]>
     }
 
