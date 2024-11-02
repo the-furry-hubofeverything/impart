@@ -1,4 +1,4 @@
-import { Stack, Box, Collapse, Card, CardContent } from '@mui/material'
+import { Stack, Box, Collapse, Card, CardContent, useMediaQuery, useTheme } from '@mui/material'
 import { SettingsPanel } from './SettingsPanel'
 import { TaskStatus } from '../Common/Components/TaskStatus'
 import { TaggableGridEvents } from './BrowserPanel/useTaggableContextMenuOptions'
@@ -6,9 +6,10 @@ import { useShowIndexingPanel } from './useShowIndexingPanel'
 import { BrowserPanel } from './BrowserPanel'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TagSelector } from '@renderer/Common/Components/TagSelector'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useLayoutEffect } from 'react'
 import { EditTaggableProvider } from './EditTaggableProvider'
 import { useHotkeys } from 'react-hotkeys-hook'
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 
 export interface TaggableBrowserProps extends Omit<TaggableGridEvents, 'onEditTags'> {
   onSettingsPressed?: () => void
@@ -37,60 +38,74 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
     setFetchOptions({ tagIds: fetchByTagSelection.map((t) => t.id) })
   }, [fetchByTagSelection])
 
-  return (
-    <Stack direction="row" gap={1} height="100vh">
-      <EditTaggableProvider
-        editTarget={editTarget}
-        renameTarget={renameTarget}
-        tags={editTagSelection}
-        onRemoveTag={(t) => {
-          const copy = editTagSelection.slice()
-          const index = copy.findIndex((c) => c.id === t.id)
+  const theme = useTheme()
+  const xl = useMediaQuery(theme.breakpoints.up('xl'))
+  const lg = useMediaQuery(theme.breakpoints.up('lg'))
 
-          if (index != -1) {
-            copy.splice(index, 1)
-            setEditTagSelection(copy)
-          }
-        }}
-        onFinish={() => {
-          fetchTaggables()
-          setEditTarget(undefined)
-          setRenameTarget(undefined)
-        }}
-      >
-        <BrowserPanel
-          {...gridEvents}
-          onEditTags={(t) => {
-            setEditTarget(t)
-            setEditTagSelection(t.tags)
-          }}
-          onRenameStack={setRenameTarget}
-        />
-        <Box minWidth={360} flex={0.25} py={1} pr={1}>
-          <Stack width="100%" height="100%">
-            <Card sx={{ flex: 1, overflowY: 'auto' }}>
-              <CardContent sx={{ height: '100%' }}>
-                <TagSelector
-                  selection={editTarget ? editTagSelection : fetchByTagSelection}
-                  onChange={editTarget ? setEditTagSelection : setFetchByTagSelection}
-                />
-              </CardContent>
-            </Card>
-            <Collapse in={showIndexingPanel}>
-              <Box pt={2}>
-                <Card>
-                  <CardContent>
-                    <TaskStatus />
+  console.log(xl, lg)
+
+  return (
+    <EditTaggableProvider
+      editTarget={editTarget}
+      renameTarget={renameTarget}
+      tags={editTagSelection}
+      onRemoveTag={(t) => {
+        const copy = editTagSelection.slice()
+        const index = copy.findIndex((c) => c.id === t.id)
+
+        if (index != -1) {
+          copy.splice(index, 1)
+          setEditTagSelection(copy)
+        }
+      }}
+      onFinish={() => {
+        fetchTaggables()
+        setEditTarget(undefined)
+        setRenameTarget(undefined)
+      }}
+    >
+      <Box height="100vh">
+        <PanelGroup direction="horizontal">
+          <Panel>
+            <BrowserPanel
+              {...gridEvents}
+              onEditTags={(t) => {
+                setEditTarget(t)
+                setEditTagSelection(t.tags)
+              }}
+              onRenameStack={setRenameTarget}
+            />
+          </Panel>
+
+          <PanelResizeHandle />
+          <Panel defaultSize={25} minSize={xl ? 12 : lg ? 15 : 20}>
+            <Box py={1} pr={1} height="100%">
+              <Stack width="100%" height="100%">
+                <Card sx={{ flex: 1, overflowY: 'auto' }}>
+                  <CardContent sx={{ height: '100%' }}>
+                    <TagSelector
+                      selection={editTarget ? editTagSelection : fetchByTagSelection}
+                      onChange={editTarget ? setEditTagSelection : setFetchByTagSelection}
+                    />
                   </CardContent>
                 </Card>
-              </Box>
-            </Collapse>
-            <Box pt={2}>
-              <SettingsPanel onClick={() => onSettingsPressed && onSettingsPressed()} />
+                <Collapse in={showIndexingPanel}>
+                  <Box pt={2}>
+                    <Card>
+                      <CardContent>
+                        <TaskStatus />
+                      </CardContent>
+                    </Card>
+                  </Box>
+                </Collapse>
+                <Box pt={2}>
+                  <SettingsPanel onClick={() => onSettingsPressed && onSettingsPressed()} />
+                </Box>
+              </Stack>
             </Box>
-          </Stack>
-        </Box>
-      </EditTaggableProvider>
-    </Stack>
+          </Panel>
+        </PanelGroup>
+      </Box>
+    </EditTaggableProvider>
   )
 }
