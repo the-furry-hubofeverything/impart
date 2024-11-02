@@ -65,7 +65,7 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
       }}
     >
       <Box height="100vh">
-        <PanelGroup direction="horizontal">
+        <PanelGroup autoSaveId="taggableBrowser" direction="horizontal">
           <Panel>
             <BrowserPanel
               {...gridEvents}
