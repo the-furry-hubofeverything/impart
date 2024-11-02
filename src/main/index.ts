@@ -11,6 +11,7 @@ import { setupTagApi } from './api/tagApi'
 import { setupIndexApi } from './api/indexApi'
 import { setupStackApi } from './api/stackApi'
 import { ThumbnailManager } from './indexables/thumbnailManager'
+import { store } from './config'
 
 interface ImpartApp {
   mainWindow?: BrowserWindow
@@ -21,8 +22,10 @@ export const impartApp: ImpartApp = {}
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1700,
-    height: 1000,
+    width: store.get('window.width') ?? 1700,
+    height: store.get('window.height') ?? 1000,
+    x: store.get('window.x'),
+    y: store.get('window.y'),
     show: false,
     autoHideMenuBar: true,
     icon,
@@ -40,6 +43,14 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+  })
+
+  mainWindow.on('close', () => {
+    const bounds = mainWindow.getBounds()
+    store.set('window.width', bounds.width)
+    store.set('window.height', bounds.height)
+    store.set('window.x', bounds.x)
+    store.set('window.y', bounds.y)
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
