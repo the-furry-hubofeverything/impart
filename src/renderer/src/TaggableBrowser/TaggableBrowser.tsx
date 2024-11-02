@@ -42,8 +42,6 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
   const xl = useMediaQuery(theme.breakpoints.up('xl'))
   const lg = useMediaQuery(theme.breakpoints.up('lg'))
 
-  console.log(xl, lg)
-
   return (
     <EditTaggableProvider
       editTarget={editTarget}

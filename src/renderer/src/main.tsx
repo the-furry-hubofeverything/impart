@@ -8,13 +8,13 @@ import { TaskStatusProvider } from './TaskStatusProvider'
 import { ThemeProvider } from '@emotion/react'
 import { CssBaseline } from '@mui/material'
 import { theme } from './theme'
-import { ErrorNotificationProvider } from './Common/Components/ErrorNotificationProvider'
+import { NotificationProvider } from './Common/Components/NotificationProvider'
 import { ActiveContextMenuProvider } from './Common/Components/ContextMenu/ActiveContextMenuProvider'
 import { ConfirmationDialogProvider } from './Common/Components/ConfirmationDialogProvider'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <ErrorNotificationProvider>
+    <NotificationProvider>
       <TaskStatusProvider>
         <DirectoryProvider>
           <TaggableProvider>
@@ -31,6 +31,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           </TaggableProvider>
         </DirectoryProvider>
       </TaskStatusProvider>
-    </ErrorNotificationProvider>
+    </NotificationProvider>
   </React.StrictMode>
 )

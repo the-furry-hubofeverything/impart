@@ -8,6 +8,7 @@ import { useTaggableSelection } from '@renderer/TaggableSelectionProvider'
 import { useConfirmationDialog } from '../ConfirmationDialogProvider'
 import { isTaggableFile, isTaggableImage } from '@renderer/Common/taggable'
 import { Box, Typography } from '@mui/material'
+import { useNotification } from '../NotificationProvider'
 
 interface DropEvent {
   dragType: DraggableType
@@ -26,6 +27,8 @@ export function useDropEvents() {
     window.taggableApi.associateImageWithFile,
     []
   )
+
+  const { sendSuccess } = useNotification()
 
   const confirm = useConfirmationDialog()
 
@@ -58,6 +61,7 @@ export function useDropEvents() {
           )
         } else {
           await addTags(droppable.id, [draggable.id])
+          sendSuccess('Item tagged!')
           reloadTaggables()
         }
       }

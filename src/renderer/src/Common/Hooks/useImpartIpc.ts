@@ -1,5 +1,5 @@
 import { DependencyList, useCallback, useEffect, useRef, useState } from 'react'
-import { useErrorNotification } from '../Components/ErrorNotificationProvider'
+import { useNotification } from '../Components/NotificationProvider'
 
 type AsyncCall<Params extends any[], Result> = (...params: Params) => Promise<Result>
 
@@ -8,7 +8,7 @@ export function useImpartIpcCall<Params extends any[], Result>(
   deps: DependencyList
 ): { callIpc: AsyncCall<Params, Exclude<Result, Impart.Error> | undefined>; isLoading: boolean } {
   const [isLoading, setLoading] = useState(false)
-  const sendError = useErrorNotification()
+  const { sendError } = useNotification()
   const callIpc = useCallback<AsyncCall<Params, Exclude<Result, Impart.Error> | undefined>>(
     async (...params: Params) => {
       setLoading(true)
