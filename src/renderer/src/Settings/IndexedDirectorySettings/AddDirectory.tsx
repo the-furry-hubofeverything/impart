@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import { Box, Button, Dialog, DialogContent, DialogTitle, Stack, Typography } from '@mui/material'
+import folderAlreadyExists from './folderAlreadyExists.png'
 
 export interface AddDirectoryProps {
   directoryState: Impart.Directory[]
@@ -42,10 +43,12 @@ export function AddDirectory({ directoryState, onAdd }: AddDirectoryProps) {
         Add Directory
       </Button>
       <Dialog open={showConflict} onClose={() => setShowConflict(false)} maxWidth={false}>
-        <DialogTitle>Directory Conflict</DialogTitle>
+        <DialogTitle textAlign="center">Directory Conflict</DialogTitle>
         <DialogContent>
-          <Stack direction="row" gap={4}>
-            <Box p={10}>[ART]</Box>
+          <Stack direction="row" gap={4} alignItems="center">
+            <Box>
+              <img src={folderAlreadyExists} height={270} />
+            </Box>
             <Stack gap={2} alignItems="flex-start">
               <Typography>The selected directory:</Typography>
               <Box py={0.5} px={1} borderRadius={2} bgcolor="secondary.light">
