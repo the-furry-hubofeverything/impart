@@ -20,6 +20,7 @@ import { useConfirmationDialog } from '../ConfirmationDialogProvider'
 import { useDraggableHandle } from '../DragAndDrop/DraggableHandleProvider'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 import { Droppable } from '../DragAndDrop/Droppable'
+import { satisfiesFilter } from './satisfiesFilter'
 
 const DropIndicator = styled(Box)<BoxProps & { showIndicator: boolean }>(
   ({ showIndicator, theme }) =>
@@ -112,7 +113,7 @@ export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProp
       <Grid container py={1} spacing={2}>
         {group.tags
           ?.slice()
-          .filter((t) => !filter || filter.split(' ').every((term) => t.label?.includes(term)))
+          .filter((t) => satisfiesFilter(t, filter))
           .sort((a, b) => a.tagOrder - b.tagOrder)
           .map((t) => (
             <Grid key={t.id}>

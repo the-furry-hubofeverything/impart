@@ -9,6 +9,7 @@ import { Draggable } from '../DragAndDrop'
 import { Droppable } from '../DragAndDrop/Droppable'
 import { TagSelection } from './TagSelection'
 import { EmptyTagGroups } from './EmptyTagGroups'
+import { satisfiesFilter } from './satisfiesFilter'
 
 const DropIndicator = styled(Box)<BoxProps & { showIndicator: boolean }>(
   ({ showIndicator, theme }) =>
@@ -58,25 +59,27 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
         }}
       >
         <SearchBar value={filter} onChange={setFilter} />
-        {groups?.map((g) => (
-          <Droppable
-            key={g.id}
-            id={g.id}
-            type="tagGroup"
-            render={({ overType }) => (
-              <DropIndicator showIndicator={overType != null}>
-                <Draggable type="tagGroup" id={g.id} exposeHandle>
-                  <TagGroup
-                    group={g}
-                    selectedTags={selection}
-                    filter={filter}
-                    onSelect={selectItem}
-                  />
-                </Draggable>
-              </DropIndicator>
-            )}
-          />
-        ))}
+        {groups
+          ?.filter((g) => g.tags?.some((t) => satisfiesFilter(t, filter)))
+          .map((g) => (
+            <Droppable
+              key={g.id}
+              id={g.id}
+              type="tagGroup"
+              render={({ overType }) => (
+                <DropIndicator showIndicator={overType != null}>
+                  <Draggable type="tagGroup" id={g.id} exposeHandle>
+                    <TagGroup
+                      group={g}
+                      selectedTags={selection}
+                      filter={filter}
+                      onSelect={selectItem}
+                    />
+                  </Draggable>
+                </DropIndicator>
+              )}
+            />
+          ))}
 
         <Droppable
           type="tagGroup"
