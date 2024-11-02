@@ -97,14 +97,14 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
         />
       </Stack>
       {(selection?.length ?? 0) > 0 && (
-        <>
+        <Box position={'sticky'} bgcolor="background.paper" bottom={0} pb={2}>
           <Divider />
           <TagSelection
             selection={selection}
             onClick={selectItem}
             onClear={() => onChange && onChange([])}
           />
-        </>
+        </Box>
       )}
     </Stack>
   )
