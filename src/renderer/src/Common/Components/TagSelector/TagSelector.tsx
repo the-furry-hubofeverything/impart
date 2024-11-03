@@ -67,7 +67,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
               id={g.id}
               type="tagGroup"
               render={({ overType }) => (
-                <DropIndicator showIndicator={overType != null}>
+                <DropIndicator showIndicator={overType === 'tagGroup'}>
                   <Draggable type="tagGroup" id={g.id} exposeHandle>
                     <TagGroup
                       group={g}
@@ -85,7 +85,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
           type="tagGroup"
           id={-1}
           render={({ overType }) => (
-            <DropIndicator showIndicator={overType != null}>
+            <DropIndicator showIndicator={overType === 'tagGroup'}>
               <Button
                 onClick={async () => {
                   await window.tagApi.createGroup()

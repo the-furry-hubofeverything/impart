@@ -1,10 +1,12 @@
-import { Box } from '@mui/material'
+import { alpha, Box, lighten, Stack } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Draggable } from '../DragAndDrop'
 import { Droppable, DroppableType } from '../DragAndDrop/Droppable'
 import { TaggableDisplay } from '../TaggableDisplay'
 import { isTaggableStack, isTaggableFile } from '@renderer/Common/taggable'
-import { TagAppliedAnimation } from './TagAppliedAnimation'
+import { CenteredOverlay } from '../CenteredOverlay'
+import SellIcon from '@mui/icons-material/Sell'
+import AddToPhotosIcon from '@mui/icons-material/AddToPhotos'
 
 function buildDropType(taggable: Impart.Taggable): DroppableType | DroppableType[] {
   if (isTaggableStack(taggable)) {
@@ -44,12 +46,31 @@ export function TaggableWrapper({
   }, [tagIncrement])
 
   return (
-    <TagAppliedAnimation
+    <CenteredOverlay
+      overlay={
+        <Box className="animate__animated animate__bounceIn">
+          <Box className="animate__animated animate__delay-2s animate__fadeOut">
+            <Stack
+              bgcolor="background.paper"
+              width={60}
+              height={60}
+              borderRadius={50}
+              justifyContent="center"
+              alignItems="center"
+              pt={0.5}
+              pl={0.5}
+            >
+              <SellIcon color="primary" sx={{ fontSize: 56 }} />
+            </Stack>
+          </Box>
+        </Box>
+      }
       show={tagIncrement > 0 && tagIncrement === lastTagIncrement}
       onHide={() => {
         setTagIncrement(0)
         setLastTagIncrement(0)
       }}
+      autoHideDelay={3000}
     >
       <Droppable
         type={buildDropType(taggable)}
@@ -59,25 +80,51 @@ export function TaggableWrapper({
           !taggable.tags.some((t) => t.id === d.id) &&
           setTagIncrement(tagIncrement + 1)
         }
-        render={({ overType }) => (
-          <Draggable id={taggable.id} type="taggable">
-            <Box
-              onContextMenu={(e) => {
-                onRightClick && onRightClick(e, taggable)
-              }}
-              onMouseDown={(e) => onMouseDown && onMouseDown(e, taggable)}
-              onClick={(e) => onClick && onClick(e, taggable)}
-              onDoubleClick={() => onDoubleClick && onDoubleClick(taggable)}
-            >
-              <TaggableDisplay
-                taggable={taggable}
-                isSelected={selection?.some((s) => s.id === taggable.id)}
-                showTags={overType === 'tag'}
-              />
-            </Box>
-          </Draggable>
+        render={({ overType, overId }) => (
+          <CenteredOverlay
+            show={overType === 'tag' && !taggable.tags.some((t) => t.id == overId)}
+            overlay={
+              <Stack
+                bgcolor="background.paper"
+                width={60}
+                height={60}
+                borderRadius={50}
+                justifyContent="center"
+                alignItems="center"
+              >
+                <AddToPhotosIcon color="primary" sx={{ fontSize: 40 }} />
+              </Stack>
+            }
+          >
+            <Draggable id={taggable.id} type="taggable">
+              <Box
+                onContextMenu={(e) => {
+                  onRightClick && onRightClick(e, taggable)
+                }}
+                onMouseDown={(e) => onMouseDown && onMouseDown(e, taggable)}
+                onClick={(e) => onClick && onClick(e, taggable)}
+                onDoubleClick={() => onDoubleClick && onDoubleClick(taggable)}
+                sx={(theme) =>
+                  overType === 'tag' && !taggable.tags.some((t) => t.id == overId)
+                    ? {
+                        border: `1px solid ${theme.palette.info.main}`,
+                        borderRadius: 2,
+                        backgroundColor: alpha(theme.palette.info.light, 0.2),
+                        margin: '-1px'
+                      }
+                    : {}
+                }
+              >
+                <TaggableDisplay
+                  taggable={taggable}
+                  isSelected={selection?.some((s) => s.id === taggable.id)}
+                  showTags={overType === 'tag'}
+                />
+              </Box>
+            </Draggable>
+          </CenteredOverlay>
         )}
       ></Droppable>
-    </TagAppliedAnimation>
+    </CenteredOverlay>
   )
 }

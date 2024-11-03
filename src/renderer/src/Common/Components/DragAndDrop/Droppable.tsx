@@ -21,7 +21,7 @@ export interface DroppableData {
 export interface DroppableProps {
   type: DroppableType | DroppableType[]
   id: number
-  render: (props: { overType?: DraggableType }) => React.ReactNode
+  render: (props: { overType?: DraggableType; overId?: number }) => React.ReactNode
   onDrop?: (draggable: DraggableData) => void
 }
 
@@ -37,9 +37,15 @@ export function Droppable({ type, id, render, onDrop }: DroppableProps) {
   })
 
   const { isValidDrop, lastDrop } = useImpartDragAndDrop()
-  const overType: DraggableType | undefined = active?.data.current?.type
+  const over = active?.data.current as DraggableData | undefined
 
-  const canDrop = isOver && overType && isValidDrop(overType, type)
+  const getValidType = () => {
+    if (!isOver || !over) {
+      return
+    }
+
+    return Array.isArray(over.type) ? over.type.find((t) => isValidDrop(t, type)) : over.type
+  }
 
   useEffect(() => {
     if (lastDrop?.droppable.type === type && lastDrop.droppable.id === id) {
@@ -47,5 +53,5 @@ export function Droppable({ type, id, render, onDrop }: DroppableProps) {
     }
   }, [lastDrop, onDrop])
 
-  return <Box ref={setNodeRef}>{render({ overType: canDrop ? overType : undefined })}</Box>
+  return <Box ref={setNodeRef}>{render({ overType: getValidType(), overId: over?.id })}</Box>
 }
