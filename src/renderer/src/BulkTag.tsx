@@ -1,23 +1,10 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid2 as Grid,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography
-} from '@mui/material'
+import { Box, Button, Card, CardContent, Grid2 as Grid, Stack, Typography } from '@mui/material'
 import { useState } from 'react'
 import { TagSelector } from './Common/Components/TagSelector'
 import { Tag } from './Common/Components/Tag'
 import CheckIcon from '@mui/icons-material/Check'
-import BackIcon from '@mui/icons-material/ArrowBack'
-import { TaggableDisplay } from './Common/Components/TaggableDisplay'
-import { TaggableGrid } from './Common/Components/TaggableGrid'
-import InfoIcon from '@mui/icons-material/Info'
 import { Backable } from './Common/Components/Backable'
+import { VirtualTaggableGrid } from './Common/Components/TaggableGrid'
 
 export interface BulkTagProps {
   items: Impart.Taggable[]
@@ -47,13 +34,17 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
   return (
     <Backable onBack={onFinish}>
       <Stack direction="row" p={1} gap={1} height="100%">
-        <Stack flex={1} alignItems="center">
-          <Typography variant="h2">Bulk Tags</Typography>
-          <Typography>Add tags to multiple items at once. Repeat tags will be ignored.</Typography>
+        <Stack flex={1}>
+          <Box textAlign="center">
+            <Typography variant="h2">Bulk Tags</Typography>
+            <Typography>
+              Add tags to multiple items at once. Repeat tags will be ignored.
+            </Typography>
+          </Box>
 
           <Stack flex={1} justifyContent="center" alignItems="center" gap={2}>
-            <Box flex="1 1 0" width="100%" overflow="auto">
-              <TaggableGrid taggables={items} />
+            <Box width="100%" flex={1}>
+              <VirtualTaggableGrid taggables={items} />
             </Box>
             <Grid container spacing={1} width="unset">
               {tagSelection.map((t) => (

@@ -10,12 +10,12 @@ import {
   TextField,
   CircularProgress
 } from '@mui/material'
-import { TaggableGrid } from './Common/Components/TaggableGrid'
 import CheckIcon from '@mui/icons-material/Check'
 import { TaggableDisplay } from './Common/Components/TaggableDisplay'
 import { useImpartIpcCall } from './Common/Hooks/useImpartIpc'
 import { useTaggables } from './EntityProviders/TaggableProvider'
 import { isTaggableImage } from './Common/taggable'
+import { VirtualTaggableGrid } from './Common/Components/TaggableGrid'
 
 export interface CreateStackProps {
   items: Impart.Taggable[]
@@ -43,15 +43,15 @@ export function CreateStack({ onFinish, items }: CreateStackProps) {
   return (
     <Backable onBack={onFinish}>
       <Stack direction="row" p={1} gap={1} height="100%">
-        <Stack flex={1} alignItems="center">
-          <Typography variant="h2">Create Stack</Typography>
-          <Stack flex={1} justifyContent="center" alignItems="center" gap={2}>
-            <Box flex="1 1 0" width="100%" overflow="auto">
-              <TaggableGrid
-                taggables={items}
-                onMouseDown={(e, item) => isTaggableImage(item) && setCoverImage(item)}
-              />
-            </Box>
+        <Stack flex={1}>
+          <Typography variant="h2" textAlign="center">
+            Create Stack
+          </Typography>
+          <Stack flex={1} justifyContent="center" gap={2}>
+            <VirtualTaggableGrid
+              taggables={items}
+              onMouseDown={(e, item) => isTaggableImage(item) && setCoverImage(item)}
+            />
           </Stack>
         </Stack>
         <Box width={500}>
