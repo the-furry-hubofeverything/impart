@@ -61,7 +61,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
       >
         <SearchBar value={filter} onChange={setFilter} />
         {groups
-          ?.filter((g) => g.tags?.some((t) => satisfiesFilter(t, filter)))
+          ?.filter((g) => g.tags?.length == 0 || g.tags?.some((t) => satisfiesFilter(t, filter)))
           .map((g) => (
             <Droppable
               key={g.id}
