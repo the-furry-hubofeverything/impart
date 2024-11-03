@@ -27,7 +27,10 @@ interface Drop {
 }
 
 export interface ImpartDragAndDropData {
-  isValidDrop: (dragType: DraggableType, dropType: DroppableType | DroppableType[]) => boolean
+  getValidDropTypes: (
+    draggable: DraggableData,
+    droppable: DroppableData
+  ) => { dragType: DraggableType; dropType: DroppableType } | undefined
   lastDrop?: Drop
 }
 
@@ -42,7 +45,7 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
   const [successfulDrop, setSuccesfulDrop] = useState(false)
   const [lastDrop, setLastDrop] = useState<Drop>()
 
-  const { handle, isValidDrop } = useDropEvents()
+  const { handle, getValidDropTypes } = useDropEvents()
 
   const { taggables } = useTaggables()
   const { groups, tags } = useTagGroups()
@@ -79,7 +82,7 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
   }
 
   return (
-    <ImpartDragAndDropContext.Provider value={{ isValidDrop, lastDrop }}>
+    <ImpartDragAndDropContext.Provider value={{ getValidDropTypes, lastDrop }}>
       <DndContext
         sensors={[mouseSensor]}
         onDragStart={handleDrag}

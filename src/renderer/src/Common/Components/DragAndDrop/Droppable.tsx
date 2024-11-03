@@ -3,6 +3,7 @@ import { Box } from '@mui/material'
 import React, { useEffect, useId } from 'react'
 import { DraggableData, DraggableType } from './Draggable'
 import { useImpartDragAndDrop } from './ImpartDragAndDropProvider'
+import { DropIndicator } from '../TagSelector/DropIndicator'
 
 export type DroppableType =
   | 'taggable'
@@ -23,9 +24,10 @@ export interface DroppableProps {
   id: number
   render: (props: { overType?: DraggableType; overId?: number }) => React.ReactNode
   onDrop?: (draggable: DraggableData) => void
+  hideIndicator?: boolean
 }
 
-export function Droppable({ type, id, render, onDrop }: DroppableProps) {
+export function Droppable({ type, id, render, onDrop, hideIndicator }: DroppableProps) {
   const droppableId = useId()
 
   const { setNodeRef, active, isOver } = useDroppable({
@@ -36,15 +38,12 @@ export function Droppable({ type, id, render, onDrop }: DroppableProps) {
     } satisfies DroppableData
   })
 
-  const { isValidDrop, lastDrop } = useImpartDragAndDrop()
+  const { getValidDropTypes, lastDrop } = useImpartDragAndDrop()
   const over = active?.data.current as DraggableData | undefined
+  const validDropTypes = over && isOver ? getValidDropTypes(over, { type, id }) : undefined
 
-  const getValidType = () => {
-    if (!isOver || !over) {
-      return
-    }
-
-    return Array.isArray(over.type) ? over.type.find((t) => isValidDrop(t, type)) : over.type
+  if (validDropTypes) {
+    console.log(validDropTypes)
   }
 
   useEffect(() => {
@@ -53,5 +52,11 @@ export function Droppable({ type, id, render, onDrop }: DroppableProps) {
     }
   }, [lastDrop, onDrop])
 
-  return <Box ref={setNodeRef}>{render({ overType: getValidType(), overId: over?.id })}</Box>
+  return (
+    <Box ref={setNodeRef}>
+      <DropIndicator show={validDropTypes != null && !hideIndicator}>
+        {render({ overType: validDropTypes?.dragType, overId: over?.id })}
+      </DropIndicator>
+    </Box>
+  )
 }

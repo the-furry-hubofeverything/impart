@@ -8,7 +8,14 @@ import { useTaggableSelection } from '@renderer/TaggableSelectionProvider'
 import { useConfirmationDialog } from '../ConfirmationDialogProvider'
 import { isTaggableFile, isTaggableImage } from '@renderer/Common/taggable'
 import { Box, Typography } from '@mui/material'
-import { useNotification } from '../NotificationProvider'
+
+function inOrEqual(item: string, target: string | string[]) {
+  return Array.isArray(target) ? target.includes(item) : target === item
+}
+
+function isNotEqual(draggable: DraggableData, droppable: DroppableData) {
+  return draggable.type !== droppable.type || draggable.id != droppable.id
+}
 
 interface DropEvent {
   dragType: DraggableType
@@ -79,13 +86,12 @@ export function useDropEvents() {
     {
       dragType: 'taggable',
       dropType: 'stack',
-      action: async (_, droppable) => {
+      isValid: (draggable, droppable) => {
         //Learned this the hard way, we don't want to be able to add a stack
         // to itself
-        if (selection.some((t) => t.id === droppable.id)) {
-          return
-        }
-
+        return !selection.some((t) => t.id === droppable.id)
+      },
+      action: async (_, droppable) => {
         await addToStack(
           selection.map((t) => t.id),
           droppable.id,
@@ -119,6 +125,11 @@ export function useDropEvents() {
     {
       dragType: 'taggable',
       dropType: 'file',
+      isValid: (draggable, droppable) => {
+        const images = selection.filter(isTaggableImage)
+
+        return images.length > 0
+      },
       action: async (draggable, droppable) => {
         const source = taggables.find((t) => t.id === droppable.id)
         const images = selection.filter(isTaggableImage)
@@ -165,6 +176,7 @@ export function useDropEvents() {
     {
       dragType: 'tagGroup',
       dropType: 'tagGroup',
+      isValid: isNotEqual,
       action: async (draggable, droppable) => {
         await reorderGroups(draggable.id, droppable.id !== -1 ? droppable.id : 'end')
         reloadTags()
@@ -176,6 +188,7 @@ export function useDropEvents() {
     {
       dragType: 'tag',
       dropType: 'tag',
+      isValid: isNotEqual,
       action: async (draggable, droppable) => {
         await reorderTags(
           draggable.id,
@@ -198,13 +211,19 @@ export function useDropEvents() {
     }
   ]
 
-  const isValidDrop = useCallback(
-    (dragType: DraggableType, dropType: DroppableType | DroppableType[]) =>
-      dropEvents.some(
+  const getValidDropTypes = useCallback(
+    (draggable: DraggableData, droppable: DroppableData) => {
+      const event = dropEvents.find(
         (e) =>
-          e.dragType === dragType &&
-          (Array.isArray(dropType) ? dropType.includes(e.dropType) : e.dropType === dropType)
-      ),
+          inOrEqual(e.dragType, draggable.type) &&
+          inOrEqual(e.dropType, droppable.type) &&
+          (e.isValid == null || e.isValid(draggable, droppable))
+      )
+
+      if (event) {
+        return { dragType: event.dragType, dropType: event.dropType }
+      }
+    },
     [dropEvents]
   )
 
@@ -212,15 +231,12 @@ export function useDropEvents() {
     (draggable: DraggableData, droppable: DroppableData) => {
       const event = dropEvents.find(
         (e) =>
-          (Array.isArray(draggable.type)
-            ? draggable.type.includes(e.dragType)
-            : e.dragType === draggable.type) &&
-          (Array.isArray(droppable.type)
-            ? droppable.type.includes(e.dropType)
-            : e.dropType === droppable.type)
+          inOrEqual(e.dragType, draggable.type) &&
+          inOrEqual(e.dropType, droppable.type) &&
+          (e.isValid == null || e.isValid(draggable, droppable))
       )
 
-      if (event && (event.isValid == null || event.isValid(draggable, droppable))) {
+      if (event) {
         event.action(draggable, droppable)
         return true
       }
@@ -230,5 +246,5 @@ export function useDropEvents() {
     [dropEvents]
   )
 
-  return { handle, isValidDrop }
+  return { handle, getValidDropTypes }
 }

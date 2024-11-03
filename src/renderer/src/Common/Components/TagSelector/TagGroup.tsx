@@ -121,6 +121,7 @@ export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProp
               <Droppable
                 type="tag"
                 id={t.id}
+                hideIndicator
                 render={({ overType }) => (
                   <DropIndicator showIndicator={overType === 'tag'}>
                     <Draggable id={t.id} type="tag">
@@ -140,6 +141,7 @@ export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProp
           <Droppable
             type="tagGroupEnd"
             id={group.id}
+            hideIndicator
             render={({ overType }) => (
               <DropIndicator showIndicator={overType === 'tag'}>
                 <IconButton

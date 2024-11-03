@@ -7,6 +7,7 @@ import { isTaggableStack, isTaggableFile } from '@renderer/Common/taggable'
 import { CenteredOverlay } from '../CenteredOverlay'
 import SellIcon from '@mui/icons-material/Sell'
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos'
+import { DropIndicator } from '../TagSelector/DropIndicator'
 
 function buildDropType(taggable: Impart.Taggable): DroppableType | DroppableType[] {
   if (isTaggableStack(taggable)) {
@@ -97,30 +98,21 @@ export function TaggableWrapper({
             }
           >
             <Draggable id={taggable.id} type="taggable">
-              <Box
+              <DropIndicator
+                show={overType === 'tag' && !taggable.tags.some((t) => t.id == overId)}
                 onContextMenu={(e) => {
                   onRightClick && onRightClick(e, taggable)
                 }}
                 onMouseDown={(e) => onMouseDown && onMouseDown(e, taggable)}
                 onClick={(e) => onClick && onClick(e, taggable)}
                 onDoubleClick={() => onDoubleClick && onDoubleClick(taggable)}
-                sx={(theme) =>
-                  overType === 'tag' && !taggable.tags.some((t) => t.id == overId)
-                    ? {
-                        border: `1px solid ${theme.palette.info.main}`,
-                        borderRadius: 2,
-                        backgroundColor: alpha(theme.palette.info.light, 0.2),
-                        margin: '-1px'
-                      }
-                    : {}
-                }
               >
                 <TaggableDisplay
                   taggable={taggable}
                   isSelected={selection?.some((s) => s.id === taggable.id)}
                   showTags={overType === 'tag'}
                 />
-              </Box>
+              </DropIndicator>
             </Draggable>
           </CenteredOverlay>
         )}

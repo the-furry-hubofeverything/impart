@@ -67,6 +67,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
               key={g.id}
               id={g.id}
               type="tagGroup"
+              hideIndicator
               render={({ overType }) => (
                 <DropIndicator showIndicator={overType === 'tagGroup'}>
                   <Draggable type="tagGroup" id={g.id} exposeHandle>
@@ -85,6 +86,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
         <Droppable
           type="tagGroup"
           id={-1}
+          hideIndicator
           render={({ overType }) => (
             <DropIndicator showIndicator={overType === 'tagGroup'}>
               <Button
