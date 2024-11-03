@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react'
 
-function useLocalStorage<T>(key: string, defaultValue: T): [T, (state: T) => void]
+function useLocalStorage<T>(
+  key: string,
+  defaultValue: T
+): [T, React.Dispatch<React.SetStateAction<T>>]
 function useLocalStorage<T = undefined>(
   key: string,
   defaultValue?: T
-): [T | undefined, (state: T | undefined) => void]
+): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>]
 function useLocalStorage<T = undefined>(
   key: string,
   defaultValue?: T
-): [T | undefined, (state: T | undefined) => void] {
+): [T | undefined, React.Dispatch<React.SetStateAction<T | undefined>>] {
   const [value, setValue] = useState(() => {
     let currentValue: T | undefined
 
