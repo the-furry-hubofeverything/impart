@@ -22,15 +22,16 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 import { Droppable } from '../DragAndDrop/Droppable'
 import { satisfiesFilter } from './satisfiesFilter'
 
-const DropIndicator = styled(Box)<BoxProps & { showIndicator: boolean }>(
-  ({ showIndicator, theme }) =>
-    showIndicator
-      ? {
-          borderLeft: `3px solid ${theme.palette.primary.main}`,
-          marginLeft: '-6px',
-          paddingLeft: '3px'
-        }
-      : {}
+const DropIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'showIndicator' })<
+  BoxProps & { showIndicator: boolean }
+>(({ showIndicator, theme }) =>
+  showIndicator
+    ? {
+        borderLeft: `3px solid ${theme.palette.primary.main}`,
+        marginLeft: '-6px',
+        paddingLeft: '3px'
+      }
+    : {}
 )
 
 export interface TagGroupProps {

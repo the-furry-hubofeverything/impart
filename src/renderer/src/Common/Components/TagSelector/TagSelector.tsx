@@ -11,15 +11,16 @@ import { TagSelection } from './TagSelection'
 import { EmptyTagGroups } from './EmptyTagGroups'
 import { satisfiesFilter } from './satisfiesFilter'
 
-const DropIndicator = styled(Box)<BoxProps & { showIndicator: boolean }>(
-  ({ showIndicator, theme }) =>
-    showIndicator
-      ? {
-          borderTop: `3px solid ${theme.palette.primary.main}`,
-          marginTop: '-6px',
-          paddingTop: '3px'
-        }
-      : {}
+const DropIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'showIndicator' })<
+  BoxProps & { showIndicator: boolean }
+>(({ showIndicator, theme }) =>
+  showIndicator
+    ? {
+        borderTop: `3px solid ${theme.palette.primary.main}`,
+        marginTop: '-6px',
+        paddingTop: '3px'
+      }
+    : {}
 )
 
 export interface TagSelectorProps {
