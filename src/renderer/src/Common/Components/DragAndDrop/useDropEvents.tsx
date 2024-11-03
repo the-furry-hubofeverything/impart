@@ -28,8 +28,6 @@ export function useDropEvents() {
     []
   )
 
-  const { sendSuccess } = useNotification()
-
   const confirm = useConfirmationDialog()
 
   const { reload: reloadTags, groups } = useTagGroups()
@@ -61,7 +59,6 @@ export function useDropEvents() {
           )
         } else {
           await addTags(droppable.id, [draggable.id])
-          sendSuccess('Item tagged!')
           reloadTaggables()
         }
       }

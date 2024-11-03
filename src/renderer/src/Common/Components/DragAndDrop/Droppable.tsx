@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core'
 import { Box } from '@mui/material'
-import React, { useId } from 'react'
-import { DraggableType } from './Draggable'
+import React, { useEffect, useId } from 'react'
+import { DraggableData, DraggableType } from './Draggable'
 import { useImpartDragAndDrop } from './ImpartDragAndDropProvider'
 
 export type DroppableType =
@@ -22,9 +22,10 @@ export interface DroppableProps {
   type: DroppableType | DroppableType[]
   id: number
   render: (props: { overType?: DraggableType }) => React.ReactNode
+  onDrop?: (draggable: DraggableData) => void
 }
 
-export function Droppable({ type, id, render }: DroppableProps) {
+export function Droppable({ type, id, render, onDrop }: DroppableProps) {
   const droppableId = useId()
 
   const { setNodeRef, active, isOver } = useDroppable({
@@ -35,10 +36,16 @@ export function Droppable({ type, id, render }: DroppableProps) {
     } satisfies DroppableData
   })
 
-  const { isValidDrop } = useImpartDragAndDrop()
+  const { isValidDrop, lastDrop } = useImpartDragAndDrop()
   const overType: DraggableType | undefined = active?.data.current?.type
 
   const canDrop = isOver && overType && isValidDrop(overType, type)
+
+  useEffect(() => {
+    if (lastDrop?.droppable.type === type && lastDrop.droppable.id === id) {
+      onDrop && onDrop(lastDrop.draggable)
+    }
+  }, [lastDrop, onDrop])
 
   return <Box ref={setNodeRef}>{render({ overType: canDrop ? overType : undefined })}</Box>
 }

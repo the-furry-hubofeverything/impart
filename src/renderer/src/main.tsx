@@ -11,6 +11,7 @@ import { theme } from './theme'
 import { NotificationProvider } from './Common/Components/NotificationProvider'
 import { ActiveContextMenuProvider } from './Common/Components/ContextMenu/ActiveContextMenuProvider'
 import { ConfirmationDialogProvider } from './Common/Components/ConfirmationDialogProvider'
+import 'animate.css'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

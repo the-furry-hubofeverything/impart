@@ -21,8 +21,14 @@ import { Box } from '@mui/material'
 import { TagGroup } from '../TagSelector/TagGroup'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 
+interface Drop {
+  draggable: DraggableData
+  droppable: DroppableData
+}
+
 export interface ImpartDragAndDropData {
   isValidDrop: (dragType: DraggableType, dropType: DroppableType | DroppableType[]) => boolean
+  lastDrop?: Drop
 }
 
 const ImpartDragAndDropContext = createContext<ImpartDragAndDropData | null>(null)
@@ -34,6 +40,7 @@ export interface ImpartDragAndDropProviderProps {
 export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProviderProps) {
   const [current, setCurrent] = useState<DraggableData>()
   const [successfulDrop, setSuccesfulDrop] = useState(false)
+  const [lastDrop, setLastDrop] = useState<Drop>()
 
   const { handle, isValidDrop } = useDropEvents()
 
@@ -62,12 +69,17 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
     const droppable = e.over?.data.current as DroppableData | undefined
 
     if (droppable) {
-      setSuccesfulDrop(handle(draggable, droppable))
+      const dropAccepted = handle(draggable, droppable)
+      setSuccesfulDrop(dropAccepted)
+
+      if (dropAccepted) {
+        setLastDrop({ draggable, droppable })
+      }
     }
   }
 
   return (
-    <ImpartDragAndDropContext.Provider value={{ isValidDrop }}>
+    <ImpartDragAndDropContext.Provider value={{ isValidDrop, lastDrop }}>
       <DndContext
         sensors={[mouseSensor]}
         onDragStart={handleDrag}
