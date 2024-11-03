@@ -13,6 +13,7 @@ import { useNotification } from '../NotificationProvider'
 interface DropEvent {
   dragType: DraggableType
   dropType: DroppableType
+  isValid?: (draggable: DraggableData, Droppable: DroppableData) => boolean
   action: (draggable: DraggableData, Droppable: DroppableData) => unknown
 }
 
@@ -42,6 +43,15 @@ export function useDropEvents() {
     {
       dragType: 'tag',
       dropType: 'taggable',
+      isValid: (draggable, droppable) => {
+        if (selection.some((s) => s.id === droppable.id)) {
+          return selection.some((s) => !s.tags.some((t) => t.id === draggable.id))
+        }
+
+        const item = taggables.find((t) => t.id === droppable.id)
+
+        return item != null && !item.tags.some((t) => t.id === draggable.id)
+      },
       action: async (draggable, droppable) => {
         if (selection.length > 1 && selection.some((t) => t.id === droppable.id)) {
           confirm(
@@ -210,7 +220,7 @@ export function useDropEvents() {
             : e.dropType === droppable.type)
       )
 
-      if (event) {
+      if (event && (event.isValid == null || event.isValid(draggable, droppable))) {
         event.action(draggable, droppable)
         return true
       }
