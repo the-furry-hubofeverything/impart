@@ -18,16 +18,18 @@ function flattenSelectOptions(groups: Impart.TagGroup[] | undefined, selected: n
   groups?.forEach((g) => {
     items.push(<ListSubheader key={`group-${g.id}`}>{g.label}</ListSubheader>)
 
-    g.tags?.forEach((t) => {
-      items.push(
-        <MenuItem key={`tag-${t.id}`} value={t.id}>
-          <Checkbox checked={selected.includes(t.id)} />
-          <ListItemText>
-            <Tag tag={t} />
-          </ListItemText>
-        </MenuItem>
-      )
-    })
+    g.tags
+      ?.sort((a, b) => a.tagOrder - b.tagOrder)
+      .forEach((t) => {
+        items.push(
+          <MenuItem key={`tag-${t.id}`} value={t.id}>
+            <Checkbox checked={selected.includes(t.id)} />
+            <ListItemText>
+              <Tag tag={t} />
+            </ListItemText>
+          </MenuItem>
+        )
+      })
   })
 
   return items
