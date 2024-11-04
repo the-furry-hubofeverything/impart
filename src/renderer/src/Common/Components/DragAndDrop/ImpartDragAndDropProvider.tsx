@@ -17,9 +17,12 @@ import { Tag } from '../Tag'
 import { DroppableData, DroppableType } from './Droppable'
 import { useDropEvents } from './useDropEvents'
 import { createContext, useContext } from 'react'
-import { Box } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { TagGroup } from '../TagSelector/TagGroup'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import { CenteredOverlay } from '../CenteredOverlay'
+import { useTaggableSelection } from '@renderer/TaggableSelectionProvider'
+import AddIcon from '@mui/icons-material/Add'
 
 interface Drop {
   draggable: DraggableData
@@ -47,6 +50,7 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
 
   const { handle, getValidDropTypes } = useDropEvents()
 
+  const { selection } = useTaggableSelection()
   const { taggables } = useTaggables()
   const { groups, tags } = useTagGroups()
 
@@ -105,11 +109,33 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
           dropAnimation={successfulDrop ? null : undefined}
           modifiers={draggedGroup ? [restrictToVerticalAxis] : undefined}
         >
-          <Box sx={{ opacity: 0.8 }}>
-            {draggedTaggable && <TaggableDisplay taggable={draggedTaggable} />}
-            {draggedTag && <Tag tag={draggedTag} />}
-            {draggedGroup && <TagGroup group={draggedGroup} />}
-          </Box>
+          {draggedTaggable && (
+            <CenteredOverlay
+              show={selection.length > 1}
+              overlay={
+                <Box p={1} borderRadius={50} bgcolor="error.main">
+                  <Stack
+                    width={40}
+                    height={40}
+                    borderRadius={50}
+                    bgcolor="background.paper"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Typography fontWeight="bold" fontSize={30}>
+                      {selection.length}
+                    </Typography>
+                  </Stack>
+                </Box>
+              }
+            >
+              <Box sx={{ opacity: 0.8 }}>
+                <TaggableDisplay taggable={draggedTaggable} />
+              </Box>
+            </CenteredOverlay>
+          )}
+          {draggedTag && <Tag tag={draggedTag} />}
+          {draggedGroup && <TagGroup group={draggedGroup} />}
         </DragOverlay>
       </DndContext>
     </ImpartDragAndDropContext.Provider>
