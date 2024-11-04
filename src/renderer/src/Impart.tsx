@@ -38,7 +38,10 @@ export function Impart({}: ImpartProps) {
   const { reload: fetchTaggables } = useTaggables()
 
   useEffect(() => {
-    window.indexApi.indexAll()
+    ;(async () => {
+      await window.indexApi.indexAll()
+      fetchTaggables()
+    })()
   }, [])
 
   const closeAndRefresh = () => {

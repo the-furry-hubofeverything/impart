@@ -1,5 +1,6 @@
 import { shell } from 'electron'
 import { readdir, stat } from 'fs/promises'
+import { existsSync } from 'fs'
 import path from 'path'
 import { TaggableImage, isTaggableImage } from '../database/entities/TaggableImage'
 import { TaggableFile, isTaggableFile } from '../database/entities/TaggableFile'
@@ -9,10 +10,8 @@ import { Directory } from '../database/entities/Directory'
 import { imageSize } from 'image-size'
 import { taskQueue } from '../task/taskQueue'
 import dayjs from 'dayjs'
-import { TagManager } from '../tagging/tagManager'
 import { ImpartTask, TaskType } from '../task/impartTask'
 import { ThumbnailManager } from './thumbnailManager'
-import { Dirent } from 'fs'
 import { zap } from '../common/zap'
 import { TaggingManager } from '../tagging/taggingManager'
 
@@ -45,6 +44,12 @@ export namespace IndexingManager {
   }
 
   export async function indexFiles(directory: Directory) {
+    if (!existsSync(directory.path)) {
+      console.log('Directory no longer exists! Removing...')
+      await directory.remove()
+      return
+    }
+
     const dirents = await readdir(directory.path, {
       withFileTypes: true,
       recursive: directory.recursive
