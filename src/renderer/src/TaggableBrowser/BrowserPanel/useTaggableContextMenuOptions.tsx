@@ -71,7 +71,7 @@ export function useTaggableContextMenuOptions(
     },
     {
       icon: <AddLinkIcon />,
-      label: 'Associate With Source File',
+      label: 'Associate With Source File...',
       hide: !selection.every((t) => isTaggableImage(t) && t.source == null),
       onClick: () =>
         onAssociateWithSource &&
@@ -87,14 +87,14 @@ export function useTaggableContextMenuOptions(
     'divider',
     {
       icon: <TagIcon />,
-      label: 'Edit Tags',
+      label: 'Edit Tags...',
       hide: selection.length > 1,
       shortcut: 'Ctrl + E',
       onClick: () => onEditTags && onEditTags(selection[0])
     },
     {
       icon: <BookmarksIcon />,
-      label: 'Bulk Tag',
+      label: 'Bulk Tag...',
       hide: selection.length < 2,
       shortcut: 'Ctrl + E',
       onClick: () => onBulkTag && onBulkTag(selection)
@@ -102,13 +102,13 @@ export function useTaggableContextMenuOptions(
     'divider',
     {
       icon: <BurstModeIcon />,
-      label: 'Create Stack',
+      label: 'Create Stack...',
       hide: selection.length < 2,
       onClick: () => onCreateStack && onCreateStack(selection)
     },
     {
       icon: <DriveFileRenameOutlineIcon />,
-      label: 'Rename Stack',
+      label: 'Rename Stack...',
       hide: selection.length !== 1 || !isTaggableStack(selection[0]),
       onClick: () => onRenameStack && isTaggableStack(selection[0]) && onRenameStack(selection[0])
     },
