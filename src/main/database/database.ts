@@ -9,6 +9,7 @@ import { TaggableFile } from './entities/TaggableFile'
 import { Thumbnail } from './entities/Thumbnail'
 import { TaggableStack } from './entities/TaggableStack'
 import { APP_DIR, DEV_DIR } from '../common/appDir'
+import { InitDatabase1730761117956 } from './migrations/1730761117956-InitDatabase'
 
 const path = app.getPath('appData')
 
@@ -25,7 +26,8 @@ export const AppDataSource = new DataSource({
     TaggableStack,
     Thumbnail
   ],
-  synchronize: true,
-  // dropSchema: true,
+  migrations: [InitDatabase1730761117956],
+  migrationsTableName: '__migrations',
+  migrationsRun: true,
   logging: app.isPackaged ? false : ['error', 'warn', 'info']
 })
