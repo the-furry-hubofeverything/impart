@@ -25,9 +25,10 @@ export interface DroppableProps {
   render: (props: { overType?: DraggableType; overId?: number }) => React.ReactNode
   onDrop?: (draggable: DraggableData) => void
   hideIndicator?: boolean
+  disabled?: boolean
 }
 
-export function Droppable({ type, id, render, onDrop, hideIndicator }: DroppableProps) {
+export function Droppable({ type, id, render, onDrop, hideIndicator, disabled }: DroppableProps) {
   const droppableId = useId()
 
   const { setNodeRef, active, isOver } = useDroppable({
@@ -35,7 +36,8 @@ export function Droppable({ type, id, render, onDrop, hideIndicator }: Droppable
     data: {
       type,
       id
-    } satisfies DroppableData
+    } satisfies DroppableData,
+    disabled
   })
 
   const { getValidDropTypes, lastDrop } = useImpartDragAndDrop()

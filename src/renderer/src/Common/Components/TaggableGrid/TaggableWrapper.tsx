@@ -21,6 +21,7 @@ function buildDropType(taggable: Impart.Taggable): DroppableType | DroppableType
 
 export interface TaggableWrapperProps {
   taggable: Impart.Taggable
+  dragAndDrop?: boolean
   selection?: Impart.Taggable[]
   onMouseDown?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, item: Impart.Taggable) => void
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>, item: Impart.Taggable) => void
@@ -34,7 +35,8 @@ export function TaggableWrapper({
   onMouseDown,
   onClick,
   onDoubleClick,
-  onRightClick
+  onRightClick,
+  dragAndDrop
 }: TaggableWrapperProps) {
   //Instead of using true/false to render the tagging animation, we
   // use an increment which allows for sequential tag drops to unmount
@@ -76,6 +78,7 @@ export function TaggableWrapper({
       <Droppable
         type={buildDropType(taggable)}
         id={taggable.id}
+        disabled={!dragAndDrop}
         onDrop={(d) =>
           d.type === 'tag' &&
           !taggable.tags.some((t) => t.id === d.id) &&
@@ -97,7 +100,7 @@ export function TaggableWrapper({
               </Stack>
             }
           >
-            <Draggable id={taggable.id} type="taggable">
+            <Draggable id={taggable.id} type="taggable" disabled={!dragAndDrop}>
               <DropIndicator
                 show={overType === 'tag' && !taggable.tags.some((t) => t.id == overId)}
                 onContextMenu={(e) => {

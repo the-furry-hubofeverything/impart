@@ -101,6 +101,7 @@ export function BrowserPanel({ ...gridEvents }: BrowserPanelProps) {
           <VirtualTaggableGrid
             taggables={taggables}
             selection={selection}
+            dragAndDrop
             onMouseDown={(e, t) => {
               if (e.button === 0 && (!itemIsSelected(t) || e.shiftKey || e.ctrlKey)) {
                 selectedItemRef.current = true

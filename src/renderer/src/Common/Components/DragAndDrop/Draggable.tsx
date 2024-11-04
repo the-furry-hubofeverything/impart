@@ -14,10 +14,11 @@ export interface DraggableProps {
   children: React.ReactNode
   id: number
   type: DraggableType | DraggableType[]
+  disabled?: boolean
   exposeHandle?: boolean
 }
 
-export function Draggable({ children, id, type, exposeHandle }: DraggableProps) {
+export function Draggable({ children, id, type, exposeHandle, disabled }: DraggableProps) {
   const draggableId = useId()
 
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -25,7 +26,8 @@ export function Draggable({ children, id, type, exposeHandle }: DraggableProps) 
     data: {
       id,
       type
-    } satisfies DraggableData
+    } satisfies DraggableData,
+    disabled
   })
 
   if (!exposeHandle) {
