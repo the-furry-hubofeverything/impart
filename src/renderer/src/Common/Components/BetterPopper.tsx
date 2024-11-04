@@ -1,5 +1,4 @@
-import { ClickAwayListener, Popper, PopperProps } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { Popper, PopperProps } from '@mui/material'
 
 export interface BetterPopper extends Omit<PopperProps, 'modifiers'> {}
 

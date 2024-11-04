@@ -1,6 +1,4 @@
 import {
-  Tooltip,
-  ToggleButton,
   Stack,
   IconButton,
   styled,
@@ -8,18 +6,18 @@ import {
   Divider,
   Collapse,
   Breadcrumbs,
-  Link,
   Chip,
-  emphasize
+  emphasize,
+  Popover
 } from '@mui/material'
-import FolderIcon from '@mui/icons-material/Folder'
 import { YearSelector } from './YearSelector'
-import { StyledToggleButtonGroup } from './StyledToggleButtonGroup'
 import { SortButtons } from './SortButtons'
 import { SearchBar } from '../../../Common/Components/SearchBar'
 import HomeIcon from '@mui/icons-material/Home'
 import { Droppable } from '@renderer/Common/Components/DragAndDrop/Droppable'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
+import FilterIcon from '@mui/icons-material/FilterAlt'
+import { useRef, useState } from 'react'
 
 const ToolbarIconButton = styled(IconButton)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -53,9 +51,12 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 
 export function GridActions({ stack, onStackChange }: GridActionsProps) {
   const {
-    fetchOptions: { search },
+    fetchOptions: { search, year },
     setFetchOptions
   } = useTaggables()
+
+  const [showFilters, setShowFilters] = useState(false)
+  const anchorRef = useRef<HTMLDivElement | null>(null)
 
   return (
     <Box width="100%">
@@ -67,11 +68,44 @@ export function GridActions({ stack, onStackChange }: GridActionsProps) {
         gap={1}
         divider={<Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />}
       >
-        <Box flex={1}>
-          <SearchBar value={search} onChange={(v) => setFetchOptions({ search: v })} />
+        <Box flex={1} ref={anchorRef}>
+          <SearchBar
+            value={search}
+            onChange={(v) => setFetchOptions({ search: v })}
+            endAdornment={
+              <>
+                {year && (
+                  <Chip
+                    label={year}
+                    size="small"
+                    onDelete={() => setFetchOptions({ year: undefined })}
+                  />
+                )}
+                <IconButton size="small" onClick={() => setShowFilters(true)}>
+                  <FilterIcon fontSize="inherit" />
+                </IconButton>
+              </>
+            }
+          />
         </Box>
-        <YearSelector />
         <SortButtons />
+        <Popover
+          open={showFilters}
+          onClose={() => setShowFilters(false)}
+          anchorEl={anchorRef.current}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          transformOrigin={{
+            vertical: -10,
+            horizontal: 'right'
+          }}
+        >
+          <Box p={2}>
+            <YearSelector />
+          </Box>
+        </Popover>
       </Stack>
       <Collapse in={stack.length > 0}>
         <Box pt={1}>

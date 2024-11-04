@@ -1,21 +1,9 @@
-import {
-  Box,
-  Button,
-  ClickAwayListener,
-  Grid2,
-  IconButton,
-  Paper,
-  Popover,
-  Popper,
-  Stack,
-  Typography
-} from '@mui/material'
+import { Box, Paper, Stack, Typography } from '@mui/material'
 import { isTaggableFile, isTaggableImage, isTaggableStack } from '../../taggable'
 import { ImageDisplay } from './ImageDisplay'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import { useRef } from 'react'
 import BurstModeIcon from '@mui/icons-material/BurstMode'
-import { Tag } from '../Tag'
 import { PaperStack } from './PaperStack'
 import { useEditTaggable } from '@renderer/TaggableBrowser/EditTaggableProvider'
 import { BetterPopper } from '../BetterPopper'
