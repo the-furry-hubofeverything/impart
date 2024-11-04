@@ -113,7 +113,7 @@ export function ImpartDragAndDropProvider({ children }: ImpartDragAndDropProvide
             <CenteredOverlay
               show={selection.length > 1}
               overlay={
-                <Box p={1} borderRadius={50} bgcolor="error.main">
+                <Box p={1} borderRadius={50} bgcolor="info.dark">
                   <Stack
                     width={40}
                     height={40}
