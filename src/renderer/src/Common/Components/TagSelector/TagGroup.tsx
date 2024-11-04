@@ -21,6 +21,7 @@ import { useDraggableHandle } from '../DragAndDrop/DraggableHandleProvider'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 import { Droppable } from '../DragAndDrop/Droppable'
 import { satisfiesFilter } from './satisfiesFilter'
+import { useImpartIpcCall } from '@renderer/Common/Hooks/useImpartIpc'
 
 const DropIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'showIndicator' })<
   BoxProps & { showIndicator: boolean }
@@ -45,6 +46,11 @@ export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProp
   const [editMode, setEditMode] = useState(false)
   const { reload } = useTagGroups()
 
+  const { callIpc: deleteGroup, isLoading: isDeleting } = useImpartIpcCall(
+    () => window.tagApi.deleteGroup(group.id),
+    [group.id]
+  )
+
   const confirm = useConfirmationDialog()
 
   const remove = async () => {
@@ -58,12 +64,12 @@ export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProp
           confirmIcon: <DeleteIcon />
         },
         async () => {
-          await window.tagApi.deleteGroup(group.id)
+          await deleteGroup()
           reload()
         }
       )
     } else {
-      await window.tagApi.deleteGroup(group.id)
+      await deleteGroup()
       reload()
     }
   }
@@ -102,7 +108,12 @@ export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProp
               <Typography variant="h5" onClick={() => setEditMode(true)}>
                 {group.label ?? 'Unnamed Group'}
               </Typography>
-              <IconButton className="fade-in-button" color="error" onClick={remove}>
+              <IconButton
+                className="fade-in-button"
+                color="error"
+                onClick={remove}
+                disabled={isDeleting}
+              >
                 <DeleteIcon />
               </IconButton>
             </Stack>
