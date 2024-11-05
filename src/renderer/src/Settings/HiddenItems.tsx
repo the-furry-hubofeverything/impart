@@ -73,6 +73,11 @@ export function HiddenItems({}: HiddenItemsProps) {
         <Typography variant="h3">Hidden Items</Typography>
       </Box>
       <Stack>
+        {hiddenTaggables?.length === 0 && (
+          <Typography color="text.secondary" fontStyle="italic" textAlign="center">
+            No items hidden.
+          </Typography>
+        )}
         {hiddenTaggables?.map((t) => (
           <SelectableBox
             key={t.id}

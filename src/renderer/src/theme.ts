@@ -40,9 +40,9 @@ export const theme = createTheme(
     palette: seafoam,
     //For some reason, this isn't working, so I guess I just have to
     // manually apply it to everything??
-    typography: {
-      fontFamily: 'NunitoSans, Arial, sans-serif'
-    },
+    // typography: {
+    //   fontFamily: 'NunitoSans, Arial, sans-serif'
+    // },
     components: {
       MuiCssBaseline: {
         styleOverrides: `
@@ -95,6 +95,9 @@ export const theme = createTheme(
           },
           caption: {
             fontFamily: 'Mallanna, Courier, monospace'
+          },
+          h5: {
+            fontSize: 22
           }
         }
       },

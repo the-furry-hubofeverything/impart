@@ -113,6 +113,7 @@ export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProp
                 color="error"
                 onClick={remove}
                 disabled={isDeleting}
+                size="small"
               >
                 <DeleteIcon />
               </IconButton>
