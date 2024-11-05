@@ -69,6 +69,7 @@ export function GridActions({ stack, onStackChange }: GridActionsProps) {
         divider={<Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />}
       >
         <Box flex={1} ref={anchorRef}>
+          {__APP_VERSION__}
           <SearchBar
             value={search}
             onChange={(v) => setFetchOptions({ search: v })}

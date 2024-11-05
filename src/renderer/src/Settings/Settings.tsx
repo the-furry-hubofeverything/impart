@@ -6,8 +6,10 @@ import { IndexedDirectoriesSettings } from './IndexedDirectorySettings'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
 import HideImageIcon from '@mui/icons-material/HideImage'
 import { HiddenItems } from './HiddenItems'
+import InfoIcon from '@mui/icons-material/Info'
+import { About } from './About/About'
 
-type SettingsType = 'directories' | 'hiddenItems'
+type SettingsType = 'directories' | 'hiddenItems' | 'about'
 
 export interface SettingsProps {
   onClose?: () => void
@@ -50,11 +52,13 @@ export function Settings({ onClose }: SettingsProps) {
               >
                 <Tab label="Directories" value="directories" icon={<FolderIcon />} />
                 <Tab label="Hidden Items" value="hiddenItems" icon={<HideImageIcon />} />
+                <Tab label="About" value="about" icon={<InfoIcon />} />
               </Tabs>
             </Stack>
             <Box flex={1} p={1} pr={8} height="100%" sx={{ overflowY: 'scroll' }}>
               {selectedTab === 'directories' && <IndexedDirectoriesSettings />}
               {selectedTab === 'hiddenItems' && <HiddenItems />}
+              {selectedTab === 'about' && <About />}
             </Box>
           </Stack>
         </Box>

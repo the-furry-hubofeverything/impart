@@ -4,6 +4,8 @@ type CallbackFunc<Payload> = (callback: (values: Payload) => void) => () => void
 type Result<Payload> = Promise<Payload | Impart.Error>
 
 declare global {
+  declare const __APP_VERSION__: string
+
   namespace Impart {
     interface Dimensions {
       width: number
