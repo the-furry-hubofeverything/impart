@@ -1,4 +1,7 @@
 import { PaletteOptions, createTheme } from '@mui/material'
+import NunitoSans from './fonts/NunitoSans.ttf'
+import NunitoSansItalic from './fonts/NunitoSans-Italic.ttf'
+import Mallanna from './fonts/Mallanna-Regular.ttf'
 
 const seafoam: PaletteOptions = {
   background: {
@@ -35,7 +38,77 @@ export const theme = createTheme(
   {
     cssVariables: true,
     palette: seafoam,
+    //For some reason, this isn't working, so I guess I just have to
+    // manually apply it to everything??
+    typography: {
+      fontFamily: 'NunitoSans, Arial, sans-serif'
+    },
     components: {
+      MuiCssBaseline: {
+        styleOverrides: `
+          @font-face {
+            font-family: 'NunitoSans';
+            src: url(${NunitoSans});
+          }
+
+          @font-face {
+            font-family: 'NunitoSans';
+            font-style: italic;
+            src: url(${NunitoSansItalic});
+          }
+
+          @font-face {
+            font-family: 'Mallanna';
+            src: url(${Mallanna});
+          }
+        `
+      },
+
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            fontFamily: 'NunitoSans, Arial, sans-serif'
+          }
+        }
+      },
+
+      MuiTypography: {
+        styleOverrides: {
+          root: {
+            fontFamily: 'NunitoSans, Arial, sans-serif'
+          },
+          caption: {
+            fontFamily: 'Mallanna, Courier, monospace'
+          }
+        }
+      },
+
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            fontFamily: 'NunitoSans, Arial, sans-serif'
+          }
+        }
+      },
+
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            '& label': {
+              fontFamily: 'NunitoSans, Arial, sans-serif'
+            }
+          }
+        }
+      },
+
+      MuiTabs: {
+        styleOverrides: {
+          root: {
+            fontFamily: 'NunitoSans, Arial, sans-serif'
+          }
+        }
+      },
+
       MuiPaper: {
         styleOverrides: {
           root: {
@@ -66,6 +139,9 @@ export const theme = createTheme(
 
       MuiButton: {
         styleOverrides: {
+          root: {
+            fontFamily: 'NunitoSans, Arial, sans-serif'
+          },
           sizeSmall: {
             borderRadius: 12,
             paddingLeft: 14,
@@ -87,6 +163,7 @@ export const theme = createTheme(
       MuiTab: {
         styleOverrides: {
           root: {
+            fontFamily: 'NunitoSans, Arial, sans-serif',
             '&.Mui-selected': {
               backgroundColor: '#e0f5f1'
             }
@@ -97,6 +174,7 @@ export const theme = createTheme(
       MuiListSubheader: {
         styleOverrides: {
           root: {
+            fontFamily: 'NunitoSans, Arial, sans-serif',
             paddingLeft: 4,
             paddingRight: 4,
             borderRadius: 8,
