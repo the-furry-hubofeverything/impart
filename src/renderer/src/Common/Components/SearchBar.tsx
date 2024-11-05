@@ -1,6 +1,6 @@
 import { TextField, Box, IconButton, Stack } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
-import ClearIcon from '@mui/icons-material/Clear'
+import SearchIcon from '@mui/icons-material/SearchRounded'
+import ClearIcon from '@mui/icons-material/ClearRounded'
 
 export interface SearchBarProps {
   value?: string

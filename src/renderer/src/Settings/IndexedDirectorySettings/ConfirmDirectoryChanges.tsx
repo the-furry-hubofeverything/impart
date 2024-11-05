@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import { useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
 import React from 'react'
-import SaveIcon from '@mui/icons-material/Save'
+import SaveIcon from '@mui/icons-material/SaveRounded'
 
 export interface ConfirmDirectoryChangesProps {
   directoryState: Impart.Directory[]

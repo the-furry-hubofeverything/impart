@@ -11,9 +11,9 @@ import {
   FormLabel
 } from '@mui/material'
 import { useState } from 'react'
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
-import FolderIcon from '@mui/icons-material/Folder'
-import CheckIcon from '@mui/icons-material/Check'
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolderRounded'
+import FolderIcon from '@mui/icons-material/FolderRounded'
+import CheckIcon from '@mui/icons-material/CheckRounded'
 import { useImpartIpcCall, useImpartIpcData } from './Common/Hooks/useImpartIpc'
 
 export interface IntroSetupProps {

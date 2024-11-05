@@ -1,6 +1,6 @@
 import { Card, IconButton, Stack, Tooltip } from '@mui/material'
 
-import SettingsIcon from '@mui/icons-material/Settings'
+import SettingsIcon from '@mui/icons-material/SettingsRounded'
 
 export interface SettingsPanelProps {
   onClick?: () => void

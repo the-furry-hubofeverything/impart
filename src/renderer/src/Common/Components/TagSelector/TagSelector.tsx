@@ -1,5 +1,5 @@
 import { Stack, Typography, Button, Box, Divider, styled, BoxProps } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
+import AddIcon from '@mui/icons-material/AddRounded'
 import { useMultiSelection } from '../../Hooks/useMultiSelection'
 import { useCallback, useState } from 'react'
 import { TagGroup } from './TagGroup'

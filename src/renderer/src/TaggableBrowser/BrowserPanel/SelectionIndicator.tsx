@@ -1,9 +1,9 @@
 import { Paper, Stack, Typography, IconButton, ButtonGroup, Button, Tooltip } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import CancelIcon from '@mui/icons-material/Cancel'
-import BookmarksIcon from '@mui/icons-material/Bookmarks'
-import SellIcon from '@mui/icons-material/Sell'
-import BurstModeIcon from '@mui/icons-material/BurstMode'
+import CancelIcon from '@mui/icons-material/CancelRounded'
+import BookmarksIcon from '@mui/icons-material/BookmarksRounded'
+import SellIcon from '@mui/icons-material/SellRounded'
+import BurstModeIcon from '@mui/icons-material/BurstModeRounded'
 
 export interface SelectionIndicatorProps {
   count?: number

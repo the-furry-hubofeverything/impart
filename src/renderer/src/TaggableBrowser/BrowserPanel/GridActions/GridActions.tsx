@@ -13,10 +13,10 @@ import {
 import { YearSelector } from './YearSelector'
 import { SortButtons } from './SortButtons'
 import { SearchBar } from '../../../Common/Components/SearchBar'
-import HomeIcon from '@mui/icons-material/Home'
+import HomeIcon from '@mui/icons-material/HomeRounded'
 import { Droppable } from '@renderer/Common/Components/DragAndDrop/Droppable'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
-import FilterIcon from '@mui/icons-material/FilterAlt'
+import FilterIcon from '@mui/icons-material/FilterAltRounded'
 import { useRef, useState } from 'react'
 
 const ToolbarIconButton = styled(IconButton)(({ theme }) => ({

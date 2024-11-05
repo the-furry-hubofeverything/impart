@@ -22,7 +22,7 @@ import { TagGroup } from '../TagSelector/TagGroup'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { CenteredOverlay } from '../CenteredOverlay'
 import { useTaggableSelection } from '@renderer/TaggableSelectionProvider'
-import AddIcon from '@mui/icons-material/Add'
+import AddIcon from '@mui/icons-material/AddRounded'
 
 interface Drop {
   draggable: DraggableData

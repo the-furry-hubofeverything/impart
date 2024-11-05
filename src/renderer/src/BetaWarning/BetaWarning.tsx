@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material'
 import React from 'react'
 import betaImage from './beta.png'
-import ThumbsUpIcon from '@mui/icons-material/ThumbUp'
+import ThumbsUpIcon from '@mui/icons-material/ThumbUpRounded'
 
 export interface BetaWarningProps {
   onClose?: () => void

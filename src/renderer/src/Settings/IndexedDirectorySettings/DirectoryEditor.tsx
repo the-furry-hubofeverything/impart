@@ -10,13 +10,13 @@ import {
   Tooltip,
   Typography
 } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
+import DeleteIcon from '@mui/icons-material/DeleteRounded'
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesomeRounded'
 import { DeletedDirectory } from './DeletedDirectory'
-import EmergencyIcon from '@mui/icons-material/Emergency'
-import UndoIcon from '@mui/icons-material/Undo'
+import EmergencyIcon from '@mui/icons-material/EmergencyRounded'
+import UndoIcon from '@mui/icons-material/UndoRounded'
 import { TagMultiSelect } from './TagMultiSelect'
-import HelpIcon from '@mui/icons-material/Help'
+import HelpIcon from '@mui/icons-material/HelpRounded'
 
 function isDifferent(first: Impart.Directory, second: Impart.Directory) {
   return (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolderRounded'
 import { Box, Button, Dialog, DialogContent, DialogTitle, Stack, Typography } from '@mui/material'
 import folderAlreadyExists from './folderAlreadyExists.png'
 

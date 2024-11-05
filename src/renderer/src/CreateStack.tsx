@@ -10,7 +10,7 @@ import {
   TextField,
   CircularProgress
 } from '@mui/material'
-import CheckIcon from '@mui/icons-material/Check'
+import CheckIcon from '@mui/icons-material/CheckRounded'
 import { TaggableDisplay } from './Common/Components/TaggableDisplay'
 import { useImpartIpcCall } from './Common/Hooks/useImpartIpc'
 import { useTaggables } from './EntityProviders/TaggableProvider'

@@ -2,7 +2,7 @@ import { Box, Button, Card, CardContent, Grid2 as Grid, Stack, Typography } from
 import { useState } from 'react'
 import { TagSelector } from './Common/Components/TagSelector'
 import { Tag } from './Common/Components/Tag'
-import CheckIcon from '@mui/icons-material/Check'
+import CheckIcon from '@mui/icons-material/CheckRounded'
 import { Backable } from './Common/Components/Backable'
 import { VirtualTaggableGrid } from './Common/Components/TaggableGrid'
 

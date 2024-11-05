@@ -1,5 +1,5 @@
 import { Stack, Typography, Button } from '@mui/material'
-import SparkleIcon from '@mui/icons-material/AutoAwesome'
+import SparkleIcon from '@mui/icons-material/AutoAwesomeRounded'
 import React from 'react'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 

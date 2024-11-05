@@ -5,8 +5,8 @@ import { Droppable, DroppableType } from '../DragAndDrop/Droppable'
 import { TaggableDisplay } from '../TaggableDisplay'
 import { isTaggableStack, isTaggableFile } from '@renderer/Common/taggable'
 import { CenteredOverlay } from '../CenteredOverlay'
-import SellIcon from '@mui/icons-material/Sell'
-import AddToPhotosIcon from '@mui/icons-material/AddToPhotos'
+import SellIcon from '@mui/icons-material/SellRounded'
+import AddToPhotosIcon from '@mui/icons-material/AddToPhotosRounded'
 import { DropIndicator } from '../TagSelector/DropIndicator'
 
 function buildDropType(taggable: Impart.Taggable): DroppableType | DroppableType[] {

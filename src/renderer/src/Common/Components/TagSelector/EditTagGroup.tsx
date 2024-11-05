@@ -2,8 +2,8 @@ import { Box, Stack, TextField, IconButton, Paper, Typography, useTheme, Fade } 
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import React, { useState } from 'react'
 import { HexColorPicker } from 'react-colorful'
-import CheckIcon from '@mui/icons-material/Check'
-import ClearIcon from '@mui/icons-material/Clear'
+import CheckIcon from '@mui/icons-material/CheckRounded'
+import ClearIcon from '@mui/icons-material/ClearRounded'
 
 export interface EditTagGroupProps {
   group: Impart.TagGroup

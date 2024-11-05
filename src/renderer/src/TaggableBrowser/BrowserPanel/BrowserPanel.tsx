@@ -11,7 +11,7 @@ import { isTaggableStack } from '@renderer/Common/taggable'
 import { GeneratingThumbnailIndicator } from './GeneratingThumbnailIndicator'
 import { useEditTaggable } from '../EditTaggableProvider'
 import { useConfirmationDialog } from '@renderer/Common/Components/ConfirmationDialogProvider'
-import CallSplitIcon from '@mui/icons-material/CallSplit'
+import CallSplitIcon from '@mui/icons-material/CallSplitRounded'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useTaggableSelection } from '@renderer/TaggableSelectionProvider'
 

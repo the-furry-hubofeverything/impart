@@ -12,7 +12,7 @@ import { isTaggableStack } from '@renderer/Common/taggable'
 import { useImpartIpcCall, useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
 import { useMultiSelection } from '@renderer/Common/Hooks/useMultiSelection'
 import React, { useState } from 'react'
-import ImageIcon from '@mui/icons-material/Image'
+import ImageIcon from '@mui/icons-material/ImageRounded'
 
 const SelectableBox = styled(Box)<BoxProps & { selected: boolean }>(({ theme, selected }) => {
   const plainSelectedColor = selected ? theme.palette.primary.main : theme.palette.background.paper

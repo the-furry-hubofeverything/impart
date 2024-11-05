@@ -1,7 +1,7 @@
 import { Tooltip, ToggleButton } from '@mui/material'
 import { StyledToggleButtonGroup } from './StyledToggleButtonGroup'
-import SortByAlphaIcon from '@mui/icons-material/SortByAlpha'
-import ClockIcon from '@mui/icons-material/AccessTime'
+import SortByAlphaIcon from '@mui/icons-material/SortByAlphaRounded'
+import ClockIcon from '@mui/icons-material/AccessTimeRounded'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 
 export interface SortButtonsProps {}

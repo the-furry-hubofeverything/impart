@@ -1,6 +1,6 @@
 import { Box, IconButton } from '@mui/material'
 import React from 'react'
-import BackIcon from '@mui/icons-material/ArrowBack'
+import BackIcon from '@mui/icons-material/ArrowBackRounded'
 
 export interface BackableProps {
   children?: React.ReactNode

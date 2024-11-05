@@ -13,11 +13,11 @@ import {
 } from '@mui/material'
 import { useRef, useState } from 'react'
 import { ContextMenu } from './ContextMenu'
-import EditIcon from '@mui/icons-material/Edit'
+import EditIcon from '@mui/icons-material/EditRounded'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
-import DeleteIcon from '@mui/icons-material/Delete'
+import DeleteIcon from '@mui/icons-material/DeleteRounded'
 import { HexColorPicker } from 'react-colorful'
-import CheckIcon from '@mui/icons-material/Check'
+import CheckIcon from '@mui/icons-material/CheckRounded'
 
 export interface TagProps {
   tag: Impart.Tag

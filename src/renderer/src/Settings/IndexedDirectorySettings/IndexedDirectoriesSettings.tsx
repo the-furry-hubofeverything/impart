@@ -14,14 +14,14 @@ import { useDirectories } from '../../EntityProviders/DirectoryProvider'
 import { useEffect, useState } from 'react'
 import { DirectoryList } from './DirectoryList'
 import { produce } from 'immer'
-import SaveIcon from '@mui/icons-material/Save'
+import SaveIcon from '@mui/icons-material/SaveRounded'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TaskStatus } from '@renderer/Common/Components/TaskStatus'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
 import { AddDirectory } from './AddDirectory'
 import { useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
 import { ConfirmDirectoryChanges } from './ConfirmDirectoryChanges'
-import ConfirmIcon from '@mui/icons-material/Check'
+import ConfirmIcon from '@mui/icons-material/CheckRounded'
 
 export interface IndexedDirectoriesSettingsProps {}
 

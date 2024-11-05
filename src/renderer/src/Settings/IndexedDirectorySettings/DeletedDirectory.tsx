@@ -1,6 +1,6 @@
 import { Card, CardHeader, Typography, IconButton } from '@mui/material'
 import React from 'react'
-import UndoIcon from '@mui/icons-material/Undo'
+import UndoIcon from '@mui/icons-material/UndoRounded'
 
 export interface DeletedDirectoryProps {
   directory?: Impart.Directory

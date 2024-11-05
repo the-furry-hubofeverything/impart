@@ -7,7 +7,7 @@ import {
   DialogTitle
 } from '@mui/material'
 import React, { createContext, useCallback, useContext, useRef, useState } from 'react'
-import CheckIcon from '@mui/icons-material/Check'
+import CheckIcon from '@mui/icons-material/CheckRounded'
 
 export interface ConfirmProps {
   title?: string

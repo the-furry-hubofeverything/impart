@@ -11,7 +11,7 @@ import {
 import React, { useState } from 'react'
 import { Backable } from './Common/Components/Backable'
 import { VirtualTaggableGrid } from './Common/Components/TaggableGrid'
-import CheckIcon from '@mui/icons-material/Check'
+import CheckIcon from '@mui/icons-material/CheckRounded'
 import { useImpartIpcCall, useImpartIpcData } from './Common/Hooks/useImpartIpc'
 import { ImageDisplay } from './Common/Components/TaggableDisplay/ImageDisplay'
 import { TaggableDisplay } from './Common/Components/TaggableDisplay'
