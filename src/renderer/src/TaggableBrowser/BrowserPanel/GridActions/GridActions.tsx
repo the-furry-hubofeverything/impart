@@ -84,28 +84,28 @@ export function GridActions({ stack, onStackChange }: GridActionsProps) {
                 <IconButton size="small" onClick={() => setShowFilters(true)}>
                   <FilterIcon fontSize="inherit" />
                 </IconButton>
+                <Popover
+                  open={showFilters}
+                  onClose={() => setShowFilters(false)}
+                  anchorEl={anchorRef.current}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                  }}
+                  transformOrigin={{
+                    vertical: -10,
+                    horizontal: 'right'
+                  }}
+                >
+                  <Box p={2}>
+                    <YearSelector />
+                  </Box>
+                </Popover>
               </>
             }
           />
         </Box>
         <SortButtons />
-        <Popover
-          open={showFilters}
-          onClose={() => setShowFilters(false)}
-          anchorEl={anchorRef.current}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right'
-          }}
-          transformOrigin={{
-            vertical: -10,
-            horizontal: 'right'
-          }}
-        >
-          <Box p={2}>
-            <YearSelector />
-          </Box>
-        </Popover>
       </Stack>
       <Collapse in={stack.length > 0}>
         <Box pt={1}>
