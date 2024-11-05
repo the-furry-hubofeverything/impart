@@ -68,6 +68,22 @@ export const theme = createTheme(
         styleOverrides: {
           root: {
             fontFamily: 'NunitoSans, Arial, sans-serif'
+          },
+          sizeMedium: {
+            borderRadius: 12,
+            height: 28
+          },
+          labelMedium: {
+            paddingLeft: 10,
+            paddingRight: 10
+          },
+          sizeSmall: {
+            borderRadius: 8,
+            height: 22
+          },
+          labelSmall: {
+            paddingLeft: 8,
+            paddingRight: 8
           }
         }
       },
