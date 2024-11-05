@@ -7,15 +7,11 @@ import { useDirectories } from './EntityProviders/DirectoryProvider'
 import { Settings } from './Settings'
 import { BulkTag } from './BulkTag'
 import { CreateStack } from './CreateStack'
-import { useLocalStorage } from './Common/Hooks/useLocalStorage'
-import { BetaWarning } from './BetaWarning/BetaWarning'
 import { ImpartDragAndDropProvider } from './Common/Components/DragAndDrop/ImpartDragAndDropProvider'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { TaggableSelectionProvider } from './TaggableSelectionProvider'
 import { AssociateWithSource } from './AssociateWithSource'
 import { isTaggableImage } from './Common/taggable'
-
-const SHOW_BETA_WARNING_KEY = 'showBetaWarning'
 
 type ImpartModal = 'bulkTag' | 'settings' | 'createStack' | 'associateSource'
 
@@ -28,7 +24,6 @@ export function Impart({}: ImpartProps) {
 
   const [currentModal, setCurrentModal] = useState<ImpartModal | null>(null)
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
-  const [showBetaWarning, setShowBetaWarning] = useLocalStorage(SHOW_BETA_WARNING_KEY, true)
 
   useHotkeys('escape', () => setCurrentModal(null))
 
@@ -65,10 +60,6 @@ export function Impart({}: ImpartProps) {
 
   if (startingUp) {
     return null
-  }
-
-  if (showBetaWarning) {
-    return <BetaWarning onClose={() => setShowBetaWarning(false)} />
   }
 
   if (!hasDirectories) {
