@@ -48,7 +48,7 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
   return (
     <Stack height="100%" gap={2} justifyContent="space-between">
       <Stack
-        gap={2}
+        gap={1}
         sx={{
           '& .MuiButton-root': {
             opacity: 0,
