@@ -39,7 +39,6 @@
     "animate.css": "^4.1.1",
     "better-sqlite3": "^11.3.0",
     "dayjs": "^1.11.13",
-    "electron-log": "^5.2.2",
     "electron-store": "^8.2.0",
     "image-size": "^1.1.1",
     "immer": "^10.1.1",
@@ -51,7 +50,6 @@
     "react-virtuoso": "^4.10.2",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.20",
-    "update-electron-app": "^3.0.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
