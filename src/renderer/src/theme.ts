@@ -1,7 +1,7 @@
 import { PaletteOptions, createTheme } from '@mui/material'
-import NunitoSans from './fonts/NunitoSans.ttf'
-import NunitoSansItalic from './fonts/NunitoSans-Italic.ttf'
-import Mallanna from './fonts/Mallanna-Regular.ttf'
+import NunitoSans from './fonts/NunitoSans.woff2'
+import NunitoSansItalic from './fonts/NunitoSans-Italic.woff2'
+import Mallanna from './fonts/Mallanna-Regular.woff2'
 
 const seafoam: PaletteOptions = {
   background: {
