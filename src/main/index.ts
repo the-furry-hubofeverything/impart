@@ -12,6 +12,9 @@ import { setupIndexApi } from './api/indexApi'
 import { setupStackApi } from './api/stackApi'
 import { ThumbnailManager } from './indexables/thumbnailManager'
 import { store } from './config'
+import { updateElectronApp } from 'update-electron-app'
+
+updateElectronApp()
 
 interface ImpartApp {
   mainWindow?: BrowserWindow

@@ -50,6 +50,7 @@
     "react-virtuoso": "^4.10.2",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.20",
+    "update-electron-app": "^3.0.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
