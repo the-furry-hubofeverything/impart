@@ -13,6 +13,7 @@ import { useImpartIpcCall, useImpartIpcData } from '@renderer/Common/Hooks/useIm
 import { useMultiSelection } from '@renderer/Common/Hooks/useMultiSelection'
 import React, { useState } from 'react'
 import ImageIcon from '@mui/icons-material/ImageRounded'
+import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 
 const SelectableBox = styled(Box)<BoxProps & { selected: boolean }>(({ theme, selected }) => {
   const plainSelectedColor = selected ? theme.palette.primary.main : theme.palette.background.paper
@@ -44,6 +45,7 @@ const SelectableBox = styled(Box)<BoxProps & { selected: boolean }>(({ theme, se
 export interface HiddenItemsProps {}
 
 export function HiddenItems({}: HiddenItemsProps) {
+  const { reload: reloadTaggableGrid } = useTaggables()
   const { data: hiddenTaggables, reload } = useImpartIpcData(
     () => window.taggableApi.getTaggables({ onlyHidden: true, order: 'alpha' }),
     []
@@ -51,7 +53,7 @@ export function HiddenItems({}: HiddenItemsProps) {
 
   const [selection, setSelection] = useState<Impart.Taggable[]>([])
 
-  const { callIpc, isLoading } = useImpartIpcCall(
+  const { callIpc: unhideItems, isLoading } = useImpartIpcCall(
     () =>
       window.taggableApi.setHidden(
         selection.map((t) => t.id),
@@ -97,8 +99,9 @@ export function HiddenItems({}: HiddenItemsProps) {
             startIcon={<ImageIcon />}
             disabled={selection.length === 0}
             onClick={async () => {
-              await callIpc()
+              await unhideItems()
               reload()
+              reloadTaggableGrid()
             }}
           >
             Unhide{' '}
