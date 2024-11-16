@@ -31,9 +31,13 @@ function createWindow(): void {
     icon,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: true
     }
   })
+
+  if (store.get('window.maximized')) {
+    mainWindow.maximize()
+  }
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     // open url in a browser and prevent default
@@ -47,10 +51,15 @@ function createWindow(): void {
 
   mainWindow.on('close', () => {
     const bounds = mainWindow.getBounds()
-    store.set('window.width', bounds.width)
-    store.set('window.height', bounds.height)
     store.set('window.x', bounds.x)
     store.set('window.y', bounds.y)
+
+    if (!mainWindow.isMaximized()) {
+      store.set('window.width', bounds.width)
+      store.set('window.height', bounds.height)
+    }
+
+    store.set('window.maximized', mainWindow.isMaximized())
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
