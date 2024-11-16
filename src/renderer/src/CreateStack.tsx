@@ -14,8 +14,21 @@ import CheckIcon from '@mui/icons-material/CheckRounded'
 import { TaggableDisplay } from './Common/Components/TaggableDisplay'
 import { useImpartIpcCall } from './Common/Hooks/useImpartIpc'
 import { useTaggables } from './EntityProviders/TaggableProvider'
-import { isTaggableImage } from './Common/taggable'
+import { isTaggableImage, isTaggableStack } from './Common/taggable'
 import { VirtualTaggableGrid } from './Common/Components/TaggableGrid'
+
+function getInitialName(items: Impart.Taggable[]) {
+  const first = items[0]
+
+  if (isTaggableStack(first)) {
+    return first.name
+  } else {
+    //Break up the filename and re-render it without the last part (the extension)
+    const segments = first.fileIndex.fileName.split('.')
+    segments.pop()
+    return segments.join('.')
+  }
+}
 
 export interface CreateStackProps {
   items: Impart.Taggable[]
@@ -24,7 +37,7 @@ export interface CreateStackProps {
 
 export function CreateStack({ onFinish, items }: CreateStackProps) {
   const [coverImage, setCoverImage] = useState(items.find(isTaggableImage))
-  const [name, setName] = useState('')
+  const [name, setName] = useState(getInitialName(items))
   const {
     fetchOptions: { stackId }
   } = useTaggables()
@@ -39,6 +52,11 @@ export function CreateStack({ onFinish, items }: CreateStackProps) {
       ),
     [name, items, coverImage]
   )
+
+  const createStack = async () => {
+    await save()
+    onFinish && onFinish()
+  }
 
   return (
     <Backable onBack={onFinish}>
@@ -63,6 +81,11 @@ export function CreateStack({ onFinish, items }: CreateStackProps) {
                   value={name}
                   fullWidth
                   onChange={(e) => setName(e.currentTarget.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      createStack()
+                    }
+                  }}
                 />
                 <Box flex={1}>
                   <Typography fontSize={32}>Cover:</Typography>
@@ -86,10 +109,7 @@ export function CreateStack({ onFinish, items }: CreateStackProps) {
                     color="success"
                     disabled={!name}
                     startIcon={<CheckIcon />}
-                    onClick={async () => {
-                      await save()
-                      onFinish && onFinish()
-                    }}
+                    onClick={createStack}
                   >
                     Save
                   </Button>
