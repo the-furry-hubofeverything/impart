@@ -13,8 +13,11 @@ import { setupStackApi } from './api/stackApi'
 import { ThumbnailManager } from './indexables/thumbnailManager'
 import { store } from './config'
 import { updateElectronApp } from 'update-electron-app'
+import electronLog from 'electron-log'
 
-updateElectronApp()
+updateElectronApp({
+  logger: electronLog
+})
 
 interface ImpartApp {
   mainWindow?: BrowserWindow
