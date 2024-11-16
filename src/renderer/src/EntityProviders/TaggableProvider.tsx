@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { usePartialState } from '@renderer/Common/Hooks/usePartialState'
 import { useTaskStatus } from '@renderer/TaskStatusProvider'
 import { useImpartIpcData } from '@renderer/Common/Hooks/useImpartIpc'
@@ -28,6 +28,11 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
   const [fetchOptions, setFetchOptions] = usePartialState<Impart.FetchTaggablesOptions>(() => ({
     order: (localStorage.getItem(DEFAULT_ORDER_KEY) as 'alpha' | 'date' | null) ?? 'alpha'
   }))
+
+  const updateStackTrail = useCallback((stack: Impart.TaggableStack[]) => {
+    setStackTrail(stack)
+    setFetchOptions({ search: undefined, tagIds: undefined })
+  }, [])
 
   useEffect(() => {
     setFetchOptions({
@@ -66,7 +71,7 @@ export function TaggableProvider({ children }: TaggableProviderProps) {
         fetchOptions,
         setFetchOptions,
         stackTrail,
-        setStackTrail
+        setStackTrail: updateStackTrail
       }}
     >
       {children}

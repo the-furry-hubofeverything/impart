@@ -6,10 +6,11 @@ import { useShowIndexingPanel } from './useShowIndexingPanel'
 import { BrowserPanel } from './BrowserPanel'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import { TagSelector } from '@renderer/Common/Components/TagSelector'
-import { useState, useEffect, useCallback, useLayoutEffect } from 'react'
+import { useState, useEffect, useCallback, useLayoutEffect, useMemo } from 'react'
 import { EditTaggableProvider } from './EditTaggableProvider'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
+import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 
 export interface TaggableBrowserProps extends Omit<TaggableGridEvents, 'onEditTags'> {
   onSettingsPressed?: () => void
@@ -17,7 +18,11 @@ export interface TaggableBrowserProps extends Omit<TaggableGridEvents, 'onEditTa
 
 export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBrowserProps) {
   const showIndexingPanel = useShowIndexingPanel()
-  const { reload: fetchTaggables } = useTaggables()
+  const {
+    reload: fetchTaggables,
+    setFetchOptions,
+    fetchOptions: { tagIds }
+  } = useTaggables()
 
   const [editTarget, setEditTarget] = useState<Impart.Taggable>()
   const [renameTarget, setRenameTarget] = useState<Impart.TaggableStack>()
@@ -31,12 +36,11 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
     }
   })
 
-  const [fetchByTagSelection, setFetchByTagSelection] = useState<Impart.Tag[]>([])
-  const { setFetchOptions } = useTaggables()
-
-  useEffect(() => {
-    setFetchOptions({ tagIds: fetchByTagSelection.map((t) => t.id) })
-  }, [fetchByTagSelection])
+  const { tags } = useTagGroups()
+  const selectedTags = useMemo(
+    () => tags?.filter((t) => tagIds?.some((id) => t.id === id)),
+    [tags, tagIds]
+  )
 
   const theme = useTheme()
   const xl = useMediaQuery(theme.breakpoints.up('xl'))
@@ -82,8 +86,14 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
                 <Card sx={{ flex: 1, overflowY: 'auto' }}>
                   <CardContent sx={{ height: '100%' }}>
                     <TagSelector
-                      selection={editTarget ? editTagSelection : fetchByTagSelection}
-                      onChange={editTarget ? setEditTagSelection : setFetchByTagSelection}
+                      selection={editTarget ? editTagSelection : selectedTags}
+                      onChange={(tags) => {
+                        if (editTarget) {
+                          setEditTagSelection(tags)
+                        } else {
+                          setFetchOptions({ tagIds: tags.map((t) => t.id) })
+                        }
+                      }}
                     />
                   </CardContent>
                 </Card>
