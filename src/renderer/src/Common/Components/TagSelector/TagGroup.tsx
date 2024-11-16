@@ -10,7 +10,7 @@ import {
   styled
 } from '@mui/material'
 import { useState } from 'react'
-import { Tag } from '../Tag'
+import { Tag } from '../Tag/Tag'
 import AddIcon from '@mui/icons-material/AddRounded'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/DeleteRounded'

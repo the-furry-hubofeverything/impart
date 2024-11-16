@@ -1,5 +1,5 @@
 import { Stack, Typography, Grid2 } from '@mui/material'
-import { Tag } from '../Tag'
+import { Tag } from '../Tag/Tag'
 
 export interface EditTagsProps {
   tags: Impart.Tag[]
