@@ -28,7 +28,7 @@ export function About({}: AboutProps) {
                   Impart
                 </Typography>
                 <Box pb={0.5}>
-                  <Typography fontSize={20}>v{__APP_VERSION__}</Typography>
+                  <Typography fontSize={20}>v{import.meta.env.PACKAGE_VERSION}</Typography>
                 </Box>
                 <Box>
                   <Typography fontSize={14}>Contribute on GitHub!</Typography>

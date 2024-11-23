@@ -1,6 +1,7 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin, swcPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
+import loadVersion from 'vite-plugin-package-version'
 
 export default defineConfig({
   main: {
@@ -15,9 +16,6 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    plugins: [react()],
-    define: {
-      __APP_VERSION__: JSON.stringify(process.env.npm_package_version)
-    }
+    plugins: [react(), loadVersion()]
   }
 })
