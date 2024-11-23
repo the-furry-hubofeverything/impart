@@ -1,6 +1,6 @@
 {
   "name": "impart",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Tag-based art organization app",
   "main": "./out/main/index.js",
   "author": "github.com/Arastryx",
@@ -23,6 +23,7 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
+    "publish": "electron-builder --win --publish always",
     "test": "vitest"
   },
   "dependencies": {
@@ -39,7 +40,9 @@
     "animate.css": "^4.1.1",
     "better-sqlite3": "^11.3.0",
     "dayjs": "^1.11.13",
+    "electron-log": "^5.2.2",
     "electron-store": "^8.2.0",
+    "electron-updater": "^6.3.9",
     "image-size": "^1.1.1",
     "immer": "^10.1.1",
     "react-color": "^2.19.3",
@@ -76,6 +79,30 @@
   "overrides": {
     "typeorm": {
       "better-sqlite3": "$better-sqlite3"
+    }
+  },
+  "build": {
+    "appId": "com.arastryx.impart",
+    "productName": "Impart",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "arastryx",
+        "repo": "impart"
+      }
+    ],
+    "win": {
+      "publish": [
+        "github"
+      ],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
     }
   }
 }

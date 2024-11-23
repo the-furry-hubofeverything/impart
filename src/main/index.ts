@@ -12,6 +12,13 @@ import { setupIndexApi } from './api/indexApi'
 import { setupStackApi } from './api/stackApi'
 import { ThumbnailManager } from './indexables/thumbnailManager'
 import { store } from './config'
+import { autoUpdater } from 'electron-updater'
+import electronLog from 'electron-log'
+
+electronLog.transports.file.level = 'info'
+autoUpdater.logger = electronLog
+
+autoUpdater.checkForUpdatesAndNotify()
 
 interface ImpartApp {
   mainWindow?: BrowserWindow
