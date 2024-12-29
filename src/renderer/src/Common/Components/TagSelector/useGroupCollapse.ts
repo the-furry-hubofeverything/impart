@@ -27,5 +27,27 @@ export function useGroupCollapse() {
     [collapsedGroups]
   )
 
-  return { isCollapsed, toggleGroupCollapse }
+  const expandAll = useCallback(
+    (groupIds: number[]) =>
+      setCollapsedGroups(
+        groupIds.reduce((obj, current) => {
+          obj[current] = false
+          return obj
+        }, {})
+      ),
+    []
+  )
+
+  const collapseAll = useCallback(
+    (groupIds: number[]) =>
+      setCollapsedGroups(
+        groupIds.reduce((obj, current) => {
+          obj[current] = true
+          return obj
+        }, {})
+      ),
+    []
+  )
+
+  return { isCollapsed, toggleGroupCollapse, expandAll, collapseAll }
 }

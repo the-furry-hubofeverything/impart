@@ -6,7 +6,8 @@ import {
   Divider,
   styled,
   BoxProps,
-  IconButton
+  IconButton,
+  Tooltip
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/AddRounded'
 import { useMultiSelection } from '../../Hooks/useMultiSelection'
@@ -20,6 +21,8 @@ import { TagSelection } from './TagSelection'
 import { EmptyTagGroups } from './EmptyTagGroups'
 import { satisfiesFilter } from './satisfiesFilter'
 import { useGroupCollapse } from './useGroupCollapse'
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
 
 const DropIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'showIndicator' })<
   BoxProps & { showIndicator: boolean }
@@ -39,7 +42,7 @@ export interface TagSelectorProps {
 }
 
 export function TagSelector({ selection, onChange }: TagSelectorProps) {
-  const { isCollapsed, toggleGroupCollapse } = useGroupCollapse()
+  const { isCollapsed, toggleGroupCollapse, expandAll, collapseAll } = useGroupCollapse()
   const { groups, reload, tags } = useTagGroups()
 
   const { selectItem } = useMultiSelection(
@@ -72,7 +75,16 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
       >
         <Stack direction="row" alignItems="center">
           <SearchBar value={filter} onChange={setFilter} />
-          <IconButton></IconButton>
+          <Tooltip title="Collapse All">
+            <IconButton sx={{ ml: 1 }} onClick={() => collapseAll(groups?.map((g) => g.id) ?? [])}>
+              <UnfoldLessIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Expand All" onClick={() => expandAll(groups?.map((g) => g.id) ?? [])}>
+            <IconButton>
+              <UnfoldMoreIcon />
+            </IconButton>
+          </Tooltip>
         </Stack>
         {groups
           ?.filter(
