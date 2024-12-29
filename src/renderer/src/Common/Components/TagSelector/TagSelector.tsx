@@ -1,4 +1,13 @@
-import { Stack, Typography, Button, Box, Divider, styled, BoxProps } from '@mui/material'
+import {
+  Stack,
+  Typography,
+  Button,
+  Box,
+  Divider,
+  styled,
+  BoxProps,
+  IconButton
+} from '@mui/material'
 import AddIcon from '@mui/icons-material/AddRounded'
 import { useMultiSelection } from '../../Hooks/useMultiSelection'
 import { useCallback, useState } from 'react'
@@ -10,6 +19,7 @@ import { Droppable } from '../DragAndDrop/Droppable'
 import { TagSelection } from './TagSelection'
 import { EmptyTagGroups } from './EmptyTagGroups'
 import { satisfiesFilter } from './satisfiesFilter'
+import { useGroupCollapse } from './useGroupCollapse'
 
 const DropIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'showIndicator' })<
   BoxProps & { showIndicator: boolean }
@@ -29,6 +39,7 @@ export interface TagSelectorProps {
 }
 
 export function TagSelector({ selection, onChange }: TagSelectorProps) {
+  const { isCollapsed, toggleGroupCollapse } = useGroupCollapse()
   const { groups, reload, tags } = useTagGroups()
 
   const { selectItem } = useMultiSelection(
@@ -59,7 +70,10 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
           }
         }}
       >
-        <SearchBar value={filter} onChange={setFilter} />
+        <Stack direction="row" alignItems="center">
+          <SearchBar value={filter} onChange={setFilter} />
+          <IconButton></IconButton>
+        </Stack>
         {groups
           ?.filter(
             (g) =>
@@ -79,6 +93,8 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
                       selectedTags={selection}
                       filter={filter}
                       onSelect={selectItem}
+                      collapsed={isCollapsed(g.id)}
+                      onToggleCollapse={() => toggleGroupCollapse(g.id)}
                     />
                   </Draggable>
                 </DropIndicator>
