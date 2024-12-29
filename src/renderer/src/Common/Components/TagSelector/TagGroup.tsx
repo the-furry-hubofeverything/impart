@@ -1,39 +1,15 @@
-import {
-  Box,
-  Typography,
-  Divider,
-  Grid2 as Grid,
-  IconButton,
-  Stack,
-  darken,
-  BoxProps,
-  styled
-} from '@mui/material'
+import { Box, Typography, Divider, IconButton, Stack, darken, Collapse } from '@mui/material'
 import { useState } from 'react'
-import { Tag } from '../Tag/Tag'
-import AddIcon from '@mui/icons-material/AddRounded'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/DeleteRounded'
 import { EditTagGroup } from './EditTagGroup'
-import { Draggable } from '../DragAndDrop/Draggable'
 import { useConfirmationDialog } from '../ConfirmationDialogProvider'
 import { useDraggableHandle } from '../DragAndDrop/DraggableHandleProvider'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicatorRounded'
-import { Droppable } from '../DragAndDrop/Droppable'
-import { satisfiesFilter } from './satisfiesFilter'
 import { useImpartIpcCall } from '@renderer/Common/Hooks/useImpartIpc'
-
-const DropIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'showIndicator' })<
-  BoxProps & { showIndicator: boolean }
->(({ showIndicator, theme }) =>
-  showIndicator
-    ? {
-        borderLeft: `3px solid ${theme.palette.primary.main}`,
-        marginLeft: '-6px',
-        paddingLeft: '3px'
-      }
-    : {}
-)
+import { GroupTagList } from './GroupTagList'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 
 export interface TagGroupProps {
   group: Impart.TagGroup
@@ -44,6 +20,7 @@ export interface TagGroupProps {
 
 export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProps) {
   const [editMode, setEditMode] = useState(false)
+  const [showTags, setShowTags] = useState(true)
   const { reload } = useTagGroups()
 
   const { callIpc: deleteGroup, isLoading: isDeleting } = useImpartIpcCall(
@@ -108,69 +85,36 @@ export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProp
               <Typography variant="h5" onClick={() => setEditMode(true)}>
                 {group.label ?? 'Unnamed Group'}
               </Typography>
-              <IconButton
-                className="fade-in-button"
-                color="error"
-                onClick={remove}
-                disabled={isDeleting}
-                size="small"
-              >
-                <DeleteIcon />
-              </IconButton>
+              <Stack direction="row">
+                <IconButton
+                  className="fade-in-button"
+                  color="error"
+                  onClick={remove}
+                  disabled={isDeleting}
+                  size="small"
+                >
+                  <DeleteIcon />
+                </IconButton>
+                <IconButton onClick={() => setShowTags(!showTags)} size="small">
+                  {showTags ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                </IconButton>
+              </Stack>
             </Stack>
             <Divider />
           </Box>
         </Stack>
       )}
 
-      <Grid container py={1} spacing={2}>
-        {group.tags
-          ?.slice()
-          .filter((t) => satisfiesFilter(t, filter))
-          .sort((a, b) => a.tagOrder - b.tagOrder)
-          .map((t) => (
-            <Grid key={t.id}>
-              <Droppable
-                type="tag"
-                id={t.id}
-                hideIndicator
-                render={({ overType }) => (
-                  <DropIndicator showIndicator={overType === 'tag'}>
-                    <Draggable id={t.id} type="tag">
-                      <Tag
-                        tag={t}
-                        editable
-                        onClick={() => onSelect && onSelect(t)}
-                        selected={selectedTags?.some((s) => s.id === t.id)}
-                      />
-                    </Draggable>
-                  </DropIndicator>
-                )}
-              />
-            </Grid>
-          ))}
-        <Grid>
-          <Droppable
-            type="tagGroupEnd"
-            id={group.id}
-            hideIndicator
-            render={({ overType }) => (
-              <DropIndicator showIndicator={overType === 'tag'}>
-                <IconButton
-                  size="small"
-                  onClick={async () => {
-                    await window.tagApi.createTag(group.id)
-                    reload()
-                  }}
-                  className="fade-in-button"
-                >
-                  <AddIcon />
-                </IconButton>
-              </DropIndicator>
-            )}
-          />
-        </Grid>
-      </Grid>
+      <Collapse in={showTags}>
+        <GroupTagList
+          tags={group.tags}
+          groupId={group.id}
+          filter={filter}
+          selectedTags={selectedTags}
+          onSelect={onSelect}
+          onAdd={reload}
+        />
+      </Collapse>
     </Box>
   )
 }
