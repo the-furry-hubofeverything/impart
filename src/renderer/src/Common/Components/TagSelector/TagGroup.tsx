@@ -10,6 +10,7 @@ import { useImpartIpcCall } from '@renderer/Common/Hooks/useImpartIpc'
 import { GroupTagList } from './GroupTagList'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+import { useLocalStorage } from '@renderer/Common/Hooks/useLocalStorage'
 
 export interface TagGroupProps {
   group: Impart.TagGroup
@@ -18,9 +19,11 @@ export interface TagGroupProps {
   onSelect?: (tag: Impart.Tag) => void
 }
 
+const GROUP_COLLAPSE_PREFIX_KEY = 'group_collapse_'
+
 export function TagGroup({ group, filter, selectedTags, onSelect }: TagGroupProps) {
   const [editMode, setEditMode] = useState(false)
-  const [showTags, setShowTags] = useState(true)
+  const [showTags, setShowTags] = useLocalStorage(GROUP_COLLAPSE_PREFIX_KEY + group.id, true)
   const { reload } = useTagGroups()
 
   const { callIpc: deleteGroup, isLoading: isDeleting } = useImpartIpcCall(
