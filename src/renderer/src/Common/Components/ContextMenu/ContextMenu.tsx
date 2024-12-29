@@ -25,6 +25,7 @@ export interface ContextMenuOption {
   hide?: boolean
   danger?: boolean
   onClick?: () => void
+  bold?: boolean
 }
 
 export interface ContextMenuRenderProps {
@@ -86,6 +87,7 @@ export function ContextMenu({ options, render, disabled, ...boxProps }: ContextM
                 '& .MuiPaper-root': { minWidth: 200 },
                 '& .MuiMenuItem-root+.MuiDivider-root': { marginY: 0.5 }
               }}
+              dense
             >
               {options
                 ?.filter((o) => o === 'divider' || !o.hide)
@@ -106,20 +108,28 @@ export function ContextMenu({ options, render, disabled, ...boxProps }: ContextM
                       disabled={o.disabled}
                     >
                       {o.icon && (
-                        <ListItemIcon sx={{ color: o.danger ? 'error.main' : undefined }}>
+                        <ListItemIcon
+                          sx={{
+                            color: o.danger ? 'error.main' : undefined
+                          }}
+                        >
                           {o.icon}
                         </ListItemIcon>
                       )}
                       <ListItemText
                         inset={!o.icon}
-                        sx={{ color: o.danger ? 'error.dark' : undefined }}
-                      >
-                        {o.label}
-                      </ListItemText>
+                        sx={{
+                          color: o.danger ? 'error.dark' : undefined
+                        }}
+                        primary={o.label}
+                        primaryTypographyProps={{ fontWeight: o.bold ? 'bold' : undefined }}
+                      />
+
                       {o.shortcut && (
-                        <Box pt={0.25} pl={2} sx={{ opacity: 0.6 }}>
+                        <Box pl={2} sx={{ opacity: 0.6 }}>
                           <Typography
                             variant="body2"
+                            fontSize={12}
                             sx={{ color: o.danger ? 'error.light' : 'text.secondary' }}
                           >
                             {o.shortcut}

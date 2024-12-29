@@ -5,6 +5,9 @@ import EditIcon from '@mui/icons-material/EditRounded'
 import { useTagGroups } from '@renderer/EntityProviders/TagProvider'
 import DeleteIcon from '@mui/icons-material/DeleteRounded'
 import { TagEditor } from './TagEditor'
+import DoneIcon from '@mui/icons-material/Done'
+import RemoveIcon from '@mui/icons-material/Remove'
+import CloseIcon from '@mui/icons-material/Close'
 
 export interface TagProps {
   tag: Impart.Tag
@@ -27,6 +30,19 @@ export function Tag({ tag, selected, editable, onClick, size }: TagProps) {
         <ContextMenu
           disabled={!editable}
           options={[
+            {
+              icon: selected ? <RemoveIcon /> : <DoneIcon />,
+              label: selected ? 'Deselect' : 'Select',
+              onClick: onClick,
+              bold: true,
+              shortcut: 'Click'
+            },
+            {
+              icon: <CloseIcon />,
+              label: 'Exclude',
+              shortcut: 'Alt + Click'
+            },
+            'divider',
             {
               icon: <EditIcon />,
               label: 'Edit...',

@@ -140,8 +140,7 @@ export const theme = createTheme(
         styleOverrides: {
           root: {
             display: 'flex',
-            flexDirection: 'column',
-            gap: 5
+            flexDirection: 'column'
           }
         }
       },
