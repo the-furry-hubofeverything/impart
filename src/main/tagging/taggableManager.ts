@@ -5,6 +5,7 @@ import { TaggableFile } from '../database/entities/TaggableFile'
 
 export interface FetchTaggablesOptions {
   tagIds?: number[]
+  excludedTagIds?: number[]
   order?: 'alpha' | 'date'
   search?: string
   year?: number
@@ -59,7 +60,11 @@ export namespace TaggableManager {
     return result
   }
 
-  function applyTags(query: SelectQueryBuilder<Taggable>, tagIds: number[]) {
+  function applyTags(
+    query: SelectQueryBuilder<Taggable>,
+    tagIds: number[],
+    excludedTagIds?: number[]
+  ) {
     Array.from(tagIds).forEach((t, index) => {
       const alias = `tags${index}`
       const variable = `id${index}`
@@ -67,6 +72,16 @@ export namespace TaggableManager {
         [variable]: t
       })
     })
+
+    if (excludedTagIds) {
+      Array.from(excludedTagIds).forEach((t, index) => {
+        const alias = `tags${index}`
+        const variable = `id${index}`
+        query.innerJoin('files.tags', alias, `${alias}.id = :${variable}`, {
+          [variable]: t
+        })
+      })
+    }
   }
 
   function applyOrder(query: SelectQueryBuilder<Taggable>, order: 'alpha' | 'date') {

@@ -21,7 +21,7 @@ export function TagSelection({ selection, onClear, onClick }: TagSelectionProps)
       <Grid2 container spacing={2} pt={1}>
         {selection?.map((t) => (
           <Grid2 key={t.id}>
-            <Tag tag={t} onClick={() => onClick && onClick(t)} />
+            <Tag tag={t} onSelect={() => onClick && onClick(t)} />
           </Grid2>
         ))}
       </Grid2>

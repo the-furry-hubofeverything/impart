@@ -1,14 +1,4 @@
-import {
-  Stack,
-  Typography,
-  Button,
-  Box,
-  Divider,
-  styled,
-  BoxProps,
-  IconButton,
-  Tooltip
-} from '@mui/material'
+import { Stack, Button, Box, Divider, styled, BoxProps, IconButton, Tooltip } from '@mui/material'
 import AddIcon from '@mui/icons-material/AddRounded'
 import { useMultiSelection } from '../../Hooks/useMultiSelection'
 import { useCallback, useState } from 'react'
@@ -38,17 +28,26 @@ const DropIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'showI
 
 export interface TagSelectorProps {
   selection?: Impart.Tag[]
-  onChange?: (selection: Impart.Tag[]) => void
+  exclusion?: Impart.Tag[]
+  onChange?: (selection: Impart.Tag[], exclusion?: Impart.Tag[]) => void
 }
 
-export function TagSelector({ selection, onChange }: TagSelectorProps) {
+export function TagSelector({ selection, exclusion, onChange }: TagSelectorProps) {
   const { isCollapsed, toggleGroupCollapse, expandAll, collapseAll } = useGroupCollapse()
   const { groups, reload, tags } = useTagGroups()
 
   const { selectItem } = useMultiSelection(
     tags ?? [],
     selection ?? [],
-    onChange,
+    (s) => onChange && onChange(s, exclusion),
+    useCallback((a, b) => a.id === b.id, []),
+    { toggleMode: true }
+  )
+
+  const { selectItem: excludeItem } = useMultiSelection(
+    tags ?? [],
+    exclusion ?? [],
+    (s) => onChange && onChange(selection ?? [], s),
     useCallback((a, b) => a.id === b.id, []),
     { toggleMode: true }
   )
@@ -103,8 +102,10 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
                     <TagGroup
                       group={g}
                       selectedTags={selection}
+                      excludedTags={exclusion}
                       filter={filter}
                       onSelect={selectItem}
+                      onExclude={excludeItem}
                       collapsed={isCollapsed(g.id)}
                       onToggleCollapse={() => toggleGroupCollapse(g.id)}
                     />

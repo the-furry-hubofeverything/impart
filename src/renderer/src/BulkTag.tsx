@@ -49,7 +49,7 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
             <Grid container spacing={1} width="unset">
               {tagSelection.map((t) => (
                 <Grid key={t.id}>
-                  <Tag tag={t} onClick={() => removeFromSelection(t)} />
+                  <Tag tag={t} onSelect={() => removeFromSelection(t)} />
                 </Grid>
               ))}
             </Grid>

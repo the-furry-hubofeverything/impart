@@ -55,6 +55,7 @@ declare global {
 
     interface FetchTaggablesOptions {
       tagIds?: number[]
+      excludedTagIds?: number[]
       order?: 'alpha' | 'date'
       search?: string
       year?: number

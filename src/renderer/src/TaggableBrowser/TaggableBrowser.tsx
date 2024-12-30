@@ -21,7 +21,7 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
   const {
     reload: fetchTaggables,
     setFetchOptions,
-    fetchOptions: { tagIds }
+    fetchOptions: { tagIds, excludedTagIds }
   } = useTaggables()
 
   const [editTarget, setEditTarget] = useState<Impart.Taggable>()
@@ -40,6 +40,10 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
   const selectedTags = useMemo(
     () => tags?.filter((t) => tagIds?.some((id) => t.id === id)),
     [tags, tagIds]
+  )
+  const excludedTags = useMemo(
+    () => tags?.filter((t) => excludedTagIds?.some((id) => t.id === id)),
+    [tags, excludedTagIds]
   )
 
   const theme = useTheme()
@@ -87,11 +91,15 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
                   <CardContent sx={{ height: '100%' }}>
                     <TagSelector
                       selection={editTarget ? editTagSelection : selectedTags}
-                      onChange={(tags) => {
+                      exclusion={editTarget ? [] : excludedTags}
+                      onChange={(tags, excludedTags) => {
                         if (editTarget) {
                           setEditTagSelection(tags)
                         } else {
-                          setFetchOptions({ tagIds: tags.map((t) => t.id) })
+                          setFetchOptions({
+                            tagIds: tags.map((t) => t.id),
+                            excludedTagIds: excludedTags?.map((t) => t.id)
+                          })
                         }
                       }}
                     />

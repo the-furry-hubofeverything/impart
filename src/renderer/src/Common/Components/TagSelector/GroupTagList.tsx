@@ -1,4 +1,4 @@
-import { Box, BoxProps, Grid2 as Grid, IconButton, styled } from '@mui/material'
+import { Box, BoxProps, Grid2 as Grid, IconButton, Stack, styled } from '@mui/material'
 import { group } from 'console'
 import React from 'react'
 import { Draggable } from '../DragAndDrop'
@@ -6,6 +6,7 @@ import { Droppable } from '../DragAndDrop/Droppable'
 import { satisfiesFilter } from './satisfiesFilter'
 import AddIcon from '@mui/icons-material/Add'
 import { Tag } from '../Tag'
+import { CenteredOverlay } from '../CenteredOverlay'
 
 const DropIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'showIndicator' })<
   BoxProps & { showIndicator: boolean }
@@ -23,9 +24,11 @@ export interface GroupTagListProps {
   groupId: number
   tags?: Impart.Tag[]
   selectedTags?: Impart.Tag[]
+  excludedTags?: Impart.Tag[]
   filter?: string
   onAdd?: () => void
   onSelect?: (t: Impart.Tag) => void
+  onExclude?: (t: Impart.Tag) => void
 }
 
 export function GroupTagList({
@@ -34,6 +37,8 @@ export function GroupTagList({
   onAdd,
   onSelect,
   selectedTags,
+  excludedTags,
+  onExclude,
   filter
 }: GroupTagListProps) {
   return (
@@ -54,8 +59,10 @@ export function GroupTagList({
                     <Tag
                       tag={t}
                       editable
-                      onClick={() => onSelect && onSelect(t)}
                       selected={selectedTags?.some((s) => s.id === t.id)}
+                      excluded={excludedTags?.some((s) => s.id === t.id)}
+                      onSelect={() => onSelect && onSelect(t)}
+                      onExclude={() => onExclude && onExclude(t)}
                     />
                   </Draggable>
                 </DropIndicator>

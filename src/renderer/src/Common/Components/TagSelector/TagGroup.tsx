@@ -15,7 +15,9 @@ export interface TagGroupProps {
   group: Impart.TagGroup
   filter?: string
   selectedTags?: Impart.Tag[]
+  excludedTags?: Impart.Tag[]
   onSelect?: (tag: Impart.Tag) => void
+  onExclude?: (tag: Impart.Tag) => void
   collapsed?: boolean
   onToggleCollapse?: () => void
 }
@@ -24,7 +26,9 @@ export function TagGroup({
   group,
   filter,
   selectedTags,
+  excludedTags,
   onSelect,
+  onExclude,
   collapsed,
   onToggleCollapse
 }: TagGroupProps) {
@@ -119,7 +123,9 @@ export function TagGroup({
           groupId={group.id}
           filter={filter}
           selectedTags={selectedTags}
+          excludedTags={excludedTags}
           onSelect={onSelect}
+          onExclude={onExclude}
           onAdd={reload}
         />
       </Collapse>
