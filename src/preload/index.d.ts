@@ -59,6 +59,7 @@ declare global {
       order?: 'alpha' | 'date'
       search?: string
       year?: number
+      directories?: string[]
       stackId?: number
       onlyHidden?: boolean
       onlyFiles?: boolean
