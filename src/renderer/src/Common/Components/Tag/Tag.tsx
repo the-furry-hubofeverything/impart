@@ -41,8 +41,8 @@ export function Tag({ tag, selected, editable, onSelect, onExclude, size, exclud
               shortcut: 'Click'
             },
             {
-              icon: <CloseIcon />,
-              label: 'Exclude',
+              icon: excluded ? <RemoveIcon /> : <CloseIcon />,
+              label: excluded ? 'Include' : 'Exclude',
               onClick: onExclude,
               shortcut: 'Alt + Click'
             },
@@ -69,10 +69,10 @@ export function Tag({ tag, selected, editable, onSelect, onExclude, size, exclud
                   width="calc(100% + 10px)"
                   height={3}
                   bgcolor={tag.color}
-                  sx={{ opacity: 0.6 }}
+                  sx={{ opacity: excluded ? 0.6 : 0, transition: '0.2s' }}
                 ></Box>
               }
-              show={excluded == true}
+              show={true}
             >
               <Chip
                 onClick={(e) => (e.altKey ? onExclude?.() : onSelect?.())}
@@ -80,8 +80,8 @@ export function Tag({ tag, selected, editable, onSelect, onExclude, size, exclud
                 label={tag.label ? tag.label : 'Unnamed Tag'}
                 onContextMenu={open}
                 sx={{
+                  transition: 'opacity 0.2s',
                   opacity: excluded ? 0.5 : 1,
-                  textDecoration: excluded ? 'line-through' : undefined,
                   bgcolor: tag.color ?? 'primary.main',
                   color: theme.palette.getContrastText(tag.color ?? theme.palette.primary.main),
                   boxShadow: selected
@@ -89,7 +89,7 @@ export function Tag({ tag, selected, editable, onSelect, onExclude, size, exclud
                     : undefined,
 
                   '&:hover': {
-                    opacity: 0.8,
+                    opacity: excluded ? 0.4 : 0.8,
                     bgcolor: tag.color ?? 'primary.main',
                     color: theme.palette.getContrastText(tag.color ?? theme.palette.primary.main)
                   }
