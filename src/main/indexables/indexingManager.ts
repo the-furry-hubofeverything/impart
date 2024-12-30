@@ -234,7 +234,6 @@ export namespace IndexingManager {
     public async prepare(): Promise<void> {}
 
     protected performStep(item: Indexable): Promise<void> {
-      throw new Error('Oh god it BREAK!!')
       return index(this.directory, item)
     }
   }
