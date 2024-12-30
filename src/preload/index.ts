@@ -29,6 +29,7 @@ contextBridge.exposeInMainWorld('taskApi', {
   onItemAddedToSequence: generateCallback('task/itemAddedToSequence'),
   onTaskStarted: generateCallback('task/taskStarted'),
   onStepTaken: generateCallback('task/stepTaken'),
+  onErrorThrown: generateCallback('task/errorThrown'),
   onTaskFinished: generateCallback('task/taskFinished'),
   onSequenceFinished: generateCallback('task/sequenceFinished')
 })

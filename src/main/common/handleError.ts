@@ -1,4 +1,4 @@
-interface ImpartError {
+export interface ImpartError {
   message: string
   stack?: string
   name?: string

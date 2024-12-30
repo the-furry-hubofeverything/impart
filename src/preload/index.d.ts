@@ -130,6 +130,7 @@ declare global {
       onItemAddedToSequence: CallbackFunc<void>
       onTaskStarted: CallbackFunc<{ type: Impart.TaskType; steps: number }>
       onStepTaken: CallbackFunc<void>
+      onErrorThrown: CallbackFunc<Impart.Error>
       onTaskFinished: CallbackFunc<void>
       onSequenceFinished: CallbackFunc<void>
     }

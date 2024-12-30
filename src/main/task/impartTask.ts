@@ -1,3 +1,4 @@
+import { handleError } from '../common/handleError'
 import { delay } from '../common/sleep'
 import { taskMessenger } from './taskMessenger'
 
@@ -23,7 +24,12 @@ export abstract class ImpartTask<T> {
     await Promise.all(
       this.targets.map((item, index) =>
         delay(async () => {
-          await this.performStep(item)
+          const result = await handleError(() => this.performStep(item))
+
+          if (result) {
+            taskMessenger.errorThrown(result)
+          }
+
           taskMessenger.stepTaken()
         }, index * this.DELAY)
       )

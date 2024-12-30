@@ -1,4 +1,5 @@
 import { impartApp } from '..'
+import { ImpartError } from '../common/handleError'
 import { TaskType } from './impartTask'
 
 class TaskMessenger {
@@ -19,6 +20,10 @@ class TaskMessenger {
 
   public stepTaken() {
     impartApp.mainWindow?.webContents.send('task/stepTaken')
+  }
+
+  public errorThrown(error: ImpartError) {
+    impartApp.mainWindow?.webContents.send('task/errorThrown', error)
   }
 
   public taskFinished() {
