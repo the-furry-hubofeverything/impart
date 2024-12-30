@@ -1,7 +1,9 @@
 import {
+  Box,
   Checkbox,
   FormControl,
   InputLabel,
+  ListItemIcon,
   ListItemText,
   MenuItem,
   OutlinedInput,
@@ -9,6 +11,8 @@ import {
 } from '@mui/material'
 import { useDirectories } from '@renderer/EntityProviders/DirectoryProvider'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
+import CheckIcon from '@mui/icons-material/CheckBoxRounded'
+import UncheckIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded'
 
 export interface DirectorySelectorProps {}
 
@@ -17,8 +21,6 @@ const LABEL_ID = 'directory-selector-label'
 export function DirectorySelector({}: DirectorySelectorProps) {
   const { data: directories } = useDirectories()
   const { fetchOptions, setFetchOptions } = useTaggables()
-
-  console.log(directories, fetchOptions.directories)
 
   return (
     <FormControl size="small" sx={{ width: 200 }}>
@@ -37,7 +39,9 @@ export function DirectorySelector({}: DirectorySelectorProps) {
       >
         {directories?.map((d) => (
           <MenuItem key={d.path} value={d.path}>
-            <Checkbox checked={fetchOptions.directories?.includes(d.path)} />
+            <ListItemIcon>
+              {fetchOptions.directories?.includes(d.path) ? <CheckIcon /> : <UncheckIcon />}
+            </ListItemIcon>
             <ListItemText primary={d.path} />
           </MenuItem>
         ))}
