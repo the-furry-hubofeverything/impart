@@ -150,12 +150,14 @@ export function TagSelector({
           )}
         />
       </Stack>
-      {(selection?.length ?? 0) > 0 && (
+      {((selection?.length ?? 0) > 0 || (exclusion?.length ?? 0) > 0) && (
         <Box position={'sticky'} bgcolor="background.paper" bottom={0} pb={2}>
           <Divider />
           <TagSelection
             selection={selection}
-            onClick={selectItem}
+            exclusion={exclusion}
+            onDeselect={selectItem}
+            onInclude={excludeItem}
             onClear={() => {
               onSelectionChange && onSelectionChange([])
               onExclusionChange && onExclusionChange([])
