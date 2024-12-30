@@ -9,6 +9,7 @@ export interface FetchTaggablesOptions {
   order?: 'alpha' | 'date'
   search?: string
   year?: number
+  directories?: string[]
   stackId?: number
   onlyHidden?: boolean
   onlyFiles?: boolean
@@ -23,7 +24,7 @@ export namespace TaggableManager {
       })
 
     if (options) {
-      const { tagIds, order, search, year, excludedTagIds } = options
+      const { tagIds, order, search, year, excludedTagIds, directories } = options
       if (tagIds && tagIds.length > 0) {
         applyTags(query, tagIds)
       }
@@ -41,7 +42,11 @@ export namespace TaggableManager {
       }
 
       if (year) {
-        applyYear(query, year)
+        query.andWhere("strftime('%Y', files.dateModified) = :year", { year: year.toString() })
+      }
+
+      if (directories && directories.length > 0) {
+        query.andWhere('files.directory IN (:...directories)', { directories })
       }
     }
 
@@ -108,10 +113,6 @@ export namespace TaggableManager {
         { [`term${index}`]: `%${t}%` }
       )
     })
-  }
-
-  function applyYear(query: SelectQueryBuilder<Taggable>, year: number) {
-    query.andWhere("strftime('%Y', files.dateModified) = :year", { year: year.toString() })
   }
 
   export async function getAllTaggableYears() {

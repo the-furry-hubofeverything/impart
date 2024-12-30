@@ -18,6 +18,8 @@ export function DirectorySelector({}: DirectorySelectorProps) {
   const { data: directories } = useDirectories()
   const { fetchOptions, setFetchOptions } = useTaggables()
 
+  console.log(directories, fetchOptions.directories)
+
   return (
     <FormControl size="small" sx={{ width: 200 }}>
       <InputLabel id={LABEL_ID}>Directories</InputLabel>
