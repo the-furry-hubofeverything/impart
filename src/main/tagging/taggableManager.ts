@@ -23,9 +23,13 @@ export namespace TaggableManager {
       })
 
     if (options) {
-      const { tagIds, order, search, year } = options
+      const { tagIds, order, search, year, excludedTagIds } = options
       if (tagIds && tagIds.length > 0) {
         applyTags(query, tagIds)
+      }
+
+      if (excludedTagIds && excludedTagIds.length > 0) {
+        applyExcludedTags(query, excludedTagIds)
       }
 
       if (order) {
@@ -60,11 +64,7 @@ export namespace TaggableManager {
     return result
   }
 
-  function applyTags(
-    query: SelectQueryBuilder<Taggable>,
-    tagIds: number[],
-    excludedTagIds?: number[]
-  ) {
+  function applyTags(query: SelectQueryBuilder<Taggable>, tagIds: number[]) {
     Array.from(tagIds).forEach((t, index) => {
       const alias = `tags${index}`
       const variable = `id${index}`
@@ -72,16 +72,20 @@ export namespace TaggableManager {
         [variable]: t
       })
     })
+  }
 
-    if (excludedTagIds) {
-      Array.from(excludedTagIds).forEach((t, index) => {
-        const alias = `tags${index}`
-        const variable = `id${index}`
-        query.innerJoin('files.tags', alias, `${alias}.id = :${variable}`, {
-          [variable]: t
-        })
-      })
-    }
+  function applyExcludedTags(query: SelectQueryBuilder<Taggable>, excludedTagIds: number[]) {
+    Array.from(excludedTagIds).forEach((t, index) => {
+      const variable = `id${index}`
+
+      query.andWhere(
+        `files.id NOT IN (SELECT DISTINCT taggable.id
+        FROM taggable
+        INNER JOIN taggable_tags_tag AS tagRelation on taggable.id = tagRelation.taggableId
+        INNER JOIN tag on tagRelation.tagId = tag.id AND tag.id = :${variable})`,
+        { [variable]: t }
+      )
+    })
   }
 
   function applyOrder(query: SelectQueryBuilder<Taggable>, order: 'alpha' | 'date') {
