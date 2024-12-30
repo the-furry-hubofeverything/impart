@@ -44,10 +44,6 @@ export function Droppable({ type, id, render, onDrop, hideIndicator, disabled }:
   const over = active?.data.current as DraggableData | undefined
   const validDropTypes = over && isOver ? getValidDropTypes(over, { type, id }) : undefined
 
-  if (validDropTypes) {
-    console.log(validDropTypes)
-  }
-
   useEffect(() => {
     if (lastDrop?.droppable.type === type && lastDrop.droppable.id === id) {
       onDrop && onDrop(lastDrop.draggable)
