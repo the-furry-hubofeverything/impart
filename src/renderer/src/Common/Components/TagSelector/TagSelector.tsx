@@ -29,25 +29,31 @@ const DropIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'showI
 export interface TagSelectorProps {
   selection?: Impart.Tag[]
   exclusion?: Impart.Tag[]
-  onChange?: (selection: Impart.Tag[], exclusion?: Impart.Tag[]) => void
+  onSelectionChange?: (selection: Impart.Tag[]) => void
+  onExclusionChange?: (selection: Impart.Tag[]) => void
 }
 
-export function TagSelector({ selection, exclusion, onChange }: TagSelectorProps) {
+export function TagSelector({
+  selection,
+  exclusion,
+  onSelectionChange,
+  onExclusionChange
+}: TagSelectorProps) {
   const { isCollapsed, toggleGroupCollapse, expandAll, collapseAll } = useGroupCollapse()
   const { groups, reload, tags } = useTagGroups()
 
-  const { selectItem } = useMultiSelection(
+  const { selectItem, itemIsSelected } = useMultiSelection(
     tags ?? [],
     selection ?? [],
-    (s) => onChange && onChange(s, exclusion),
+    (s) => onSelectionChange && onSelectionChange(s),
     useCallback((a, b) => a.id === b.id, []),
     { toggleMode: true }
   )
 
-  const { selectItem: excludeItem } = useMultiSelection(
+  const { selectItem: excludeItem, itemIsSelected: itemIsExcluded } = useMultiSelection(
     tags ?? [],
     exclusion ?? [],
-    (s) => onChange && onChange(selection ?? [], s),
+    (s) => onExclusionChange && onExclusionChange(s),
     useCallback((a, b) => a.id === b.id, []),
     { toggleMode: true }
   )
@@ -104,8 +110,18 @@ export function TagSelector({ selection, exclusion, onChange }: TagSelectorProps
                       selectedTags={selection}
                       excludedTags={exclusion}
                       filter={filter}
-                      onSelect={selectItem}
-                      onExclude={excludeItem}
+                      onSelect={(t) => {
+                        selectItem(t)
+                        if (itemIsExcluded(t)) {
+                          excludeItem(t)
+                        }
+                      }}
+                      onExclude={(t) => {
+                        excludeItem(t)
+                        if (itemIsSelected(t)) {
+                          selectItem(t)
+                        }
+                      }}
                       collapsed={isCollapsed(g.id)}
                       onToggleCollapse={() => toggleGroupCollapse(g.id)}
                     />
@@ -140,7 +156,10 @@ export function TagSelector({ selection, exclusion, onChange }: TagSelectorProps
           <TagSelection
             selection={selection}
             onClick={selectItem}
-            onClear={() => onChange && onChange([])}
+            onClear={() => {
+              onSelectionChange && onSelectionChange([])
+              onExclusionChange && onExclusionChange([])
+            }}
           />
         </Box>
       )}

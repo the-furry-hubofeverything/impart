@@ -92,12 +92,18 @@ export function TaggableBrowser({ onSettingsPressed, ...gridEvents }: TaggableBr
                     <TagSelector
                       selection={editTarget ? editTagSelection : selectedTags}
                       exclusion={editTarget ? [] : excludedTags}
-                      onChange={(tags, excludedTags) => {
+                      onSelectionChange={(tags) => {
                         if (editTarget) {
                           setEditTagSelection(tags)
                         } else {
                           setFetchOptions({
-                            tagIds: tags.map((t) => t.id),
+                            tagIds: tags.map((t) => t.id)
+                          })
+                        }
+                      }}
+                      onExclusionChange={(excludedTags) => {
+                        if (!editTarget) {
+                          setFetchOptions({
                             excludedTagIds: excludedTags?.map((t) => t.id)
                           })
                         }

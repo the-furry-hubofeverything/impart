@@ -61,7 +61,7 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
         <Box width={500}>
           <Card sx={{ height: '100%' }}>
             <CardContent sx={{ height: '100%', overflowY: 'auto' }}>
-              <TagSelector selection={tagSelection} onChange={setTagSelection} />
+              <TagSelector selection={tagSelection} onSelectionChange={setTagSelection} />
             </CardContent>
           </Card>
         </Box>
