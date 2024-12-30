@@ -64,9 +64,6 @@ export namespace TaggableManager {
       query.andWhere('files.parentId = :stackId', { stackId: options.stackId })
     }
 
-    console.log('THE QUERY:')
-    console.log(query.getSql())
-
     const result = await query.getMany()
 
     return result
