@@ -5,9 +5,11 @@ import { TaggableFile } from '../database/entities/TaggableFile'
 
 export interface FetchTaggablesOptions {
   tagIds?: number[]
+  excludedTagIds?: number[]
   order?: 'alpha' | 'date'
   search?: string
   year?: number
+  directories?: string[]
   stackId?: number
   onlyHidden?: boolean
   onlyFiles?: boolean
@@ -22,9 +24,13 @@ export namespace TaggableManager {
       })
 
     if (options) {
-      const { tagIds, order, search, year } = options
+      const { tagIds, order, search, year, excludedTagIds, directories } = options
       if (tagIds && tagIds.length > 0) {
         applyTags(query, tagIds)
+      }
+
+      if (excludedTagIds && excludedTagIds.length > 0) {
+        applyExcludedTags(query, excludedTagIds)
       }
 
       if (order) {
@@ -36,7 +42,11 @@ export namespace TaggableManager {
       }
 
       if (year) {
-        applyYear(query, year)
+        query.andWhere("strftime('%Y', files.dateModified) = :year", { year: year.toString() })
+      }
+
+      if (directories && directories.length > 0) {
+        query.andWhere('files.directory IN (:...directories)', { directories })
       }
     }
 
@@ -69,6 +79,20 @@ export namespace TaggableManager {
     })
   }
 
+  function applyExcludedTags(query: SelectQueryBuilder<Taggable>, excludedTagIds: number[]) {
+    Array.from(excludedTagIds).forEach((t, index) => {
+      const variable = `exclude${index}`
+
+      query.andWhere(
+        `files.id NOT IN (SELECT DISTINCT taggable.id
+        FROM taggable
+        INNER JOIN taggable_tags_tag AS tagRelation on taggable.id = tagRelation.taggableId
+        INNER JOIN tag on tagRelation.tagId = tag.id AND tag.id = :${variable})`,
+        { [variable]: t }
+      )
+    })
+  }
+
   function applyOrder(query: SelectQueryBuilder<Taggable>, order: 'alpha' | 'date') {
     switch (order) {
       case 'alpha':
@@ -89,10 +113,6 @@ export namespace TaggableManager {
         { [`term${index}`]: `%${t}%` }
       )
     })
-  }
-
-  function applyYear(query: SelectQueryBuilder<Taggable>, year: number) {
-    query.andWhere("strftime('%Y', files.dateModified) = :year", { year: year.toString() })
   }
 
   export async function getAllTaggableYears() {

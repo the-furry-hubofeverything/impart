@@ -34,11 +34,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
   )
 
   const sendSuccess = useCallback((m: string) => sendNotification(m, 'success'), [sendNotification])
-
-  const sendError = useCallback(
-    (m: string) => (m: string) => sendNotification(m, 'error'),
-    [type, message, total]
-  )
+  const sendError = useCallback((m: string) => sendNotification(m, 'error'), [sendNotification])
 
   return (
     <NotificationContext.Provider value={{ sendError, sendSuccess }}>

@@ -16,7 +16,7 @@ export function EditTags({ tags, removeTag }: EditTagsProps) {
         <Grid2 container maxWidth={360} spacing={1} justifyContent={'center'}>
           {tags.map((t) => (
             <Grid2 key={t.id}>
-              <Tag tag={t} onClick={() => removeTag && removeTag(t)} />
+              <Tag tag={t} onSelect={() => removeTag && removeTag(t)} />
             </Grid2>
           ))}
         </Grid2>

@@ -1,4 +1,4 @@
-import { Stack, Typography, Button, Box, Divider, styled, BoxProps } from '@mui/material'
+import { Stack, Button, Box, Divider, styled, BoxProps, IconButton, Tooltip } from '@mui/material'
 import AddIcon from '@mui/icons-material/AddRounded'
 import { useMultiSelection } from '../../Hooks/useMultiSelection'
 import { useCallback, useState } from 'react'
@@ -10,6 +10,9 @@ import { Droppable } from '../DragAndDrop/Droppable'
 import { TagSelection } from './TagSelection'
 import { EmptyTagGroups } from './EmptyTagGroups'
 import { satisfiesFilter } from './satisfiesFilter'
+import { useGroupCollapse } from './useGroupCollapse'
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
 
 const DropIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'showIndicator' })<
   BoxProps & { showIndicator: boolean }
@@ -25,16 +28,32 @@ const DropIndicator = styled(Box, { shouldForwardProp: (prop) => prop !== 'showI
 
 export interface TagSelectorProps {
   selection?: Impart.Tag[]
-  onChange?: (selection: Impart.Tag[]) => void
+  exclusion?: Impart.Tag[]
+  onSelectionChange?: (selection: Impart.Tag[]) => void
+  onExclusionChange?: (selection: Impart.Tag[]) => void
 }
 
-export function TagSelector({ selection, onChange }: TagSelectorProps) {
+export function TagSelector({
+  selection,
+  exclusion,
+  onSelectionChange,
+  onExclusionChange
+}: TagSelectorProps) {
+  const { isCollapsed, toggleGroupCollapse, expandAll, collapseAll } = useGroupCollapse()
   const { groups, reload, tags } = useTagGroups()
 
-  const { selectItem } = useMultiSelection(
+  const { selectItem, itemIsSelected } = useMultiSelection(
     tags ?? [],
     selection ?? [],
-    onChange,
+    (s) => onSelectionChange && onSelectionChange(s),
+    useCallback((a, b) => a.id === b.id, []),
+    { toggleMode: true }
+  )
+
+  const { selectItem: excludeItem, itemIsSelected: itemIsExcluded } = useMultiSelection(
+    tags ?? [],
+    exclusion ?? [],
+    (s) => onExclusionChange && onExclusionChange(s),
     useCallback((a, b) => a.id === b.id, []),
     { toggleMode: true }
   )
@@ -59,7 +78,19 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
           }
         }}
       >
-        <SearchBar value={filter} onChange={setFilter} />
+        <Stack direction="row" alignItems="center">
+          <SearchBar value={filter} onChange={setFilter} />
+          <Tooltip title="Collapse All">
+            <IconButton sx={{ ml: 1 }} onClick={() => collapseAll(groups?.map((g) => g.id) ?? [])}>
+              <UnfoldLessIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Expand All" onClick={() => expandAll(groups?.map((g) => g.id) ?? [])}>
+            <IconButton>
+              <UnfoldMoreIcon />
+            </IconButton>
+          </Tooltip>
+        </Stack>
         {groups
           ?.filter(
             (g) =>
@@ -77,8 +108,22 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
                     <TagGroup
                       group={g}
                       selectedTags={selection}
+                      excludedTags={exclusion}
                       filter={filter}
-                      onSelect={selectItem}
+                      onSelect={(t) => {
+                        selectItem(t)
+                        if (itemIsExcluded(t)) {
+                          excludeItem(t)
+                        }
+                      }}
+                      onExclude={(t) => {
+                        excludeItem(t)
+                        if (itemIsSelected(t)) {
+                          selectItem(t)
+                        }
+                      }}
+                      collapsed={isCollapsed(g.id)}
+                      onToggleCollapse={() => toggleGroupCollapse(g.id)}
                     />
                   </Draggable>
                 </DropIndicator>
@@ -105,13 +150,18 @@ export function TagSelector({ selection, onChange }: TagSelectorProps) {
           )}
         />
       </Stack>
-      {(selection?.length ?? 0) > 0 && (
+      {((selection?.length ?? 0) > 0 || (exclusion?.length ?? 0) > 0) && (
         <Box position={'sticky'} bgcolor="background.paper" bottom={0} pb={2}>
           <Divider />
           <TagSelection
             selection={selection}
-            onClick={selectItem}
-            onClear={() => onChange && onChange([])}
+            exclusion={exclusion}
+            onDeselect={selectItem}
+            onInclude={excludeItem}
+            onClear={() => {
+              onSelectionChange && onSelectionChange([])
+              onExclusionChange && onExclusionChange([])
+            }}
           />
         </Box>
       )}

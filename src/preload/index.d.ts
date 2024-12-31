@@ -55,9 +55,11 @@ declare global {
 
     interface FetchTaggablesOptions {
       tagIds?: number[]
+      excludedTagIds?: number[]
       order?: 'alpha' | 'date'
       search?: string
       year?: number
+      directories?: string[]
       stackId?: number
       onlyHidden?: boolean
       onlyFiles?: boolean
@@ -129,6 +131,7 @@ declare global {
       onItemAddedToSequence: CallbackFunc<void>
       onTaskStarted: CallbackFunc<{ type: Impart.TaskType; steps: number }>
       onStepTaken: CallbackFunc<void>
+      onErrorThrown: CallbackFunc<Impart.Error>
       onTaskFinished: CallbackFunc<void>
       onSequenceFinished: CallbackFunc<void>
     }

@@ -42,6 +42,8 @@ function createWindow(): void {
     }
   })
 
+  mainWindow.removeMenu()
+
   if (store.get('window.maximized')) {
     mainWindow.maximize()
   }

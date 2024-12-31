@@ -1,30 +1,50 @@
-import { Box, Stack, Typography, Button, Grid2 } from '@mui/material'
+import { Box, Stack, Typography, Button, Grid2, Divider } from '@mui/material'
 import React from 'react'
 import { Tag } from '../Tag/Tag'
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOffRounded'
 
 export interface TagSelectionProps {
   selection?: Impart.Tag[]
-  onClick?: (tag: Impart.Tag) => void
+  exclusion?: Impart.Tag[]
+  onDeselect?: (tag: Impart.Tag) => void
+  onInclude?: (tag: Impart.Tag) => void
   onClear?: () => void
 }
 
-export function TagSelection({ selection, onClear, onClick }: TagSelectionProps) {
+export function TagSelection({
+  selection,
+  exclusion,
+  onClear,
+  onDeselect,
+  onInclude
+}: TagSelectionProps) {
   return (
-    <Box pt={1}>
+    <Stack pt={1} gap={1}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6">Selected Tags</Typography>
+        <Typography variant="h6">Active Tags</Typography>
         <Button startIcon={<FilterAltOffIcon />} size="small" onClick={onClear}>
           Clear all
         </Button>
       </Stack>
-      <Grid2 container spacing={2} pt={1}>
-        {selection?.map((t) => (
-          <Grid2 key={t.id}>
-            <Tag tag={t} onClick={() => onClick && onClick(t)} />
-          </Grid2>
-        ))}
-      </Grid2>
-    </Box>
+      {selection && selection.length > 0 && (
+        <Grid2 container spacing={2}>
+          {selection.map((t) => (
+            <Grid2 key={t.id}>
+              <Tag tag={t} onSelect={() => onDeselect && onDeselect(t)} />
+            </Grid2>
+          ))}
+        </Grid2>
+      )}
+      {selection && selection.length > 0 && exclusion && exclusion.length > 0 && <Divider />}
+      {exclusion && exclusion.length > 0 && (
+        <Grid2 container spacing={2}>
+          {exclusion?.map((t) => (
+            <Grid2 key={t.id}>
+              <Tag tag={t} excluded onSelect={() => onInclude && onInclude(t)} />
+            </Grid2>
+          ))}
+        </Grid2>
+      )}
+    </Stack>
   )
 }

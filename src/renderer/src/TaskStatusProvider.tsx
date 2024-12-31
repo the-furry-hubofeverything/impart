@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import { useNotification } from './Common/Components/NotificationProvider'
 
 export interface TaskStatusData {
   isTaskRunning: boolean
@@ -25,6 +26,8 @@ export function TaskStatusProvider({ children }: TaskStatusProviderProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [stepCount, setStepCount] = useState(0)
 
+  const { sendError } = useNotification()
+
   useEffect(() => {
     return window.taskApi.onSequenceStarted(() => {
       setTaskRunning(true)
@@ -48,6 +51,10 @@ export function TaskStatusProvider({ children }: TaskStatusProviderProps) {
   useEffect(() => {
     return window.taskApi.onStepTaken(() => setCurrentStep((step) => step + 1))
   }, [])
+
+  useEffect(() => {
+    return window.taskApi.onErrorThrown(({ message }) => sendError(message))
+  }, [sendError])
 
   useEffect(() => {
     return window.taskApi.onTaskFinished(() => setCurrentTask((task) => task + 1))

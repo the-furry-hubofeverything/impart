@@ -18,6 +18,7 @@ import { Droppable } from '@renderer/Common/Components/DragAndDrop/Droppable'
 import { useTaggables } from '@renderer/EntityProviders/TaggableProvider'
 import FilterIcon from '@mui/icons-material/FilterAltRounded'
 import { useRef, useState } from 'react'
+import { DirectorySelector } from './DirectorySelector'
 
 const ToolbarIconButton = styled(IconButton)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -51,7 +52,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 
 export function GridActions({ stack, onStackChange }: GridActionsProps) {
   const {
-    fetchOptions: { search, year },
+    fetchOptions: { search, year, directories },
     setFetchOptions
   } = useTaggables()
 
@@ -81,6 +82,17 @@ export function GridActions({ stack, onStackChange }: GridActionsProps) {
                     onDelete={() => setFetchOptions({ year: undefined })}
                   />
                 )}
+                {directories && directories.length > 0 && (
+                  <Chip
+                    label={
+                      directories.length === 1
+                        ? directories[0]
+                        : `${directories.length} Directories`
+                    }
+                    size="small"
+                    onDelete={() => setFetchOptions({ directories: undefined })}
+                  />
+                )}
                 <IconButton size="small" onClick={() => setShowFilters(true)}>
                   <FilterIcon fontSize="inherit" />
                 </IconButton>
@@ -97,9 +109,10 @@ export function GridActions({ stack, onStackChange }: GridActionsProps) {
                     horizontal: 'right'
                   }}
                 >
-                  <Box p={2}>
+                  <Stack p={2} gap={1}>
                     <YearSelector />
-                  </Box>
+                    <DirectorySelector />
+                  </Stack>
                 </Popover>
               </>
             }

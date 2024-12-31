@@ -49,7 +49,7 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
             <Grid container spacing={1} width="unset">
               {tagSelection.map((t) => (
                 <Grid key={t.id}>
-                  <Tag tag={t} onClick={() => removeFromSelection(t)} />
+                  <Tag tag={t} onSelect={() => removeFromSelection(t)} />
                 </Grid>
               ))}
             </Grid>
@@ -61,7 +61,7 @@ export function BulkTag({ items, onFinish }: BulkTagProps) {
         <Box width={500}>
           <Card sx={{ height: '100%' }}>
             <CardContent sx={{ height: '100%', overflowY: 'auto' }}>
-              <TagSelector selection={tagSelection} onChange={setTagSelection} />
+              <TagSelector selection={tagSelection} onSelectionChange={setTagSelection} />
             </CardContent>
           </Card>
         </Box>
