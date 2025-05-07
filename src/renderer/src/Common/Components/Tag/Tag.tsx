@@ -26,6 +26,8 @@ export function Tag({ tag, selected, editable, onSelect, onExclude, size, exclud
 
   const { reload } = useTagGroups()
 
+  const [toggleTest, setToggleTest] = useState(false)
+
   return (
     <Box position="relative">
       <TagEditor tag={tag} show={editMode} onEdit={reload} onClose={() => setEditMode(false)} />
@@ -51,6 +53,11 @@ export function Tag({ tag, selected, editable, onSelect, onExclude, size, exclud
               icon: <EditIcon />,
               label: 'Edit...',
               onClick: () => setEditMode(true)
+            },
+            {
+              label: 'Is NSFW',
+              isChecked: toggleTest,
+              onClick: () => setToggleTest(!toggleTest)
             },
             {
               icon: <DeleteIcon />,

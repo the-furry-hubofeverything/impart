@@ -74,6 +74,7 @@ declare global {
       label?: string
       tagOrder: number
       color?: string
+      isNsfw: boolean
     }
 
     interface TagGroup {

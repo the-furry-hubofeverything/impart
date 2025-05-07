@@ -1,6 +1,7 @@
 import {
   Box,
   BoxProps,
+  Checkbox,
   ClickAwayListener,
   Divider,
   ListItemIcon,
@@ -16,6 +17,8 @@ import { useContextMenu } from './useContextMenu'
 import { BetterPopper } from '../BetterPopper'
 import { v4 } from 'uuid'
 import { useHotkeys } from 'react-hotkeys-hook'
+import CheckedIcon from '@mui/icons-material/CheckBox'
+import UncheckedIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 
 export interface ContextMenuOption {
   label: React.ReactNode
@@ -26,6 +29,7 @@ export interface ContextMenuOption {
   danger?: boolean
   onClick?: () => void
   bold?: boolean
+  isChecked?: boolean
 }
 
 export interface ContextMenuRenderProps {
@@ -102,27 +106,31 @@ export function ContextMenu({ options, render, disabled, ...boxProps }: ContextM
                       key={index}
                       onClick={(e) => {
                         o.onClick && o.onClick()
-                        closeMenu()
+                        if (o.isChecked === undefined) {
+                          closeMenu()
+                        }
                         e.stopPropagation()
                       }}
                       disabled={o.disabled}
                     >
-                      {o.icon && (
+                      {(o.icon || o.isChecked !== undefined) && (
                         <ListItemIcon
                           sx={{
                             color: o.danger ? 'error.main' : undefined
                           }}
                         >
-                          {o.icon}
+                          {o.isChecked !== undefined &&
+                            (o.isChecked ? <CheckedIcon /> : <UncheckedIcon />)}
+                          {o.isChecked === undefined && o.icon}
                         </ListItemIcon>
                       )}
                       <ListItemText
-                        inset={!o.icon}
+                        inset={!o.icon && o.isChecked === undefined}
                         sx={{
                           color: o.danger ? 'error.dark' : undefined
                         }}
                         primary={o.label}
-                        primaryTypographyProps={{ fontWeight: o.bold ? 'bold' : undefined }}
+                        slotProps={{ primary: { fontWeight: o.bold ? 'bold' : undefined } }}
                       />
 
                       {o.shortcut && (
