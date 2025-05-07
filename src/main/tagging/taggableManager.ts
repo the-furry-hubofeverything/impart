@@ -91,7 +91,7 @@ export namespace TaggableManager {
 
   function applyExcludedTags(query: SelectQueryBuilder<Taggable>, excludedTagIds: number[]) {
     Array.from(excludedTagIds).forEach((t, index) => {
-      const variable = `id${index}`
+      const variable = `exclude${index}`
 
       query.andWhere(
         `files.id NOT IN (SELECT DISTINCT taggable.id
