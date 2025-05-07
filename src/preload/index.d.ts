@@ -77,6 +77,12 @@ declare global {
       isNsfw: boolean
     }
 
+    interface TagModel {
+      label?: string
+      color?: string
+      isNsfw: boolean
+    }
+
     interface TagGroup {
       id: number
       label?: string
@@ -149,7 +155,7 @@ declare global {
       deleteGroup: (id: number) => Result<true>
 
       createTag: (groupId: number) => Result<Impart.Tag>
-      editTag: (tagId: number, label?: string, color?: string) => Result<Impart.Tag>
+      editTag: (tagId: number, model: Impart.TagModel) => Result<Impart.Tag>
       reorderTags: (moveId: number, toGroupId: number, beforeTagId: number | 'end') => Result<void>
       deleteTag: (id: number) => Result<true>
     }
