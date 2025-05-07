@@ -16,7 +16,7 @@ const path = app.getPath('appData')
 
 export const AppDataSource = new DataSource({
   type: 'better-sqlite3',
-  database: `${path}/impart/${app.isPackaged ? APP_DIR : DEV_DIR}/db.sqlite`,
+  database: `${path}/impart/${APP_DIR}/db.sqlite`,
   entities: [
     Directory,
     Tag,
