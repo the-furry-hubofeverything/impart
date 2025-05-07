@@ -63,6 +63,7 @@ declare global {
       stackId?: number
       onlyHidden?: boolean
       onlyFiles?: boolean
+      allowNsfw?: boolean
     }
 
     //~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
