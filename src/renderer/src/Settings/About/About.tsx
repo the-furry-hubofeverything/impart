@@ -3,7 +3,7 @@ import React from 'react'
 import arastryxIcon from './arastryxIcon.jpg'
 import XIcon from '@mui/icons-material/X'
 import bsky from './blueskyLogo.png'
-import GithubIcon from '@mui/icons-material/Github'
+import GitHubIcon from '@mui/icons-material/GitHub'
 
 const HoverLink = styled('a')({
   transition: '0.2s',
@@ -33,7 +33,7 @@ export function About({}: AboutProps) {
                 <Box>
                   <Typography fontSize={14}>Contribute on GitHub!</Typography>
                   <HoverLink href="https://github.com/Arastryx/impart" target="_blank">
-                    <GithubIcon sx={{ fontSize: 40, color: '#1F2328' }} />
+                    <GitHubIcon sx={{ fontSize: 40, color: '#1F2328' }} />
                   </HoverLink>
                 </Box>
               </Box>
